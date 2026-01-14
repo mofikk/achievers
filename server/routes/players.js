@@ -5,6 +5,22 @@ const { nanoid } = require("nanoid");
 
 const router = express.Router();
 const dbPath = path.join(__dirname, "..", "data", "db.json");
+const allowedPositions = new Set([
+  "FW",
+  "CM",
+  "CDM",
+  "CAM",
+  "LM",
+  "RM",
+  "CB",
+  "RB",
+  "LB",
+  "LW",
+  "RW",
+  "GK",
+  "DF",
+  "MF"
+]);
 
 async function readDb() {
   const raw = await fs.readFile(dbPath, "utf-8");
@@ -27,19 +43,50 @@ router.get("/", async (req, res, next) => {
 
 router.post("/", async (req, res, next) => {
   try {
+    const name = String(req.body.name || "").trim();
+    const position = String(req.body.position || "").trim();
+    const nickname = String(req.body.nickname || "").trim();
+
+    if (!name || !position) {
+      res.status(400).send("Name and position are required.");
+      return;
+    }
+
+    if (!allowedPositions.has(position)) {
+      res.status(400).send("Position is not supported.");
+      return;
+    }
+
     const db = await readDb();
+    const players = db.players || [];
+    const nameKey = name.toLowerCase();
+    const nicknameKey = nickname.toLowerCase();
+
+    const nameExists = players.some(
+      (player) => String(player.name || "").trim().toLowerCase() === nameKey
+    );
+    if (nameExists) {
+      res.status(409).json({ error: "Player name already exists." });
+      return;
+    }
+
+    if (nickname) {
+      const nicknameExists = players.some(
+        (player) => String(player.nickname || "").trim().toLowerCase() === nicknameKey
+      );
+      if (nicknameExists) {
+        res.status(409).json({ error: "Player nickname already exists." });
+        return;
+      }
+    }
     const now = new Date();
     const yearKey = String(now.getFullYear());
     const monthKey = `${yearKey}-${String(now.getMonth() + 1).padStart(2, "0")}`;
-    const jerseyNumber =
-      req.body.jerseyNumber === null || req.body.jerseyNumber === undefined
-        ? null
-        : Number(req.body.jerseyNumber);
     const player = {
       id: nanoid(8),
-      name: req.body.name || "",
-      position: req.body.position || "",
-      jerseyNumber: Number.isFinite(jerseyNumber) ? jerseyNumber : null,
+      name,
+      nickname: nickname || "",
+      position,
       subscriptions: {
         year: { [yearKey]: "pending" },
         months: { [monthKey]: "pending" }
@@ -48,11 +95,32 @@ router.post("/", async (req, res, next) => {
       attendance: {}
     };
 
-    db.players = db.players || [];
-    db.players.push(player);
+    players.push(player);
+    db.players = players;
 
     await writeDb(db);
     res.status(201).json(player);
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.delete("/:id", async (req, res, next) => {
+  try {
+    const db = await readDb();
+    const id = req.params.id;
+    const players = db.players || [];
+    const index = players.findIndex((player) => player.id === id);
+
+    if (index === -1) {
+      res.status(404).json({ ok: false });
+      return;
+    }
+
+    players.splice(index, 1);
+    db.players = players;
+    await writeDb(db);
+    res.json({ ok: true });
   } catch (err) {
     next(err);
   }

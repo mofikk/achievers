@@ -16,10 +16,37 @@
     });
 
     if (!res.ok) {
+      const contentType = res.headers.get("content-type") || "";
+      if (contentType.includes("application/json")) {
+        const data = await res.json();
+        throw new Error(data.error || "API request failed");
+      }
       const message = await res.text();
       throw new Error(message || "API request failed");
     }
 
     return res.json();
+  };
+
+  window.toast = function toast(message, type = "success") {
+    let container = document.querySelector(".toast-container");
+    if (!container) {
+      container = document.createElement("div");
+      container.className = "toast-container";
+      document.body.appendChild(container);
+    }
+
+    const toastEl = document.createElement("div");
+    toastEl.className = `toast toast-${type}`;
+    toastEl.textContent = message;
+    container.appendChild(toastEl);
+
+    setTimeout(() => {
+      toastEl.classList.add("toast-hide");
+    }, 2000);
+
+    setTimeout(() => {
+      toastEl.remove();
+    }, 2600);
   };
 })();

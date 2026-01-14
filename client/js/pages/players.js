@@ -1,107 +1,264 @@
 (function () {
   const body = document.getElementById("players-body");
   const addBtn = document.getElementById("add-player-btn");
-  const modal = document.getElementById("player-modal");
-  const form = document.getElementById("player-form");
-  const cancelBtn = document.getElementById("cancel-player-btn");
-  const errorEl = document.getElementById("player-error");
+  const addModal = document.getElementById("player-modal");
+  const addForm = document.getElementById("player-form");
+  const addCancelBtn = document.getElementById("cancel-player-btn");
+  const addError = document.getElementById("player-error");
+  const addSaveBtn = addForm.querySelector("button[type=\"submit\"]");
 
-  if (!body || !addBtn || !modal || !form || !cancelBtn || !errorEl) return;
+  const viewModal = document.getElementById("view-player-modal");
+  const closeViewBtn = document.getElementById("close-view-btn");
+  const deleteBtn = document.getElementById("delete-player-btn");
+  const viewError = document.getElementById("view-error");
+  const viewName = document.getElementById("view-name");
+  const viewNickname = document.getElementById("view-nickname");
+  const viewPosition = document.getElementById("view-position");
+  const viewYearly = document.getElementById("view-yearly");
+  const viewMonthly = document.getElementById("view-monthly");
 
-  const now = new Date();
-  const yearKey = String(now.getFullYear());
-  const monthKey = `${yearKey}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+  if (
+    !body ||
+    !addBtn ||
+    !addModal ||
+    !addForm ||
+    !addCancelBtn ||
+    !addError ||
+    !addSaveBtn ||
+    !viewModal ||
+    !closeViewBtn ||
+    !deleteBtn ||
+    !viewError ||
+    !viewName ||
+    !viewNickname ||
+    !viewPosition ||
+    !viewYearly ||
+    !viewMonthly
+  ) {
+    return;
+  }
+
+  const positionLabels = {
+    FW: "Forward (FW)",
+    CM: "Midfielder (CM)",
+    CDM: "Midfielder (CDM)",
+    CAM: "Midfielder (CAM)",
+    LM: "Midfielder (LM)",
+    RM: "Midfielder (RM)",
+    CB: "Defender (CB)",
+    RB: "Defender (RB)",
+    LB: "Defender (LB)",
+    LW: "Winger (LW)",
+    RW: "Winger (RW)",
+    GK: "Goalkeeper (GK)",
+    DF: "Defender (DF)",
+    MF: "Midfielder (MF)"
+  };
+
+  const state = {
+    players: [],
+    yearKey: null,
+    monthKey: null
+  };
 
   function formatStatus(value, fallback) {
     return value ? value.charAt(0).toUpperCase() + value.slice(1) : fallback;
+  }
+
+  function formatPosition(code) {
+    if (!code) return "";
+    return positionLabels[code] || code;
+  }
+
+  function getLatestKey(players, field) {
+    const keys = [];
+    players.forEach((player) => {
+      const bucket = player?.subscriptions?.[field] || {};
+      Object.keys(bucket).forEach((key) => keys.push(key));
+    });
+    keys.sort();
+    return keys[keys.length - 1] || null;
+  }
+
+  function computeKeys(players) {
+    state.yearKey = getLatestKey(players, "year");
+    state.monthKey = getLatestKey(players, "months");
+  }
+
+  function getStatus(player) {
+    const yearly = state.yearKey ? player?.subscriptions?.year?.[state.yearKey] : null;
+    const monthly = state.monthKey ? player?.subscriptions?.months?.[state.monthKey] : null;
+    return {
+      yearly: formatStatus(yearly, "Pending"),
+      monthly: formatStatus(monthly, "Pending")
+    };
   }
 
   function renderPlayers(players) {
     body.innerHTML = "";
 
     players.forEach((player) => {
-      const yearly = player?.subscriptions?.year?.[yearKey] || null;
-      const monthly = player?.subscriptions?.months?.[monthKey] || null;
-
+      const status = getStatus(player);
       const row = document.createElement("tr");
       row.innerHTML = `
-        <td>${player.name}</td>
-        <td>${player.position}</td>
-        <td>${formatStatus(yearly, "Pending")}</td>
-        <td>${formatStatus(monthly, "Pending")}</td>
-        <td><button class="action-btn" data-name="${player.name}">View</button></td>
+        <td>${player.name || ""}</td>
+        <td>${player.nickname || "-"}</td>
+        <td>${formatPosition(player.position)}</td>
+        <td>${status.yearly}</td>
+        <td>${status.monthly}</td>
+        <td>
+          <button class="action-btn" data-id="${player.id}">View</button>
+        </td>
       `;
       body.appendChild(row);
-    });
-
-    body.querySelectorAll(".action-btn").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        alert(`View player: ${btn.dataset.name}`);
-      });
     });
   }
 
   function loadPlayers() {
-    return window.apiFetch("/players").then(renderPlayers).catch(console.error);
+    return window
+      .apiFetch("/players")
+      .then((players) => {
+        state.players = players;
+        computeKeys(players);
+        renderPlayers(players);
+      })
+      .catch(console.error);
   }
 
-  function openModal() {
-    errorEl.textContent = "";
-    modal.classList.add("is-open");
+  function openModal(modal) {
+    modal.classList.remove("hidden");
     modal.setAttribute("aria-hidden", "false");
   }
 
-  function closeModal() {
-    modal.classList.remove("is-open");
+  function closeModal(modal) {
+    modal.classList.add("hidden");
     modal.setAttribute("aria-hidden", "true");
   }
 
-  addBtn.addEventListener("click", openModal);
-  cancelBtn.addEventListener("click", () => {
-    form.reset();
-    closeModal();
+  function resetAddForm() {
+    addForm.reset();
+    addError.textContent = "";
+  }
+
+  function resetViewModal() {
+    viewError.textContent = "";
+    deleteBtn.removeAttribute("data-id");
+  }
+
+  addBtn.addEventListener("click", () => {
+    resetAddForm();
+    openModal(addModal);
   });
 
-  modal.addEventListener("click", (event) => {
-    if (event.target === modal) {
-      form.reset();
-      closeModal();
+  addCancelBtn.addEventListener("click", () => {
+    resetAddForm();
+    closeModal(addModal);
+  });
+
+  addModal.addEventListener("click", (event) => {
+    if (event.target === addModal) {
+      resetAddForm();
+      closeModal(addModal);
     }
   });
 
-  form.addEventListener("submit", (event) => {
-    event.preventDefault();
-    errorEl.textContent = "";
+  viewModal.addEventListener("click", (event) => {
+    if (event.target === viewModal) {
+      resetViewModal();
+      closeModal(viewModal);
+    }
+  });
 
-    const formData = new FormData(form);
+  closeViewBtn.addEventListener("click", () => {
+    resetViewModal();
+    closeModal(viewModal);
+  });
+
+  body.addEventListener("click", (event) => {
+    const target = event.target;
+    if (!target.classList.contains("action-btn")) return;
+    const playerId = target.getAttribute("data-id");
+    const player = state.players.find((p) => p.id === playerId);
+    if (!player) return;
+
+    const status = getStatus(player);
+    viewName.textContent = player.name || "";
+    viewNickname.textContent = player.nickname || "-";
+    viewPosition.textContent = formatPosition(player.position);
+    viewYearly.textContent = status.yearly;
+    viewMonthly.textContent = status.monthly;
+    deleteBtn.setAttribute("data-id", player.id);
+    viewError.textContent = "";
+    openModal(viewModal);
+  });
+
+  function setAddLoading(isLoading) {
+    addSaveBtn.disabled = isLoading;
+    addCancelBtn.disabled = isLoading;
+    addSaveBtn.textContent = isLoading ? "Saving..." : "Save";
+  }
+
+  function setDeleteLoading(isLoading) {
+    deleteBtn.disabled = isLoading;
+    deleteBtn.textContent = isLoading ? "Deleting..." : "Delete Player";
+  }
+
+  addForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    addError.textContent = "";
+
+    const formData = new FormData(addForm);
     const name = String(formData.get("name") || "").trim();
+    const nickname = String(formData.get("nickname") || "").trim();
     const position = String(formData.get("position") || "").trim();
-    const jerseyRaw = String(formData.get("jerseyNumber") || "").trim();
 
     if (!name || !position) {
-      errorEl.textContent = "Name and position are required.";
+      addError.textContent = "Name and position are required.";
       return;
     }
 
-    const jerseyNumber = jerseyRaw ? Number(jerseyRaw) : null;
-    const payload = {
-      name,
-      position,
-      jerseyNumber: Number.isFinite(jerseyNumber) ? jerseyNumber : null
-    };
+    const payload = { name, position };
+    if (nickname) payload.nickname = nickname;
 
+    setAddLoading(true);
     window
       .apiFetch("/players", {
         method: "POST",
         body: JSON.stringify(payload)
       })
       .then(() => {
-        form.reset();
-        closeModal();
+        resetAddForm();
+        closeModal(addModal);
+        window.toast("Player added", "success");
         return loadPlayers();
       })
       .catch((err) => {
-        errorEl.textContent = err.message || "Unable to save player.";
+        addError.textContent = err.message || "Unable to save player.";
+      })
+      .finally(() => {
+        setAddLoading(false);
+      });
+  });
+
+  deleteBtn.addEventListener("click", () => {
+    const playerId = deleteBtn.getAttribute("data-id");
+    if (!playerId) return;
+    if (!confirm("Delete this player?")) return;
+
+    setDeleteLoading(true);
+    window
+      .apiFetch(`/players/${playerId}`, { method: "DELETE" })
+      .then(() => {
+        resetViewModal();
+        closeModal(viewModal);
+        window.toast("Player deleted", "success");
+        return loadPlayers();
+      })
+      .catch((err) => {
+        viewError.textContent = err.message || "Unable to delete player.";
+      })
+      .finally(() => {
+        setDeleteLoading(false);
       });
   });
 
