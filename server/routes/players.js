@@ -59,25 +59,20 @@ router.post("/", async (req, res, next) => {
 
     const db = await readDb();
     const players = db.players || [];
-    const nameKey = name.toLowerCase();
-    const nicknameKey = nickname.toLowerCase();
+    const nameNorm = name.toLowerCase();
+    const nickNorm = nickname.toLowerCase();
 
-    const nameExists = players.some(
-      (player) => String(player.name || "").trim().toLowerCase() === nameKey
-    );
-    if (nameExists) {
-      res.status(409).json({ error: "Player name already exists." });
+    const duplicateExists = players.some((player) => {
+      const existingName = String(player.name || "").trim().toLowerCase();
+      const existingNick = String(player.nickname || "").trim().toLowerCase();
+      return existingName === nameNorm && existingNick === nickNorm;
+    });
+
+    if (duplicateExists) {
+      res.status(409).json({
+        error: "Player with this name and nickname already exists."
+      });
       return;
-    }
-
-    if (nickname) {
-      const nicknameExists = players.some(
-        (player) => String(player.nickname || "").trim().toLowerCase() === nicknameKey
-      );
-      if (nicknameExists) {
-        res.status(409).json({ error: "Player nickname already exists." });
-        return;
-      }
     }
     const now = new Date();
     const yearKey = String(now.getFullYear());
