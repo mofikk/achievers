@@ -2,6 +2,7 @@
   const body = document.getElementById("payments-body");
   const modal = document.getElementById("payments-modal");
   const modalTitleName = document.getElementById("payments-player-name");
+  const memberSinceLabel = document.getElementById("member-since-label");
   const errorEl = document.getElementById("payments-error");
   const closeBtn = document.getElementById("payments-close");
   const saveBtn = document.getElementById("payments-save");
@@ -24,6 +25,7 @@
     !modal ||
     !modalTitleName ||
     !errorEl ||
+    !memberSinceLabel ||
     !closeBtn ||
     !saveBtn ||
     !yearlyYear ||
@@ -89,6 +91,13 @@
     }
 
     return Number(getNowYear());
+  }
+
+  function updateMemberSinceLabel(player, selectedYear) {
+    const memberSinceYear = getMemberSinceYear(player);
+    const label =
+      Number(selectedYear) === memberSinceYear ? "New member year" : "Renewal";
+    memberSinceLabel.textContent = `Member since: ${memberSinceYear} (${label})`;
   }
 
   function deriveStatus(expected, paid) {
@@ -227,6 +236,7 @@
     monthlyExpected.value = String(monthly.expected);
     monthlyPaid.value = String(monthly.paid);
 
+    updateMemberSinceLabel(player, yearlyYear.value);
     updateYearlyPreview();
     updateMonthlyPreview();
   }
@@ -277,6 +287,7 @@
     const yearly = getYearlyPayment(player, yearlyYear.value);
     yearlyExpected.value = String(yearly.expected);
     yearlyPaid.value = String(yearly.paid);
+    updateMemberSinceLabel(player, yearlyYear.value);
     updateYearlyPreview();
   });
 

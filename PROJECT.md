@@ -13,8 +13,15 @@ Archievers FC is a football community management system that tracks players, att
 
 ## Current features
 - Add Player flow from the Players page (modal form)
+- View player details and delete from the View modal
+- Position codes stored as compact values (FW, CM, CDM, CAM, LM, RM, CB, RB, LB, LW, RW)
+- Membership tracking with `membership.memberSinceYear`
 
 ## Subscription rules
 - Yearly subscriptions: `paid` or `pending`
 - Monthly subscriptions: `paid`, `incomplete`, or `pending`
 - Weekly payments are derived from monthly values (do not store weekly yet)
+
+## Fee policy defaults
+- Monthly expected: 3000
+- Yearly expected: 5000 in the member's first year, 2500 for later years

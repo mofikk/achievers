@@ -62,6 +62,7 @@
     yearKey: null,
     monthKey: null
   };
+  const currentYear = new Date().getFullYear();
 
   function formatStatus(value, fallback) {
     return value ? value.charAt(0).toUpperCase() + value.slice(1) : fallback;
@@ -140,7 +141,7 @@
   function resetAddForm() {
     addForm.reset();
     addError.textContent = "";
-    addMemberSince.value = String(new Date().getFullYear());
+    addMemberSince.value = String(currentYear);
   }
 
   function resetViewModal() {
@@ -221,11 +222,18 @@
       return;
     }
 
+    if (
+      !Number.isFinite(memberSinceYear) ||
+      memberSinceYear < 2000 ||
+      memberSinceYear > currentYear + 1
+    ) {
+      addError.textContent = "Member since year must be valid.";
+      return;
+    }
+
     const payload = { name, position };
     if (nickname) payload.nickname = nickname;
-    if (Number.isFinite(memberSinceYear) && memberSinceYear > 0) {
-      payload.memberSinceYear = memberSinceYear;
-    }
+    payload.memberSinceYear = memberSinceYear;
 
     setAddLoading(true);
     window

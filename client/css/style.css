@@ -92,6 +92,12 @@ body {
   color: var(--muted);
 }
 
+.muted {
+  color: var(--muted);
+  font-size: 13px;
+  margin-top: 6px;
+}
+
 .page-title-row {
   display: flex;
   align-items: center;

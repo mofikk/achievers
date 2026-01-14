@@ -77,9 +77,12 @@ router.post("/", async (req, res, next) => {
     const currentYear = now.getFullYear();
     const yearKey = String(currentYear);
     const monthKey = `${yearKey}-${String(now.getMonth() + 1).padStart(2, "0")}`;
-    const memberSinceYear = Number.isFinite(memberSinceInput) && memberSinceInput > 0
-      ? memberSinceInput
-      : currentYear;
+    const memberSinceYear =
+      Number.isFinite(memberSinceInput) &&
+      memberSinceInput >= 2000 &&
+      memberSinceInput <= currentYear + 1
+        ? memberSinceInput
+        : currentYear;
     const player = {
       id: nanoid(8),
       name,
