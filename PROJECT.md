@@ -11,6 +11,9 @@ Archievers FC is a football community management system that tracks players, att
 - Stats
 - Settings
 
+## Current features
+- Add Player flow from the Players page (modal form)
+
 ## Subscription rules
 - Yearly subscriptions: `paid` or `pending`
 - Monthly subscriptions: `paid`, `incomplete`, or `pending`

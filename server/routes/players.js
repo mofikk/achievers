@@ -28,13 +28,24 @@ router.get("/", async (req, res, next) => {
 router.post("/", async (req, res, next) => {
   try {
     const db = await readDb();
+    const now = new Date();
+    const yearKey = String(now.getFullYear());
+    const monthKey = `${yearKey}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+    const jerseyNumber =
+      req.body.jerseyNumber === null || req.body.jerseyNumber === undefined
+        ? null
+        : Number(req.body.jerseyNumber);
     const player = {
       id: nanoid(8),
       name: req.body.name || "",
       position: req.body.position || "",
-      subscriptions: req.body.subscriptions || { year: {}, months: {} },
-      stats: req.body.stats || { goals: 0, assists: 0, yellow: 0, red: 0 },
-      attendance: req.body.attendance || {}
+      jerseyNumber: Number.isFinite(jerseyNumber) ? jerseyNumber : null,
+      subscriptions: {
+        year: { [yearKey]: "pending" },
+        months: { [monthKey]: "pending" }
+      },
+      stats: { goals: 0, assists: 0, yellow: 0, red: 0 },
+      attendance: {}
     };
 
     db.players = db.players || [];
