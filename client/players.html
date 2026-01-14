@@ -41,6 +41,7 @@
               <thead>
                 <tr>
                   <th>Name</th>
+                  <th>Nickname</th>
                   <th>Position</th>
                   <th>Yearly</th>
                   <th>Monthly</th>
@@ -54,8 +55,13 @@
       </div>
     </div>
 
-    <div class="modal" id="player-modal" aria-hidden="true">
-      <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="player-modal-title">
+    <div class="modal hidden" id="player-modal" aria-hidden="true">
+      <div
+        class="modal-content"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="player-modal-title"
+      >
         <div class="modal-header">
           <h3 id="player-modal-title">Add Player</h3>
         </div>
@@ -66,18 +72,29 @@
               <input class="input" name="name" type="text" required />
             </label>
             <label class="form-field">
+              <span>Nickname</span>
+              <input class="input" name="nickname" type="text" />
+            </label>
+            <label class="form-field">
+              <span>Member since (year)</span>
+              <input class="input" name="memberSinceYear" type="number" min="1900" />
+            </label>
+            <label class="form-field">
               <span>Position</span>
               <select class="input" name="position" required>
                 <option value="">Select position</option>
-                <option value="GK">GK</option>
-                <option value="DF">DF</option>
-                <option value="MF">MF</option>
-                <option value="FW">FW</option>
+                <option value="FW">Forward (FW)</option>
+                <option value="CM">Midfielder (CM)</option>
+                <option value="CDM">Midfielder (CDM)</option>
+                <option value="CAM">Midfielder (CAM)</option>
+                <option value="LM">Midfielder (LM)</option>
+                <option value="RM">Midfielder (RM)</option>
+                <option value="CB">Defender (CB)</option>
+                <option value="RB">Defender (RB)</option>
+                <option value="LB">Defender (LB)</option>
+                <option value="LW">Winger (LW)</option>
+                <option value="RW">Winger (RW)</option>
               </select>
-            </label>
-            <label class="form-field">
-              <span>Jersey number</span>
-              <input class="input" name="jerseyNumber" type="number" min="1" />
             </label>
           </div>
           <div class="form-error" id="player-error" role="alert"></div>
@@ -86,6 +103,48 @@
             <button class="action-btn" type="submit">Save</button>
           </div>
         </form>
+      </div>
+    </div>
+
+    <div class="modal hidden" id="view-player-modal" aria-hidden="true">
+      <div
+        class="modal-content"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="view-player-title"
+      >
+        <div class="modal-header">
+          <h3 id="view-player-title">Player Details</h3>
+        </div>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <span>Name</span>
+            <strong id="view-name"></strong>
+          </div>
+          <div class="detail-item">
+            <span>Nickname</span>
+            <strong id="view-nickname"></strong>
+          </div>
+          <div class="detail-item">
+            <span>Position</span>
+            <strong id="view-position"></strong>
+          </div>
+          <div class="detail-item">
+            <span>Yearly</span>
+            <strong id="view-yearly"></strong>
+          </div>
+          <div class="detail-item">
+            <span>Monthly</span>
+            <strong id="view-monthly"></strong>
+          </div>
+        </div>
+        <div class="form-error" id="view-error" role="alert"></div>
+        <div class="modal-actions">
+          <button class="ghost-btn" type="button" id="close-view-btn">Close</button>
+          <button class="danger-btn" type="button" id="delete-player-btn">
+            Delete Player
+          </button>
+        </div>
       </div>
     </div>
 

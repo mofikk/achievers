@@ -6,6 +6,7 @@
   const addCancelBtn = document.getElementById("cancel-player-btn");
   const addError = document.getElementById("player-error");
   const addSaveBtn = addForm.querySelector("button[type=\"submit\"]");
+  const addMemberSince = addForm.querySelector("input[name=\"memberSinceYear\"]");
 
   const viewModal = document.getElementById("view-player-modal");
   const closeViewBtn = document.getElementById("close-view-btn");
@@ -25,6 +26,7 @@
     !addCancelBtn ||
     !addError ||
     !addSaveBtn ||
+    !addMemberSince ||
     !viewModal ||
     !closeViewBtn ||
     !deleteBtn ||
@@ -138,6 +140,7 @@
   function resetAddForm() {
     addForm.reset();
     addError.textContent = "";
+    addMemberSince.value = String(new Date().getFullYear());
   }
 
   function resetViewModal() {
@@ -211,6 +214,7 @@
     const name = String(formData.get("name") || "").trim();
     const nickname = String(formData.get("nickname") || "").trim();
     const position = String(formData.get("position") || "").trim();
+    const memberSinceYear = Number(formData.get("memberSinceYear"));
 
     if (!name || !position) {
       addError.textContent = "Name and position are required.";
@@ -219,6 +223,9 @@
 
     const payload = { name, position };
     if (nickname) payload.nickname = nickname;
+    if (Number.isFinite(memberSinceYear) && memberSinceYear > 0) {
+      payload.memberSinceYear = memberSinceYear;
+    }
 
     setAddLoading(true);
     window

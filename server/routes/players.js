@@ -46,6 +46,7 @@ router.post("/", async (req, res, next) => {
     const name = String(req.body.name || "").trim();
     const position = String(req.body.position || "").trim();
     const nickname = String(req.body.nickname || "").trim();
+    const memberSinceInput = Number(req.body.memberSinceYear);
 
     if (!name || !position) {
       res.status(400).send("Name and position are required.");
@@ -73,13 +74,18 @@ router.post("/", async (req, res, next) => {
       return;
     }
     const now = new Date();
-    const yearKey = String(now.getFullYear());
+    const currentYear = now.getFullYear();
+    const yearKey = String(currentYear);
     const monthKey = `${yearKey}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+    const memberSinceYear = Number.isFinite(memberSinceInput) && memberSinceInput > 0
+      ? memberSinceInput
+      : currentYear;
     const player = {
       id: nanoid(8),
       name,
       nickname: nickname || "",
       position,
+      membership: { memberSinceYear },
       subscriptions: {
         year: { [yearKey]: "pending" },
         months: { [monthKey]: "pending" }

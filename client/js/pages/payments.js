@@ -76,6 +76,21 @@
     return keys[keys.length - 1] || fallback;
   }
 
+  function getMemberSinceYear(player) {
+    const stored = Number(player?.membership?.memberSinceYear);
+    if (Number.isFinite(stored) && stored > 0) return stored;
+
+    const years = Object.keys(player?.subscriptions?.year || {})
+      .map((year) => Number(year))
+      .filter((year) => Number.isFinite(year));
+    if (years.length) {
+      years.sort((a, b) => a - b);
+      return years[0];
+    }
+
+    return Number(getNowYear());
+  }
+
   function deriveStatus(expected, paid) {
     const expectedNum = Number(expected);
     const paidNum = Number(paid);
@@ -91,19 +106,28 @@
     return status.charAt(0).toUpperCase() + status.slice(1);
   }
 
+  function getYearlyExpected(player, yearKey, value) {
+    const numeric = Number(value);
+    if (Number.isFinite(numeric) && numeric > 0) return numeric;
+    const memberSinceYear = getMemberSinceYear(player);
+    return Number(yearKey) === memberSinceYear ? 5000 : 2500;
+  }
+
   function getYearlyPayment(player, yearKey) {
     const yearly = player?.payments?.yearly?.[yearKey];
     return {
-      expected: yearly?.expected ?? DEFAULT_YEARLY_EXPECTED,
-      paid: yearly?.paid ?? 0
+      expected: getYearlyExpected(player, yearKey, yearly?.expected ?? DEFAULT_YEARLY_EXPECTED),
+      paid: Number.isFinite(Number(yearly?.paid)) ? Number(yearly.paid) : 0
     };
   }
 
   function getMonthlyPayment(player, monthKey) {
     const monthly = player?.payments?.monthly?.[monthKey];
+    const expectedValue = Number(monthly?.expected);
+    const expected = expectedValue > 0 ? expectedValue : DEFAULT_MONTHLY_EXPECTED;
     return {
-      expected: monthly?.expected ?? DEFAULT_MONTHLY_EXPECTED,
-      paid: monthly?.paid ?? 0
+      expected,
+      paid: Number.isFinite(Number(monthly?.paid)) ? Number(monthly.paid) : 0
     };
   }
 
