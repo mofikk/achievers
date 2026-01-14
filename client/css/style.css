@@ -204,6 +204,10 @@ body {
   padding: 20px;
   width: min(520px, 100%);
   box-shadow: var(--shadow);
+  max-height: 90vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .modal-header h3 {
@@ -314,6 +318,12 @@ body {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
+}
+
+.modal-body-scroll {
+  overflow-y: auto;
+  padding-right: 8px;
+  max-height: calc(90vh - 180px);
 }
 
 .ghost-btn {
