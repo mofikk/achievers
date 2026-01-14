@@ -59,8 +59,8 @@ router.post("/", async (req, res, next) => {
 
     const db = await readDb();
     const players = db.players || [];
-    const nameNorm = name.toLowerCase();
-    const nickNorm = nickname.toLowerCase();
+    const nameNorm = name.trim().toLowerCase();
+    const nickNorm = String(nickname || "").trim().toLowerCase();
 
     const duplicateExists = players.some((player) => {
       const existingName = String(player.name || "").trim().toLowerCase();
@@ -69,9 +69,7 @@ router.post("/", async (req, res, next) => {
     });
 
     if (duplicateExists) {
-      res.status(409).json({
-        error: "Player with this name and nickname already exists."
-      });
+      res.status(409).send("Player with this name and nickname already exists.");
       return;
     }
     const now = new Date();
