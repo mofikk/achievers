@@ -98,6 +98,14 @@ body {
   margin-top: 6px;
 }
 
+.helper-text {
+  color: var(--muted);
+  font-size: 12px;
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 500;
+}
+
 .page-title-row {
   display: flex;
   align-items: center;

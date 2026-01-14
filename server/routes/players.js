@@ -173,6 +173,69 @@ router.patch("/:id/payments", async (req, res, next) => {
   }
 });
 
+router.patch("/:id", async (req, res, next) => {
+  try {
+    const db = await readDb();
+    const players = db.players || [];
+    const player = players.find((item) => item.id === req.params.id);
+
+    if (!player) {
+      res.status(404).json({ ok: false });
+      return;
+    }
+
+    const name = String(req.body.name || "").trim();
+    const position = String(req.body.position || "").trim();
+    const nickname = String(req.body.nickname || "").trim();
+    const memberSinceInput = Number(req.body.memberSinceYear);
+    const now = new Date();
+    const currentYear = now.getFullYear();
+
+    if (!name || !position) {
+      res.status(400).send("Name and position are required.");
+      return;
+    }
+
+    if (!allowedPositions.has(position)) {
+      res.status(400).send("Position is not supported.");
+      return;
+    }
+
+    if (
+      !Number.isFinite(memberSinceInput) ||
+      memberSinceInput < 2000 ||
+      memberSinceInput > currentYear + 1
+    ) {
+      res.status(400).send("Member since year is invalid.");
+      return;
+    }
+
+    const nameNorm = name.trim().toLowerCase();
+    const nickNorm = String(nickname || "").trim().toLowerCase();
+    const duplicateExists = players.some((item) => {
+      if (item.id === player.id) return false;
+      const existingName = String(item.name || "").trim().toLowerCase();
+      const existingNick = String(item.nickname || "").trim().toLowerCase();
+      return existingName === nameNorm && existingNick === nickNorm;
+    });
+
+    if (duplicateExists) {
+      res.status(409).send("Player with this name and nickname already exists.");
+      return;
+    }
+
+    player.name = name;
+    player.nickname = nickname;
+    player.position = position;
+    player.membership = { memberSinceYear: memberSinceInput };
+
+    await writeDb(db);
+    res.json(player);
+  } catch (err) {
+    next(err);
+  }
+});
+
 router.delete("/:id", async (req, res, next) => {
   try {
     const db = await readDb();

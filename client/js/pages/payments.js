@@ -44,7 +44,6 @@
   }
 
   const DEFAULT_MONTHLY_EXPECTED = 3000;
-  const DEFAULT_YEARLY_EXPECTED = 0;
 
   const state = {
     players: [],
@@ -115,27 +114,20 @@
     return status.charAt(0).toUpperCase() + status.slice(1);
   }
 
-  function getYearlyExpected(player, yearKey, value) {
-    const numeric = Number(value);
-    if (Number.isFinite(numeric) && numeric > 0) return numeric;
-    const memberSinceYear = getMemberSinceYear(player);
-    return Number(yearKey) === memberSinceYear ? 5000 : 2500;
-  }
-
   function getYearlyPayment(player, yearKey) {
     const yearly = player?.payments?.yearly?.[yearKey];
+    const memberSinceYear = getMemberSinceYear(player);
+    const expected = Number(yearKey) === memberSinceYear ? 5000 : 2500;
     return {
-      expected: getYearlyExpected(player, yearKey, yearly?.expected ?? DEFAULT_YEARLY_EXPECTED),
+      expected,
       paid: Number.isFinite(Number(yearly?.paid)) ? Number(yearly.paid) : 0
     };
   }
 
   function getMonthlyPayment(player, monthKey) {
     const monthly = player?.payments?.monthly?.[monthKey];
-    const expectedValue = Number(monthly?.expected);
-    const expected = expectedValue > 0 ? expectedValue : DEFAULT_MONTHLY_EXPECTED;
     return {
-      expected,
+      expected: DEFAULT_MONTHLY_EXPECTED,
       paid: Number.isFinite(Number(monthly?.paid)) ? Number(monthly.paid) : 0
     };
   }
@@ -322,9 +314,9 @@
 
     const yearKey = yearlyYear.value;
     const monthKey = monthlyMonth.value;
-    const yearlyExpectedValue = Math.max(0, Number(yearlyExpected.value || 0));
+    const yearlyExpectedValue = getYearlyPayment(player, yearKey).expected;
     const yearlyPaidValue = Math.max(0, Number(yearlyPaid.value || 0));
-    const monthlyExpectedValue = Math.max(0, Number(monthlyExpected.value || 0));
+    const monthlyExpectedValue = DEFAULT_MONTHLY_EXPECTED;
     const monthlyPaidValue = Math.max(0, Number(monthlyPaid.value || 0));
 
     errorEl.textContent = "";

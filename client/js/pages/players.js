@@ -17,6 +17,7 @@
   const viewPosition = document.getElementById("view-position");
   const viewYearly = document.getElementById("view-yearly");
   const viewMonthly = document.getElementById("view-monthly");
+  const modalTitle = document.getElementById("player-modal-title");
 
   if (
     !body ||
@@ -35,7 +36,8 @@
     !viewNickname ||
     !viewPosition ||
     !viewYearly ||
-    !viewMonthly
+    !viewMonthly ||
+    !modalTitle
   ) {
     return;
   }
@@ -63,6 +65,8 @@
     monthKey: null
   };
   const currentYear = new Date().getFullYear();
+  let mode = "add";
+  let editingId = null;
 
   function formatStatus(value, fallback) {
     return value ? value.charAt(0).toUpperCase() + value.slice(1) : fallback;
@@ -111,6 +115,7 @@
         <td>${status.monthly}</td>
         <td>
           <button class="action-btn" data-id="${player.id}">View</button>
+          <button class="ghost-btn" data-edit-id="${player.id}">Edit</button>
         </td>
       `;
       body.appendChild(row);
@@ -144,12 +149,19 @@
     addMemberSince.value = String(currentYear);
   }
 
+  function setMode(nextMode) {
+    mode = nextMode;
+    modalTitle.textContent = mode === "edit" ? "Edit Player" : "Add Player";
+  }
+
   function resetViewModal() {
     viewError.textContent = "";
     deleteBtn.removeAttribute("data-id");
   }
 
   addBtn.addEventListener("click", () => {
+    setMode("add");
+    editingId = null;
     resetAddForm();
     openModal(addModal);
   });
@@ -196,6 +208,25 @@
     openModal(viewModal);
   });
 
+  body.addEventListener("click", (event) => {
+    const target = event.target;
+    if (!target.hasAttribute("data-edit-id")) return;
+    const playerId = target.getAttribute("data-edit-id");
+    const player = state.players.find((p) => p.id === playerId);
+    if (!player) return;
+
+    setMode("edit");
+    editingId = playerId;
+    addError.textContent = "";
+    addForm.elements.name.value = player.name || "";
+    addForm.elements.nickname.value = player.nickname || "";
+    addForm.elements.position.value = player.position || "";
+    addMemberSince.value = String(
+      player?.membership?.memberSinceYear || currentYear
+    );
+    openModal(addModal);
+  });
+
   function setAddLoading(isLoading) {
     addSaveBtn.disabled = isLoading;
     addCancelBtn.disabled = isLoading;
@@ -231,20 +262,26 @@
       return;
     }
 
-    const payload = { name, position };
+    const payload = { name, position, memberSinceYear };
     if (nickname) payload.nickname = nickname;
-    payload.memberSinceYear = memberSinceYear;
 
     setAddLoading(true);
-    window
-      .apiFetch("/players", {
-        method: "POST",
-        body: JSON.stringify(payload)
-      })
+    const request =
+      mode === "edit" && editingId
+        ? window.apiFetch(`/players/${editingId}`, {
+            method: "PATCH",
+            body: JSON.stringify(payload)
+          })
+        : window.apiFetch("/players", {
+            method: "POST",
+            body: JSON.stringify(payload)
+          });
+
+    request
       .then(() => {
         resetAddForm();
         closeModal(addModal);
-        window.toast("Player added", "success");
+        window.toast(mode === "edit" ? "Player updated" : "Player added", "success");
         return loadPlayers();
       })
       .catch((err) => {
