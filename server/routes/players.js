@@ -98,6 +98,72 @@ router.post("/", async (req, res, next) => {
   }
 });
 
+router.patch("/:id/payments", async (req, res, next) => {
+  try {
+    const db = await readDb();
+    const players = db.players || [];
+    const player = players.find((item) => item.id === req.params.id);
+
+    if (!player) {
+      res.status(404).json({ ok: false });
+      return;
+    }
+
+    const yearKey = String(req.body.yearKey || "").trim();
+    const monthKey = String(req.body.monthKey || "").trim();
+    const yearly = req.body.yearly || {};
+    const monthly = req.body.monthly || {};
+
+    const yearlyExpected = Number(yearly.expected);
+    const yearlyPaid = Number(yearly.paid);
+    const monthlyExpected = Number(monthly.expected);
+    const monthlyPaid = Number(monthly.paid);
+
+    if (!yearKey || !monthKey) {
+      res.status(400).send("Year and month are required.");
+      return;
+    }
+
+    if (
+      !Number.isFinite(yearlyExpected) ||
+      !Number.isFinite(yearlyPaid) ||
+      !Number.isFinite(monthlyExpected) ||
+      !Number.isFinite(monthlyPaid) ||
+      yearlyExpected < 0 ||
+      yearlyPaid < 0 ||
+      monthlyExpected < 0 ||
+      monthlyPaid < 0
+    ) {
+      res.status(400).send("Expected and paid must be non-negative numbers.");
+      return;
+    }
+
+    if (!player.payments) {
+      player.payments = { yearly: {}, monthly: {} };
+    }
+    if (!player.payments.yearly) {
+      player.payments.yearly = {};
+    }
+    if (!player.payments.monthly) {
+      player.payments.monthly = {};
+    }
+
+    player.payments.yearly[yearKey] = {
+      expected: yearlyExpected,
+      paid: yearlyPaid
+    };
+    player.payments.monthly[monthKey] = {
+      expected: monthlyExpected,
+      paid: monthlyPaid
+    };
+
+    await writeDb(db);
+    res.json(player);
+  } catch (err) {
+    next(err);
+  }
+});
+
 router.delete("/:id", async (req, res, next) => {
   try {
     const db = await readDb();

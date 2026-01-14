@@ -241,6 +241,53 @@ body {
   font-size: 13px;
 }
 
+.payment-sections {
+  display: grid;
+  gap: 18px;
+  margin: 12px 0 8px;
+}
+
+.payment-section {
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: #f9fbff;
+}
+
+.section-title {
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  color: var(--muted);
+}
+
+.badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: #ffffff;
+}
+
+.badge.paid {
+  background: #12b76a;
+}
+
+.badge.pending {
+  background: #f04438;
+}
+
+.badge.incomplete {
+  background: #f79009;
+}
+
+.badge-preview {
+  padding: 10px 0 0;
+}
+
 .detail-grid {
   display: grid;
   gap: 12px;
