@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Archievers FC - Dashboard</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar">
+        <div class="brand">Archievers FC</div>
+        <nav class="nav">
+          <a href="index.html" class="nav-link">Dashboard</a>
+          <a href="players.html" class="nav-link">Players</a>
+          <a href="payments.html" class="nav-link">Payments</a>
+          <a href="attendance.html" class="nav-link">Attendance</a>
+          <a href="stats.html" class="nav-link">Stats</a>
+          <a href="settings.html" class="nav-link">Settings</a>
+        </nav>
+      </aside>
+      <div class="content">
+        <header class="topbar">
+          <h1>Archievers FC</h1>
+        </header>
+        <main class="main">
+          <div class="page-title">
+            <h2>Dashboard</h2>
+            <p>Snapshot of the squad and subscriptions.</p>
+          </div>
+
+          <section class="cards">
+            <div class="card">
+              <h3>Total Players</h3>
+              <div class="card-value" id="total-players">0</div>
+            </div>
+            <div class="card">
+              <h3>Paid This Month</h3>
+              <div class="card-value" id="paid-month">0</div>
+            </div>
+            <div class="card">
+              <h3>Pending This Month</h3>
+              <div class="card-value" id="pending-month">0</div>
+            </div>
+          </section>
+
+          <section class="panel">
+            <h3>Recent Activity</h3>
+            <ul class="activity">
+              <li>Samuel Okoro marked attendance (2025-01-19)</li>
+              <li>Kofi Mensah paid monthly subscription (2025-01-18)</li>
+              <li>Training session logged (2025-01-17)</li>
+            </ul>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script src="js/pages/dashboard.js"></script>
+  </body>
+</html>

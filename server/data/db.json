@@ -1,0 +1,99 @@
+{
+  "players": [
+    {
+      "id": "p001",
+      "name": "Samuel Okoro",
+      "position": "Forward",
+      "subscriptions": {
+        "year": { "2025": "paid" },
+        "months": {
+          "2025-01": "paid",
+          "2025-02": "paid",
+          "2025-03": "pending"
+        }
+      },
+      "stats": { "goals": 6, "assists": 2, "yellow": 1, "red": 0 },
+      "attendance": {
+        "2025-01-05": true,
+        "2025-01-12": true,
+        "2025-01-19": false
+      }
+    },
+    {
+      "id": "p002",
+      "name": "Kofi Mensah",
+      "position": "Midfielder",
+      "subscriptions": {
+        "year": { "2025": "pending" },
+        "months": {
+          "2025-01": "paid",
+          "2025-02": "incomplete",
+          "2025-03": "pending"
+        }
+      },
+      "stats": { "goals": 2, "assists": 5, "yellow": 0, "red": 0 },
+      "attendance": {
+        "2025-01-05": true,
+        "2025-01-12": true,
+        "2025-01-19": true
+      }
+    },
+    {
+      "id": "p003",
+      "name": "Emeka Nwosu",
+      "position": "Defender",
+      "subscriptions": {
+        "year": { "2025": "paid" },
+        "months": {
+          "2025-01": "paid",
+          "2025-02": "paid",
+          "2025-03": "paid"
+        }
+      },
+      "stats": { "goals": 1, "assists": 1, "yellow": 2, "red": 0 },
+      "attendance": {
+        "2025-01-05": true,
+        "2025-01-12": false,
+        "2025-01-19": true
+      }
+    },
+    {
+      "id": "p004",
+      "name": "Ibrahim Sule",
+      "position": "Goalkeeper",
+      "subscriptions": {
+        "year": { "2025": "paid" },
+        "months": {
+          "2025-01": "paid",
+          "2025-02": "pending",
+          "2025-03": "pending"
+        }
+      },
+      "stats": { "goals": 0, "assists": 0, "yellow": 0, "red": 0 },
+      "attendance": {
+        "2025-01-05": true,
+        "2025-01-12": true,
+        "2025-01-19": true
+      }
+    },
+    {
+      "id": "p005",
+      "name": "Tunde Adebayo",
+      "position": "Winger",
+      "subscriptions": {
+        "year": { "2025": "pending" },
+        "months": {
+          "2025-01": "pending",
+          "2025-02": "pending",
+          "2025-03": "pending"
+        }
+      },
+      "stats": { "goals": 3, "assists": 4, "yellow": 1, "red": 1 },
+      "attendance": {
+        "2025-01-05": false,
+        "2025-01-12": true,
+        "2025-01-19": false
+      }
+    }
+  ]
+}
