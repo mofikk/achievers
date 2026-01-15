@@ -172,6 +172,9 @@ router.get("/attendance.csv", async (req, res, next) => {
 router.get("/stats.csv", async (req, res, next) => {
   try {
     const db = await readJson(dbPath);
+    const settings = await readJson(settingsPath);
+    const yellowFine = settings.discipline?.yellowFine ?? 500;
+    const redFine = settings.discipline?.redFine ?? 1000;
     const rows = (db.players || []).map((player) => {
       const stats = player.stats || {};
       const discipline = player.discipline || {};
@@ -183,13 +186,17 @@ router.get("/stats.csv", async (req, res, next) => {
       const redPaid = Number(discipline.redPaid) || 0;
       const yellowOwed = Math.max(0, yellow - yellowPaid);
       const redOwed = Math.max(0, red - redPaid);
-      const finesOwed = yellowOwed * 500 + redOwed * 1000;
+      const finesOwed = yellowOwed * yellowFine + redOwed * redFine;
+      const cardsTotal = yellow + red;
+      const cardsPaidTotal = yellowPaid + redPaid;
       const status =
-        finesOwed === 0
-          ? "paid"
-          : yellowPaid + redPaid === 0
-            ? "pending"
-            : "incomplete";
+        cardsTotal === 0
+          ? "no_cards"
+          : finesOwed === 0
+            ? "cleared"
+            : cardsPaidTotal === 0
+              ? "pending"
+              : "incomplete";
 
       return [
         player.id,

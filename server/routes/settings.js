@@ -80,13 +80,27 @@ router.patch("/", async (req, res, next) => {
       return;
     }
 
+    const discipline = payload.discipline || {};
+    const yellowFine = Number(discipline.yellowFine);
+    const redFine = Number(discipline.redFine);
+    if (
+      !Number.isFinite(yellowFine) ||
+      !Number.isFinite(redFine) ||
+      yellowFine < 0 ||
+      redFine < 0
+    ) {
+      res.status(400).send("Discipline fines must be non-negative numbers.");
+      return;
+    }
+
     const updated = {
       ...settings,
       clubName: payload.clubName.trim(),
       season,
       currencySymbol,
       fees: { monthly, newMemberYearly, renewalYearly },
-      attendance: { startDate, lockFuture: attendance.lockFuture }
+      attendance: { startDate, lockFuture: attendance.lockFuture },
+      discipline: { yellowFine, redFine }
     };
 
     await writeSettings(updated);

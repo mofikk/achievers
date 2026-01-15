@@ -7,6 +7,8 @@
   const renewalFeeInput = document.getElementById("setting-fee-renewal");
   const attendanceStartInput = document.getElementById("setting-attendance-start");
   const attendanceLockInput = document.getElementById("setting-attendance-lock");
+  const yellowFineInput = document.getElementById("setting-fine-yellow");
+  const redFineInput = document.getElementById("setting-fine-red");
   const saveBtn = document.getElementById("settings-save");
   const resetBtn = document.getElementById("settings-reset");
   const errorEl = document.getElementById("settings-error");
@@ -22,7 +24,9 @@
     !attendanceLockInput ||
     !saveBtn ||
     !resetBtn ||
-    !errorEl
+    !errorEl ||
+    !yellowFineInput ||
+    !redFineInput
   ) {
     return;
   }
@@ -38,6 +42,8 @@
     renewalFeeInput.value = String(settings.fees?.renewalYearly ?? 0);
     attendanceStartInput.value = settings.attendance?.startDate || "";
     attendanceLockInput.checked = Boolean(settings.attendance?.lockFuture);
+    yellowFineInput.value = String(settings.discipline?.yellowFine ?? 0);
+    redFineInput.value = String(settings.discipline?.redFine ?? 0);
   }
 
   function getFormPayload() {
@@ -53,6 +59,10 @@
       attendance: {
         startDate: attendanceStartInput.value,
         lockFuture: attendanceLockInput.checked
+      },
+      discipline: {
+        yellowFine: Number(yellowFineInput.value),
+        redFine: Number(redFineInput.value)
       }
     };
   }

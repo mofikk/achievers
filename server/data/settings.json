@@ -10,5 +10,9 @@
   "attendance": {
     "startDate": "2026-01-10",
     "lockFuture": true
+  },
+  "discipline": {
+    "yellowFine": 500,
+    "redFine": 1000
   }
 }

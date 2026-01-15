@@ -34,15 +34,17 @@
     return;
   }
 
-  const FINE_YELLOW = 500;
-  const FINE_RED = 1000;
+  const defaultSettings = {
+    discipline: { yellowFine: 500, redFine: 1000 }
+  };
 
   const state = {
     players: [],
     allPlayers: [],
     editingId: null,
     sortKey: "goals",
-    sortDir: "desc"
+    sortDir: "desc",
+    settings: defaultSettings
   };
 
   function safeNumber(value) {
@@ -69,13 +71,29 @@
   function getFineSummary(player) {
     const stats = getStats(player);
     const discipline = getDiscipline(player);
+    const yellowFine = state.settings.discipline.yellowFine;
+    const redFine = state.settings.discipline.redFine;
     const owedYellow = Math.max(0, stats.yellow - discipline.yellowPaid);
     const owedRed = Math.max(0, stats.red - discipline.redPaid);
-    const fineOwed = owedYellow * FINE_YELLOW + owedRed * FINE_RED;
-    const totalPaid = discipline.yellowPaid + discipline.redPaid;
-    const status =
-      fineOwed === 0 ? "paid" : totalPaid === 0 ? "pending" : "incomplete";
-    return { owedYellow, owedRed, fineOwed, status };
+    const fineOwed = owedYellow * yellowFine + owedRed * redFine;
+    const cardsTotal = stats.yellow + stats.red;
+    const cardsPaidTotal = discipline.yellowPaid + discipline.redPaid;
+    let status = "pending";
+    let statusLabel = "Pending";
+    if (cardsTotal === 0) {
+      status = "neutral";
+      statusLabel = "No cards";
+    } else if (fineOwed === 0) {
+      status = "paid";
+      statusLabel = "Cleared";
+    } else if (cardsPaidTotal === 0) {
+      status = "pending";
+      statusLabel = "Pending";
+    } else {
+      status = "incomplete";
+      statusLabel = "Incomplete";
+    }
+    return { owedYellow, owedRed, fineOwed, status, statusLabel };
   }
 
   function sortPlayers(players) {
@@ -114,7 +132,7 @@
         <td>${stats.red}</td>
         <td>Y:${fines.owedYellow} R:${fines.owedRed}</td>
         <td>\u20a6${fines.fineOwed}</td>
-        <td><span class="badge ${fines.status}">${fines.status}</span></td>
+        <td><span class="badge ${fines.status}">${fines.statusLabel}</span></td>
         <td><button class="action-btn" data-id="${player.id}">Edit</button></td>
       `;
       body.appendChild(row);
@@ -171,6 +189,17 @@
         setSortIndicator();
       })
       .catch(console.error);
+  }
+
+  function loadSettings() {
+    return window
+      .apiFetch("/settings")
+      .then((settings) => {
+        state.settings = settings;
+      })
+      .catch(() => {
+        state.settings = defaultSettings;
+      });
   }
 
   document.querySelectorAll("th.sortable").forEach((th) => {
@@ -237,5 +266,5 @@
       });
   });
 
-  loadPlayers();
+  loadSettings().finally(loadPlayers);
 })();

@@ -367,6 +367,10 @@ body {
   background: #f79009;
 }
 
+.badge.neutral {
+  background: #98a2b3;
+}
+
 .badge-preview {
   padding: 10px 0 0;
 }
