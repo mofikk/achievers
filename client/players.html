@@ -18,6 +18,7 @@
           <a href="attendance.html" class="nav-link">Attendance</a>
           <a href="attendance-summary.html" class="nav-link">Attendance Summary</a>
           <a href="stats.html" class="nav-link">Stats</a>
+          <a href="reports.html" class="nav-link">Reports</a>
           <a href="settings.html" class="nav-link">Settings</a>
         </nav>
       </aside>
@@ -87,6 +88,10 @@
               <input class="input" name="nickname" type="text" />
             </label>
             <label class="form-field">
+              <span>Email</span>
+              <input class="input" name="email" type="email" />
+            </label>
+            <label class="form-field">
               <span>Member since (year)</span>
               <input class="input" name="memberSinceYear" type="number" min="2000" required />
             </label>
@@ -108,6 +113,27 @@
               </select>
             </label>
           </div>
+          <details class="detail-group">
+            <summary class="muted">Initial Payments (optional)</summary>
+            <div class="form-grid">
+              <label class="form-field">
+                <span>Month Key (YYYY-MM)</span>
+                <input class="input" name="initialMonthKey" type="text" placeholder="2026-01" />
+              </label>
+              <label class="form-field">
+                <span>Monthly Paid</span>
+                <input class="input" name="initialMonthlyPaid" type="number" min="0" value="0" />
+              </label>
+              <label class="form-field">
+                <span>Year Key (YYYY)</span>
+                <input class="input" name="initialYearKey" type="number" min="2000" />
+              </label>
+              <label class="form-field">
+                <span>Yearly Paid</span>
+                <input class="input" name="initialYearlyPaid" type="number" min="0" value="0" />
+              </label>
+            </div>
+          </details>
           <div class="form-error" id="player-error" role="alert"></div>
           <div class="modal-actions">
             <button class="ghost-btn" type="button" id="cancel-player-btn">Cancel</button>

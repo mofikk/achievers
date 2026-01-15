@@ -7,6 +7,11 @@
   const addError = document.getElementById("player-error");
   const addSaveBtn = addForm.querySelector("button[type=\"submit\"]");
   const addMemberSince = addForm.querySelector("input[name=\"memberSinceYear\"]");
+  const addEmail = addForm.querySelector("input[name=\"email\"]");
+  const initialMonthKeyInput = addForm.querySelector("input[name=\"initialMonthKey\"]");
+  const initialMonthlyPaidInput = addForm.querySelector("input[name=\"initialMonthlyPaid\"]");
+  const initialYearKeyInput = addForm.querySelector("input[name=\"initialYearKey\"]");
+  const initialYearlyPaidInput = addForm.querySelector("input[name=\"initialYearlyPaid\"]");
   const searchInput = document.getElementById("players-search");
   const countEl = document.getElementById("players-count");
 
@@ -34,6 +39,11 @@
     !addError ||
     !addSaveBtn ||
     !addMemberSince ||
+    !addEmail ||
+    !initialMonthKeyInput ||
+    !initialMonthlyPaidInput ||
+    !initialYearKeyInput ||
+    !initialYearlyPaidInput ||
     !viewModal ||
     !closeViewBtn ||
     !deleteBtn ||
@@ -78,6 +88,8 @@
     monthKey: null
   };
   const currentYear = new Date().getFullYear();
+  const defaultSettings = { season: currentYear };
+  let settings = defaultSettings;
   let mode = "add";
   let editingId = null;
 
@@ -140,7 +152,11 @@
 
   function loadPlayers() {
     return window
-      .apiFetch("/players")
+      .apiFetch("/settings")
+      .then((settingsData) => {
+        settings = settingsData || defaultSettings;
+        return window.apiFetch("/players");
+      })
       .then((players) => {
         state.players = players;
         state.allPlayers = players;
@@ -160,6 +176,7 @@
             addForm.elements.name.value = player.name || "";
             addForm.elements.nickname.value = player.nickname || "";
             addForm.elements.position.value = player.position || "";
+            addEmail.value = player.email || "";
             addMemberSince.value = String(
               player?.membership?.memberSinceYear || currentYear
             );
@@ -184,6 +201,8 @@
     addForm.reset();
     addError.textContent = "";
     addMemberSince.value = String(currentYear);
+    initialMonthKeyInput.value = `${currentYear}-${String(new Date().getMonth() + 1).padStart(2, "0")}`;
+    initialYearKeyInput.value = String(settings.season || currentYear);
   }
 
   function setMode(nextMode) {
@@ -212,6 +231,7 @@
   addBtn.addEventListener("click", () => {
     setMode("add");
     editingId = null;
+    addEmail.value = "";
     resetAddForm();
     openModal(addModal);
   });
@@ -300,6 +320,11 @@
     const nickname = String(formData.get("nickname") || "").trim();
     const position = String(formData.get("position") || "").trim();
     const memberSinceYear = Number(formData.get("memberSinceYear"));
+    const email = String(formData.get("email") || "").trim();
+    const initialMonthKey = String(formData.get("initialMonthKey") || "").trim();
+    const initialMonthlyPaid = Number(formData.get("initialMonthlyPaid") || 0);
+    const initialYearKey = String(formData.get("initialYearKey") || "").trim();
+    const initialYearlyPaid = Number(formData.get("initialYearlyPaid") || 0);
 
     if (!name || !position) {
       addError.textContent = "Name and position are required.";
@@ -315,8 +340,16 @@
       return;
     }
 
-    const payload = { name, position, memberSinceYear };
+    const payload = { name, position, memberSinceYear, email };
     if (nickname) payload.nickname = nickname;
+    if (mode === "add") {
+      payload.initialPayments = {
+        monthKey: initialMonthKey,
+        monthlyPaid: Number.isFinite(initialMonthlyPaid) ? initialMonthlyPaid : 0,
+        yearKey: initialYearKey,
+        yearlyPaid: Number.isFinite(initialYearlyPaid) ? initialYearlyPaid : 0
+      };
+    }
 
     setAddLoading(true);
     const request =

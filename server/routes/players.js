@@ -44,6 +44,17 @@ async function readSettings() {
   return JSON.parse(raw);
 }
 
+function getMonthlyExpected(settings, monthKey) {
+  const schedule = settings.fees?.monthlySchedule || [];
+  if (!schedule.length) return 0;
+  const sorted = [...schedule].sort((a, b) => a.from.localeCompare(b.from));
+  let candidate = sorted[0].amount;
+  sorted.forEach((item) => {
+    if (item.from <= monthKey) candidate = item.amount;
+  });
+  return candidate;
+}
+
 router.get("/", async (req, res, next) => {
   try {
     const db = await readDb();
@@ -58,6 +69,7 @@ router.post("/", async (req, res, next) => {
     const name = String(req.body.name || "").trim();
     const position = String(req.body.position || "").trim();
     const nickname = String(req.body.nickname || "").trim();
+    const email = String(req.body.email || "").trim();
     const memberSinceInput = Number(req.body.memberSinceYear);
 
     if (!name || !position) {
@@ -100,6 +112,7 @@ router.post("/", async (req, res, next) => {
       name,
       nickname: nickname || "",
       position,
+      email,
       membership: { memberSinceYear },
       subscriptions: {
         year: { [yearKey]: "pending" },
@@ -111,6 +124,43 @@ router.post("/", async (req, res, next) => {
 
     players.push(player);
     db.players = players;
+
+    if (req.body.initialPayments) {
+      const settings = await readSettings();
+      const monthKeyInput = String(req.body.initialPayments.monthKey || "").trim();
+      const yearKeyInput = String(req.body.initialPayments.yearKey || "").trim();
+      const monthlyPaid = Number(req.body.initialPayments.monthlyPaid) || 0;
+      const yearlyPaid = Number(req.body.initialPayments.yearlyPaid) || 0;
+      const monthlyExpected = getMonthlyExpected(settings, monthKeyInput);
+      const yearlyExpected =
+        Number(yearKeyInput) === memberSinceYear
+          ? settings.fees.newMemberYearly
+          : settings.fees.renewalYearly;
+
+      if (!player.payments) player.payments = { yearly: {}, monthly: {} };
+      if (monthKeyInput) {
+        player.payments.monthly[monthKeyInput] = {
+          expected: monthlyExpected,
+          paid: Math.max(0, monthlyPaid)
+        };
+        if (monthlyPaid >= monthlyExpected) {
+          await logActivity(
+            `Monthly payment cleared: ${formatDisplayName(player)} (${monthKeyInput})`
+          );
+        }
+      }
+      if (yearKeyInput) {
+        player.payments.yearly[yearKeyInput] = {
+          expected: yearlyExpected,
+          paid: Math.max(0, yearlyPaid)
+        };
+        if (yearlyPaid >= yearlyExpected) {
+          await logActivity(
+            `Yearly subscription cleared: ${formatDisplayName(player)} (${yearKeyInput})`
+          );
+        }
+      }
+    }
 
     await writeDb(db);
     await logActivity(`New member joined: ${formatDisplayName(player)}`);
@@ -223,6 +273,7 @@ router.patch("/:id", async (req, res, next) => {
     const position = String(req.body.position || "").trim();
     const nickname = String(req.body.nickname || "").trim();
     const memberSinceInput = Number(req.body.memberSinceYear);
+    const email = String(req.body.email || "").trim();
     const now = new Date();
     const currentYear = now.getFullYear();
 
@@ -261,6 +312,7 @@ router.patch("/:id", async (req, res, next) => {
 
     player.name = name;
     player.nickname = nickname;
+    player.email = email;
     player.position = position;
     player.membership = { memberSinceYear: memberSinceInput };
 

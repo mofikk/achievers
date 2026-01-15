@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Archievers FC - Reports</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar">
+        <div class="brand">Archievers FC</div>
+        <nav class="nav">
+          <a href="index.html" class="nav-link">Dashboard</a>
+          <a href="players.html" class="nav-link">Players</a>
+          <a href="payments.html" class="nav-link">Payments</a>
+          <a href="obligations.html" class="nav-link">Obligations</a>
+          <a href="attendance.html" class="nav-link">Attendance</a>
+          <a href="attendance-summary.html" class="nav-link">Attendance Summary</a>
+          <a href="stats.html" class="nav-link">Stats</a>
+          <a href="reports.html" class="nav-link">Reports</a>
+          <a href="settings.html" class="nav-link">Settings</a>
+        </nav>
+      </aside>
+      <div class="content">
+        <header class="topbar">
+          <h1>Archievers FC</h1>
+        </header>
+        <main class="main">
+          <div class="page-title">
+            <h2>Reports</h2>
+            <p>Financial and discipline summaries.</p>
+          </div>
+
+          <section class="panel">
+            <div class="page-title-row">
+              <h3>Monthly Financial Report</h3>
+              <div class="page-title-actions">
+                <label class="form-field">
+                  <span>Month</span>
+                  <select class="input" id="report-month"></select>
+                </label>
+              </div>
+            </div>
+            <div class="detail-grid" id="monthly-totals"></div>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Paid</th>
+                  <th>Remaining</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="monthly-body"></tbody>
+            </table>
+          </section>
+
+          <section class="panel">
+            <div class="page-title-row">
+              <h3>Yearly Financial Report</h3>
+              <div class="page-title-actions">
+                <label class="form-field">
+                  <span>Year</span>
+                  <select class="input" id="report-year"></select>
+                </label>
+              </div>
+            </div>
+            <div class="detail-grid" id="yearly-totals"></div>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Paid</th>
+                  <th>Remaining</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="yearly-body"></tbody>
+            </table>
+          </section>
+
+          <section class="panel">
+            <div class="page-title-row">
+              <h3>Discipline Fines Report</h3>
+              <div class="page-title-actions">
+                <span class="muted">Season to date</span>
+              </div>
+            </div>
+            <div class="detail-grid" id="fines-totals"></div>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Yellow Owed</th>
+                  <th>Red Owed</th>
+                  <th>Amount Owed</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="fines-body"></tbody>
+            </table>
+          </section>
+
+          <section class="panel">
+            <h3>Exports</h3>
+            <div class="data-tools">
+              <a class="btn" href="/api/export/players.csv">Export Players CSV</a>
+              <a class="btn" href="/api/export/payments.csv">Export Payments CSV</a>
+              <a class="btn" href="/api/export/attendance.csv">Export Attendance CSV</a>
+              <a class="btn" href="/api/export/stats.csv">Export Stats CSV</a>
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script src="js/pages/reports.js"></script>
+  </body>
+</html>

@@ -54,7 +54,14 @@
   const defaultSettings = {
     season: new Date().getFullYear(),
     currencySymbol: "\u20a6",
-    fees: { monthly: 3000, newMemberYearly: 5000, renewalYearly: 2500 },
+    fees: {
+      monthlySchedule: [
+        { from: "2026-01", amount: 2000 },
+        { from: "2026-02", amount: 3000 }
+      ],
+      newMemberYearly: 5000,
+      renewalYearly: 2500
+    },
     attendance: { startDate: "2026-01-10" },
     discipline: { yellowFine: 500, redFine: 1000 }
   };
@@ -103,7 +110,7 @@
     const yearlyStatus = yearlyPaid >= yearlyExpected ? "Cleared" : "Pending";
 
     const monthKey = monthSelect.value;
-    const monthlyExpected = state.settings.fees.monthly;
+    const monthlyExpected = getMonthlyExpected(monthKey);
     const monthlyPaid = Number(player?.payments?.monthly?.[monthKey]?.paid) || 0;
     const monthlyStatus = monthlyPaid >= monthlyExpected ? "Cleared" : "Pending";
 
@@ -114,6 +121,17 @@
     monthlyEl.textContent = `${monthlyStatus} • ${formatCurrency(monthlyPaid)} / ${formatCurrency(
       monthlyExpected
     )}`;
+  }
+
+  function getMonthlyExpected(monthKey) {
+    const schedule = state.settings.fees.monthlySchedule || [];
+    if (!schedule.length) return 0;
+    const sorted = [...schedule].sort((a, b) => a.from.localeCompare(b.from));
+    let candidate = sorted[0].amount;
+    sorted.forEach((item) => {
+      if (item.from <= monthKey) candidate = item.amount;
+    });
+    return candidate;
   }
 
   function buildSaturdayList(startDate, endDate) {

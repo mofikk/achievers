@@ -19,6 +19,8 @@
   const monthlyPaid = document.getElementById("monthly-paid");
   const monthlyRemaining = document.getElementById("monthly-remaining");
   const monthlyStatus = document.getElementById("monthly-status");
+  const yearFilter = document.getElementById("payments-year");
+  const monthFilter = document.getElementById("payments-month");
   const searchInput = document.getElementById("payments-search");
   const countEl = document.getElementById("payments-count");
   const yearlyExpectedLabel = document.getElementById("yearly-expected-label");
@@ -47,6 +49,8 @@
     !monthlyPaid ||
     !monthlyRemaining ||
     !monthlyStatus ||
+    !yearFilter ||
+    !monthFilter ||
     !searchInput ||
     !countEl ||
     !yearlyExpectedLabel ||
@@ -61,7 +65,14 @@
 
   const defaultSettings = {
     currencySymbol: "\u20a6",
-    fees: { monthly: 3000, newMemberYearly: 5000, renewalYearly: 2500 }
+    fees: {
+      monthlySchedule: [
+        { from: "2026-01", amount: 2000 },
+        { from: "2026-02", amount: 3000 }
+      ],
+      newMemberYearly: 5000,
+      renewalYearly: 2500
+    }
   };
 
   const state = {
@@ -74,6 +85,17 @@
     months: [],
     settings: defaultSettings
   };
+
+  function getMonthlyExpected(monthKey) {
+    const schedule = state.settings.fees.monthlySchedule || [];
+    if (!schedule.length) return 0;
+    const sorted = [...schedule].sort((a, b) => a.from.localeCompare(b.from));
+    let candidate = sorted[0].amount;
+    sorted.forEach((item) => {
+      if (item.from <= monthKey) candidate = item.amount;
+    });
+    return candidate;
+  }
 
   function getNowYear() {
     return String(new Date().getFullYear());
@@ -151,7 +173,7 @@
   function getMonthlyPayment(player, monthKey) {
     const monthly = player?.payments?.monthly?.[monthKey];
     return {
-      expected: state.settings.fees.monthly,
+      expected: getMonthlyExpected(monthKey),
       paid: Number.isFinite(Number(monthly?.paid)) ? Number(monthly.paid) : 0
     };
   }
@@ -163,8 +185,8 @@
   function renderTable(players) {
     body.innerHTML = "";
     players.forEach((player) => {
-      const yearly = getYearlyPayment(player, state.yearKey);
-      const monthly = getMonthlyPayment(player, state.monthKey);
+      const yearly = getYearlyPayment(player, yearFilter.value || state.yearKey);
+      const monthly = getMonthlyPayment(player, monthFilter.value || state.monthKey);
       const yearlyStatusText = deriveStatus(yearly.expected, yearly.paid);
       const monthlyStatusText = deriveStatus(monthly.expected, monthly.paid);
 
@@ -237,14 +259,17 @@
     modalTitleName.textContent = player.name || "";
     errorEl.textContent = "";
 
-    populateSelect(yearlyYear, state.years, state.yearKey);
-    populateSelect(monthlyYear, state.years, state.yearKey);
+    const yearValue = yearFilter.value || state.yearKey;
+    const monthValue = monthFilter.value || state.monthKey;
 
-    const monthsForYear = getMonthsForYear(state.yearKey);
-    const monthValue = monthsForYear.includes(state.monthKey)
-      ? state.monthKey
+    populateSelect(yearlyYear, state.years, yearValue);
+    populateSelect(monthlyYear, state.years, yearValue);
+
+    const monthsForYear = getMonthsForYear(yearValue);
+    const preferredMonth = monthsForYear.includes(monthValue)
+      ? monthValue
       : monthsForYear[monthsForYear.length - 1];
-    populateSelect(monthlyMonth, monthsForYear, monthValue);
+    populateSelect(monthlyMonth, monthsForYear, preferredMonth);
 
     const yearly = getYearlyPayment(player, yearlyYear.value);
     const monthly = getMonthlyPayment(player, monthlyMonth.value);
@@ -270,6 +295,19 @@
     state.selectedId = null;
   }
 
+  function buildFilters(players) {
+    const yearSet = new Set([getNowYear()]);
+    const monthSet = new Set([getNowMonth()]);
+    players.forEach((player) => {
+      Object.keys(player?.payments?.yearly || {}).forEach((key) => yearSet.add(key));
+      Object.keys(player?.subscriptions?.year || {}).forEach((key) => yearSet.add(key));
+      Object.keys(player?.payments?.monthly || {}).forEach((key) => monthSet.add(key));
+      Object.keys(player?.subscriptions?.months || {}).forEach((key) => monthSet.add(key));
+    });
+    state.years = Array.from(yearSet).sort();
+    state.months = Array.from(monthSet).sort();
+  }
+
   function loadPlayers() {
     return window
       .apiFetch("/players")
@@ -278,7 +316,9 @@
         state.allPlayers = players;
         state.yearKey = getLatestKey(players, "yearly", getNowYear());
         state.monthKey = getLatestKey(players, "monthly", getNowMonth());
-        buildAvailableKeys(players);
+        buildFilters(players);
+        populateSelect(yearFilter, state.years, state.yearKey);
+        populateSelect(monthFilter, state.months, state.monthKey);
         renderTable(players);
       })
       .catch(console.error);
@@ -333,6 +373,14 @@
     renderTable(filtered);
   });
 
+  yearFilter.addEventListener("change", () => {
+    renderTable(state.allPlayers);
+  });
+
+  monthFilter.addEventListener("change", () => {
+    renderTable(state.allPlayers);
+  });
+
   closeBtn.addEventListener("click", closeModal);
   modal.addEventListener("click", (event) => {
     if (event.target === modal) closeModal();
@@ -381,7 +429,7 @@
     const monthKey = monthlyMonth.value;
     const yearlyExpectedValue = getYearlyPayment(player, yearKey).expected;
     const yearlyPaidValue = Math.max(0, Number(yearlyPaid.value || 0));
-    const monthlyExpectedValue = DEFAULT_MONTHLY_EXPECTED;
+    const monthlyExpectedValue = getMonthlyExpected(monthKey);
     const monthlyPaidValue = Math.max(0, Number(monthlyPaid.value || 0));
 
     errorEl.textContent = "";

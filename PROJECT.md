@@ -13,6 +13,7 @@ Archievers FC is a football community management system that tracks players, att
 - Stats
 - Settings
  - Player Profile
+ - Reports
 
 ## Current features
 - Add Player flow from the Players page (modal form)
@@ -29,6 +30,11 @@ Archievers FC is a football community management system that tracks players, att
 - Player profile with payments, attendance, stats, and fines overview
 - Attendance summary and trends with top attendance and streaks
 - Player deletion with custom confirmation modal
+- Season tools with rollover/reset and backups
+- CSV imports for players and payments
+- Reports for monthly/yearly finances and discipline fines
+- Player email field and initial payments on create
+- Payments filters by month/year
 
 ## Subscription rules
 - Yearly subscriptions: `paid` or `pending`
@@ -36,7 +42,7 @@ Archievers FC is a football community management system that tracks players, att
 - Weekly payments are derived from monthly values (do not store weekly yet)
 
 ## Fee policy defaults
-- Monthly expected: 3000
+- Monthly expected: based on schedule (e.g., Jan 2026 = 2000, Feb+ = 3000)
 - Yearly expected: 5000 in the member's first year, 2500 for later years
 - Expected amounts are policy-controlled (read-only in Payments)
 

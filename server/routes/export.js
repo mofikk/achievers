@@ -47,6 +47,17 @@ function deriveStatus(expected, paid) {
   return "pending";
 }
 
+function getMonthlyExpected(settings, monthKey) {
+  const schedule = settings.fees?.monthlySchedule || [];
+  if (!schedule.length) return 0;
+  const sorted = [...schedule].sort((a, b) => a.from.localeCompare(b.from));
+  let candidate = sorted[0].amount;
+  sorted.forEach((item) => {
+    if (item.from <= monthKey) candidate = item.amount;
+  });
+  return candidate;
+}
+
 router.get("/players.csv", async (req, res, next) => {
   try {
     const db = await readJson(dbPath);
@@ -56,11 +67,12 @@ router.get("/players.csv", async (req, res, next) => {
       player.name || "",
       player.nickname || "",
       player.position || "",
+      player.email || "",
       getMemberSinceYear(player, currentYear)
     ]);
 
     const csv = toCsv(
-      ["id", "name", "nickname", "position", "memberSinceYear"],
+      ["id", "name", "nickname", "position", "email", "memberSinceYear"],
       rows
     );
     res.set("Content-Type", "text/csv; charset=utf-8");
@@ -89,7 +101,7 @@ router.get("/payments.csv", async (req, res, next) => {
         Number(yearKey) === memberSinceYear
           ? settings.fees.newMemberYearly
           : settings.fees.renewalYearly;
-      const monthlyExpected = settings.fees.monthly;
+      const monthlyExpected = monthKey ? getMonthlyExpected(settings, monthKey) : 0;
       const yearlyPaid = Number(yearlyRecord.paid) || 0;
       const monthlyPaid = Number(monthlyRecord.paid) || 0;
       const yearlyStatus = deriveStatus(yearlyExpected, yearlyPaid);

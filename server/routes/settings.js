@@ -51,15 +51,35 @@ router.patch("/", async (req, res, next) => {
     }
 
     const fees = payload.fees || {};
-    const monthly = Number(fees.monthly);
+    const schedule = Array.isArray(fees.monthlySchedule) ? fees.monthlySchedule : [];
     const newMemberYearly = Number(fees.newMemberYearly);
     const renewalYearly = Number(fees.renewalYearly);
 
+    if (!schedule.length) {
+      res.status(400).send("Monthly schedule is required.");
+      return;
+    }
+
+    const scheduleValidated = schedule
+      .map((item) => ({
+        from: String(item.from || "").trim(),
+        amount: Number(item.amount)
+      }))
+      .filter((item) => item.from && Number.isFinite(item.amount) && item.amount >= 0);
+
+    const fromPattern = /^\d{4}-\d{2}$/;
+    const hasInvalidFrom = scheduleValidated.some((item) => !fromPattern.test(item.from));
+
+    if (scheduleValidated.length !== schedule.length || hasInvalidFrom) {
+      res.status(400).send("Monthly schedule entries are invalid.");
+      return;
+    }
+
+    scheduleValidated.sort((a, b) => a.from.localeCompare(b.from));
+
     if (
-      !Number.isFinite(monthly) ||
       !Number.isFinite(newMemberYearly) ||
       !Number.isFinite(renewalYearly) ||
-      monthly < 0 ||
       newMemberYearly < 0 ||
       renewalYearly < 0
     ) {
@@ -98,7 +118,7 @@ router.patch("/", async (req, res, next) => {
       clubName: payload.clubName.trim(),
       season,
       currencySymbol,
-      fees: { monthly, newMemberYearly, renewalYearly },
+      fees: { monthlySchedule: scheduleValidated, newMemberYearly, renewalYearly },
       attendance: { startDate, lockFuture: attendance.lockFuture },
       discipline: { yellowFine, redFine }
     };
