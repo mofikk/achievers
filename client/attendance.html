@@ -30,7 +30,39 @@
           </div>
 
           <section class="panel">
-            <div class="empty-state">Attendance UI coming soon.</div>
+            <div class="controls-row">
+              <label class="form-field">
+                <span>Month</span>
+                <select class="input" id="attendance-month"></select>
+              </label>
+              <label class="form-field">
+                <span>Saturday</span>
+                <select class="input" id="attendance-date"></select>
+              </label>
+              <label class="form-field">
+                <span>Search</span>
+                <input class="input" id="attendance-search" type="text" placeholder="Name or nickname" />
+              </label>
+              <div class="control-actions">
+                <button class="ghost-btn" type="button" id="mark-present">Mark all Present</button>
+                <button class="ghost-btn" type="button" id="mark-absent">Mark all Absent</button>
+                <button class="action-btn" type="button" id="save-attendance">Save</button>
+              </div>
+            </div>
+
+            <div class="summary-bar" id="attendance-summary">Present: 0 | Absent: 0</div>
+            <div class="hint-text" id="attendance-hint"></div>
+
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Nickname</th>
+                  <th>Present</th>
+                </tr>
+              </thead>
+              <tbody id="attendance-body"></tbody>
+            </table>
           </section>
         </main>
       </div>

@@ -17,6 +17,7 @@ Archievers FC is a football community management system that tracks players, att
 - View player details and delete from the View modal
 - Position codes stored as compact values (FW, CM, CDM, CAM, LM, RM, CB, RB, LB, LW, RW)
 - Membership tracking with `membership.memberSinceYear`
+- Weekly Saturday attendance with date-first workflow and live present/absent summary
 
 ## Subscription rules
 - Yearly subscriptions: `paid` or `pending`
