@@ -35,6 +35,7 @@
             <div class="profile-actions">
               <a class="action-btn" id="profile-edit" href="players.html">Edit Player</a>
               <a class="ghost-btn" id="profile-payments" href="payments.html">Open in Payments</a>
+              <button class="danger-btn" type="button" id="profile-delete">Delete Player</button>
             </div>
           </div>
 
@@ -112,6 +113,20 @@
             </section>
           </div>
         </main>
+      </div>
+    </div>
+
+    <div class="modal hidden" id="profile-delete-modal" aria-hidden="true">
+      <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="profile-delete-title">
+        <div class="modal-header">
+          <h3 id="profile-delete-title">Delete player?</h3>
+        </div>
+        <p id="profile-delete-text" class="muted"></p>
+        <p class="muted">This action cannot be undone.</p>
+        <div class="modal-actions">
+          <button class="ghost-btn" type="button" id="profile-delete-cancel">Cancel</button>
+          <button class="danger-btn" type="button" id="profile-delete-confirm">Delete</button>
+        </div>
       </div>
     </div>
 

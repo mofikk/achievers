@@ -28,6 +28,7 @@ Archievers FC is a football community management system that tracks players, att
 - Outstanding obligations table combining fees and fines
 - Player profile with payments, attendance, stats, and fines overview
 - Attendance summary and trends with top attendance and streaks
+- Player deletion with custom confirmation modal
 
 ## Subscription rules
 - Yearly subscriptions: `paid` or `pending`

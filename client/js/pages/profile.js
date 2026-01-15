@@ -4,6 +4,11 @@
   const metaEl = document.getElementById("profile-meta");
   const editLink = document.getElementById("profile-edit");
   const paymentsLink = document.getElementById("profile-payments");
+  const deleteBtn = document.getElementById("profile-delete");
+  const deleteModal = document.getElementById("profile-delete-modal");
+  const deleteCancelBtn = document.getElementById("profile-delete-cancel");
+  const deleteConfirmBtn = document.getElementById("profile-delete-confirm");
+  const deleteText = document.getElementById("profile-delete-text");
   const yearInput = document.getElementById("profile-year");
   const monthSelect = document.getElementById("profile-month");
   const yearlyEl = document.getElementById("profile-yearly");
@@ -24,6 +29,11 @@
     !metaEl ||
     !editLink ||
     !paymentsLink ||
+    !deleteBtn ||
+    !deleteModal ||
+    !deleteCancelBtn ||
+    !deleteConfirmBtn ||
+    !deleteText ||
     !yearInput ||
     !monthSelect ||
     !yearlyEl ||
@@ -243,6 +253,45 @@
   });
 
   monthSelect.addEventListener("change", renderPayments);
+
+  deleteBtn.addEventListener("click", () => {
+    if (!state.player) return;
+    const label = state.player.nickname
+      ? `${state.player.name} (${state.player.nickname})`
+      : state.player.name;
+    deleteText.textContent =
+      `This will permanently remove ${label} and their payments, attendance, and stats from this device.`;
+    deleteModal.classList.remove("hidden");
+    deleteModal.setAttribute("aria-hidden", "false");
+  });
+
+  deleteCancelBtn.addEventListener("click", () => {
+    deleteModal.classList.add("hidden");
+    deleteModal.setAttribute("aria-hidden", "true");
+  });
+
+  deleteModal.addEventListener("click", (event) => {
+    if (event.target === deleteModal) {
+      deleteModal.classList.add("hidden");
+      deleteModal.setAttribute("aria-hidden", "true");
+    }
+  });
+
+  deleteConfirmBtn.addEventListener("click", () => {
+    if (!state.player) return;
+    deleteConfirmBtn.disabled = true;
+    window
+      .apiFetch(`/players/${state.player.id}`, { method: "DELETE" })
+      .then(() => {
+        window.location.href = "players.html?deleted=1";
+      })
+      .catch((err) => {
+        window.toast(err.message || "Unable to delete player.", "error");
+      })
+      .finally(() => {
+        deleteConfirmBtn.disabled = false;
+      });
+  });
 
   loadProfile();
 })();

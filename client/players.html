@@ -55,10 +55,10 @@
                   <th>Nickname</th>
                   <th>Position</th>
                   <th>Yearly</th>
-              <th>Monthly</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
+                  <th>Monthly</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
               <tbody id="players-body"></tbody>
             </table>
           </section>
@@ -155,6 +155,20 @@
           <button class="danger-btn" type="button" id="delete-player-btn">
             Delete Player
           </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal hidden" id="delete-player-modal" aria-hidden="true">
+      <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="delete-player-title">
+        <div class="modal-header">
+          <h3 id="delete-player-title">Delete player?</h3>
+        </div>
+        <p id="delete-player-text" class="muted"></p>
+        <p class="muted">This action cannot be undone.</p>
+        <div class="modal-actions">
+          <button class="ghost-btn" type="button" id="delete-cancel">Cancel</button>
+          <button class="danger-btn" type="button" id="delete-confirm">Delete</button>
         </div>
       </div>
     </div>

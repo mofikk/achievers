@@ -13,6 +13,10 @@
   const viewModal = document.getElementById("view-player-modal");
   const closeViewBtn = document.getElementById("close-view-btn");
   const deleteBtn = document.getElementById("delete-player-btn");
+  const deleteModal = document.getElementById("delete-player-modal");
+  const deleteCancelBtn = document.getElementById("delete-cancel");
+  const deleteConfirmBtn = document.getElementById("delete-confirm");
+  const deleteText = document.getElementById("delete-player-text");
   const viewError = document.getElementById("view-error");
   const viewName = document.getElementById("view-name");
   const viewNickname = document.getElementById("view-nickname");
@@ -33,6 +37,10 @@
     !viewModal ||
     !closeViewBtn ||
     !deleteBtn ||
+    !deleteModal ||
+    !deleteCancelBtn ||
+    !deleteConfirmBtn ||
+    !deleteText ||
     !viewError ||
     !viewName ||
     !viewNickname ||
@@ -121,6 +129,7 @@
         <td>
           <button class="action-btn" data-id="${player.id}">View</button>
           <button class="ghost-btn" data-edit-id="${player.id}">Edit</button>
+          <a class="ghost-btn" href="profile.html?id=${player.id}">View Profile</a>
         </td>
       `;
       body.appendChild(row);
@@ -138,6 +147,9 @@
         computeKeys(players);
         renderPlayers(players);
         const params = new URLSearchParams(window.location.search);
+        if (params.get("deleted") === "1") {
+          window.toast("Player deleted", "success");
+        }
         const editId = params.get("edit");
         if (editId) {
           const player = state.players.find((item) => item.id === editId);
@@ -182,6 +194,19 @@
   function resetViewModal() {
     viewError.textContent = "";
     deleteBtn.removeAttribute("data-id");
+  }
+
+  function openDeleteModal(player) {
+    deleteConfirmBtn.setAttribute("data-id", player.id);
+    const label = player.nickname ? `${player.name} (${player.nickname})` : player.name;
+    deleteText.textContent =
+      `This will permanently remove ${label} and their payments, attendance, and stats from this device.`;
+    openModal(deleteModal);
+  }
+
+  function closeDeleteModal() {
+    deleteConfirmBtn.removeAttribute("data-id");
+    closeModal(deleteModal);
   }
 
   addBtn.addEventListener("click", () => {
@@ -261,6 +286,9 @@
   function setDeleteLoading(isLoading) {
     deleteBtn.disabled = isLoading;
     deleteBtn.textContent = isLoading ? "Deleting..." : "Delete Player";
+    deleteConfirmBtn.disabled = isLoading;
+    deleteCancelBtn.disabled = isLoading;
+    deleteConfirmBtn.textContent = isLoading ? "Deleting..." : "Delete";
   }
 
   addForm.addEventListener("submit", (event) => {
@@ -334,18 +362,31 @@
   deleteBtn.addEventListener("click", () => {
     const playerId = deleteBtn.getAttribute("data-id");
     if (!playerId) return;
-    if (!confirm("Delete this player?")) return;
+    const player = state.players.find((item) => item.id === playerId);
+    if (!player) return;
+    closeModal(viewModal);
+    openDeleteModal(player);
+  });
 
+  deleteCancelBtn.addEventListener("click", closeDeleteModal);
+  deleteModal.addEventListener("click", (event) => {
+    if (event.target === deleteModal) closeDeleteModal();
+  });
+
+  deleteConfirmBtn.addEventListener("click", () => {
+    const playerId = deleteConfirmBtn.getAttribute("data-id");
+    if (!playerId) return;
     setDeleteLoading(true);
     window
       .apiFetch(`/players/${playerId}`, { method: "DELETE" })
       .then(() => {
+        closeDeleteModal();
         resetViewModal();
-        closeModal(viewModal);
         window.toast("Player deleted", "success");
         return loadPlayers();
       })
       .catch((err) => {
+        closeDeleteModal();
         viewError.textContent = err.message || "Unable to delete player.";
       })
       .finally(() => {
