@@ -268,6 +268,37 @@ router.patch("/attendance/:date", async (req, res, next) => {
   }
 });
 
+router.patch("/:id/stats", async (req, res, next) => {
+  try {
+    const db = await readDb();
+    const players = db.players || [];
+    const player = players.find((item) => item.id === req.params.id);
+
+    if (!player) {
+      res.status(404).json({ ok: false });
+      return;
+    }
+
+    const goals = Number(req.body.goals);
+    const assists = Number(req.body.assists);
+    const yellow = Number(req.body.yellow);
+    const red = Number(req.body.red);
+
+    const values = [goals, assists, yellow, red];
+    if (values.some((value) => !Number.isFinite(value) || value < 0)) {
+      res.status(400).send("Stats must be non-negative numbers.");
+      return;
+    }
+
+    player.stats = { goals, assists, yellow, red };
+
+    await writeDb(db);
+    res.json(player);
+  } catch (err) {
+    next(err);
+  }
+});
+
 router.delete("/:id", async (req, res, next) => {
   try {
     const db = await readDb();
