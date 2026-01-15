@@ -46,6 +46,7 @@
     filteredIds: [],
     selectedDate: ""
   };
+  let isFuture = false;
 
   function formatDate(year, monthIndex, day) {
     return `${year}-${String(monthIndex + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
@@ -111,18 +112,35 @@
     state.players.forEach((player) => {
       state.attendance[player.id] = player?.attendance?.[date] === true;
     });
+    isFuture = date ? isFutureDate(date) : false;
     updateHint();
     renderTable();
+  }
+
+  function isFutureDate(dateStr) {
+    const selected = new Date(`${dateStr}T00:00:00`);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return selected.getTime() > today.getTime();
   }
 
   function updateHint() {
     if (!state.selectedDate) {
       hintEl.textContent = "Select a Saturday to mark attendance.";
       saveBtn.disabled = true;
+      markPresentBtn.disabled = true;
+      markAbsentBtn.disabled = true;
       return;
     }
-    hintEl.textContent = "";
-    saveBtn.disabled = false;
+    if (isFuture) {
+      hintEl.textContent =
+        "This date is in the future. Attendance can only be recorded after the match.";
+    } else {
+      hintEl.textContent = "";
+    }
+    saveBtn.disabled = isFuture;
+    markPresentBtn.disabled = isFuture;
+    markAbsentBtn.disabled = isFuture;
   }
 
   function updateSummary() {
@@ -155,7 +173,7 @@
         <td>
           <input type="checkbox" class="attendance-toggle" data-id="${player.id}" ${
             state.attendance[player.id] ? "checked" : ""
-          } />
+          } ${isFuture ? "disabled" : ""} />
         </td>
       `;
       body.appendChild(row);
@@ -165,6 +183,7 @@
   }
 
   function setAllVisible(value) {
+    if (isFuture) return;
     state.filteredIds.forEach((id) => {
       state.attendance[id] = value;
     });
@@ -175,7 +194,7 @@
   }
 
   function setSaving(isSaving) {
-    saveBtn.disabled = isSaving || !state.selectedDate;
+    saveBtn.disabled = isSaving || !state.selectedDate || isFuture;
     saveBtn.textContent = isSaving ? "Saving..." : "Save";
   }
 
@@ -198,6 +217,7 @@
   body.addEventListener("change", (event) => {
     const target = event.target;
     if (!target.classList.contains("attendance-toggle")) return;
+    if (isFuture) return;
     const id = target.getAttribute("data-id");
     state.attendance[id] = target.checked;
     updateSummary();
@@ -212,7 +232,7 @@
   });
 
   saveBtn.addEventListener("click", () => {
-    if (!state.selectedDate) return;
+    if (!state.selectedDate || isFuture) return;
     setSaving(true);
 
     const updates = state.players.map((player) => ({
