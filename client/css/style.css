@@ -27,6 +27,7 @@ body {
   background: linear-gradient(135deg, #edf2ff, #f8fafc);
   color: var(--ink);
   font-size: clamp(14px, 1.6vw, 16px);
+  overflow-x: hidden;
 }
 
 body.nav-open {
@@ -98,6 +99,7 @@ body.nav-open {
   display: grid;
   gap: 24px;
   max-width: 100%;
+  overflow-x: hidden;
 }
 
 .page-title h2 {
@@ -252,6 +254,21 @@ body.nav-open {
   width: 100%;
 }
 
+.content,
+.main,
+.panel,
+.card,
+.section-card {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.panel *,
+.card *,
+.section-card * {
+  box-sizing: border-box;
+}
+
 .activity {
   list-style: none;
   display: grid;
@@ -358,6 +375,7 @@ body.nav-open {
 .table-wrap {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
+  max-width: 100%;
 }
 
 .table.responsive thead {
@@ -369,7 +387,7 @@ body.nav-open {
 }
 
 .schedule-table {
-  min-width: 520px;
+  width: 100%;
 }
 
 .schedule-table .input {
@@ -504,6 +522,11 @@ body.nav-open {
   font-size: 14px;
   color: var(--ink);
   background: #ffffff;
+}
+
+textarea.input {
+  width: 100%;
+  max-width: 100%;
 }
 
 .form-error {
@@ -896,4 +919,38 @@ body.nav-open {
     font-weight: 600;
     color: var(--muted);
   }
+}
+
+@media (max-width: 520px) {
+  .modal-actions,
+  .form-actions,
+  .tool-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: stretch;
+  }
+
+  .modal-actions .action-btn,
+  .modal-actions .ghost-btn,
+  .modal-actions .danger-btn,
+  .tool-actions .action-btn,
+  .tool-actions .ghost-btn,
+  .tool-actions .danger-btn {
+    width: 100%;
+  }
+
+  .season-tools label {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .season-tools input[type="checkbox"] {
+    flex: 0 0 auto;
+  }
+}
+
+.debug-overflow * {
+  outline: 1px solid rgba(255, 0, 0, 0.2);
 }
