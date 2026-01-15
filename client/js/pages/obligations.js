@@ -1,0 +1,181 @@
+(function () {
+  const monthSelect = document.getElementById("obligation-month");
+  const yearSelect = document.getElementById("obligation-year");
+  const searchInput = document.getElementById("obligation-search");
+  const countEl = document.getElementById("obligation-count");
+  const body = document.getElementById("obligation-body");
+
+  if (!monthSelect || !yearSelect || !searchInput || !countEl || !body) {
+    return;
+  }
+
+  const defaultSettings = {
+    season: new Date().getFullYear(),
+    currencySymbol: "\u20a6",
+    fees: { monthly: 3000, newMemberYearly: 5000, renewalYearly: 2500 },
+    discipline: { yellowFine: 500, redFine: 1000 }
+  };
+
+  const state = {
+    players: [],
+    settings: defaultSettings,
+    months: [],
+    years: []
+  };
+
+  function formatCurrency(amount) {
+    return `${state.settings.currencySymbol}${amount}`;
+  }
+
+  function getMemberSinceYear(player) {
+    const stored = Number(player?.membership?.memberSinceYear);
+    if (Number.isFinite(stored) && stored > 0) return stored;
+    const years = Object.keys(player?.subscriptions?.year || {})
+      .map((year) => Number(year))
+      .filter((year) => Number.isFinite(year));
+    if (years.length) {
+      years.sort((a, b) => a - b);
+      return years[0];
+    }
+    return state.settings.season;
+  }
+
+  function getLatestMonth(players) {
+    const keys = [];
+    players.forEach((player) => {
+      Object.keys(player?.payments?.monthly || {}).forEach((key) => keys.push(key));
+      Object.keys(player?.subscriptions?.months || {}).forEach((key) => keys.push(key));
+    });
+    keys.sort();
+    return keys[keys.length - 1] || "";
+  }
+
+  function buildFilters(players) {
+    const monthSet = new Set();
+    const yearSet = new Set([String(state.settings.season)]);
+    players.forEach((player) => {
+      Object.keys(player?.payments?.monthly || {}).forEach((key) => monthSet.add(key));
+      Object.keys(player?.subscriptions?.months || {}).forEach((key) => monthSet.add(key));
+      Object.keys(player?.payments?.yearly || {}).forEach((key) => yearSet.add(key));
+      Object.keys(player?.subscriptions?.year || {}).forEach((key) => yearSet.add(key));
+    });
+    state.months = Array.from(monthSet).sort();
+    state.years = Array.from(yearSet).sort();
+  }
+
+  function populateSelect(select, options, selected) {
+    select.innerHTML = "";
+    options.forEach((option) => {
+      const opt = document.createElement("option");
+      opt.value = option;
+      opt.textContent = option;
+      if (option === selected) opt.selected = true;
+      select.appendChild(opt);
+    });
+  }
+
+  function getFineSummary(player) {
+    const stats = player.stats || {};
+    const discipline = player.discipline || {};
+    const yellow = Number(stats.yellow) || 0;
+    const red = Number(stats.red) || 0;
+    const yellowPaid = Number(discipline.yellowPaid) || 0;
+    const redPaid = Number(discipline.redPaid) || 0;
+    const owedYellow = Math.max(0, yellow - yellowPaid);
+    const owedRed = Math.max(0, red - redPaid);
+    const fineOwed =
+      owedYellow * state.settings.discipline.yellowFine +
+      owedRed * state.settings.discipline.redFine;
+    return {
+      owedYellow,
+      owedRed,
+      fineOwed,
+      paidCount: yellowPaid + redPaid
+    };
+  }
+
+  function computeStatus(totalOwed, paidTotals) {
+    if (totalOwed === 0) return { text: "Cleared", className: "paid" };
+    if (paidTotals === 0) return { text: "Pending", className: "pending" };
+    return { text: "Incomplete", className: "incomplete" };
+  }
+
+  function renderTable(players) {
+    body.innerHTML = "";
+    const monthKey = monthSelect.value;
+    const yearKey = yearSelect.value;
+    players.forEach((player) => {
+      const memberSinceYear = getMemberSinceYear(player);
+      const yearlyExpected =
+        Number(yearKey) === memberSinceYear
+          ? state.settings.fees.newMemberYearly
+          : state.settings.fees.renewalYearly;
+      const yearlyPaid = Number(player?.payments?.yearly?.[yearKey]?.paid) || 0;
+      const yearlyOwed = Math.max(0, yearlyExpected - yearlyPaid);
+
+      const monthlyExpected = state.settings.fees.monthly;
+      const monthlyPaid = Number(player?.payments?.monthly?.[monthKey]?.paid) || 0;
+      const monthlyOwed = Math.max(0, monthlyExpected - monthlyPaid);
+
+      const fines = getFineSummary(player);
+      const totalOwed = monthlyOwed + yearlyOwed + fines.fineOwed;
+      const status = computeStatus(
+        totalOwed,
+        yearlyPaid + monthlyPaid + fines.paidCount
+      );
+
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${player.name || ""}</td>
+        <td>${player.nickname || "-"}</td>
+        <td>${formatCurrency(monthlyOwed)}</td>
+        <td>${formatCurrency(yearlyOwed)}</td>
+        <td>${formatCurrency(fines.fineOwed)}</td>
+        <td>${formatCurrency(totalOwed)}</td>
+        <td><span class="pill ${status.className}">${status.text}</span></td>
+        <td>
+          <a class="action-btn" href="profile.html?id=${player.id}">View Profile</a>
+        </td>
+      `;
+      body.appendChild(row);
+    });
+
+    countEl.textContent = `Showing ${players.length} of ${state.players.length}`;
+  }
+
+  function applyFilters() {
+    const query = searchInput.value.trim().toLowerCase();
+    const filtered = state.players.filter((player) => {
+      const name = String(player.name || "").toLowerCase();
+      const nickname = String(player.nickname || "").toLowerCase();
+      return !query || name.includes(query) || nickname.includes(query);
+    });
+    renderTable(filtered);
+  }
+
+  function loadData() {
+    const settingsRequest = window.apiFetch("/settings").catch(() => defaultSettings);
+    const playersRequest = window.apiFetch("/players");
+
+    Promise.all([settingsRequest, playersRequest])
+      .then(([settings, players]) => {
+        state.settings = settings || defaultSettings;
+        state.players = players;
+        buildFilters(players);
+        const latestMonth = getLatestMonth(players);
+        const defaultMonth = latestMonth || "";
+        const defaultYear = String(state.settings.season || new Date().getFullYear());
+
+        populateSelect(monthSelect, state.months, defaultMonth);
+        populateSelect(yearSelect, state.years, defaultYear);
+        applyFilters();
+      })
+      .catch(console.error);
+  }
+
+  monthSelect.addEventListener("change", applyFilters);
+  yearSelect.addEventListener("change", applyFilters);
+  searchInput.addEventListener("input", applyFilters);
+
+  loadData();
+})();

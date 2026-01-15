@@ -137,6 +137,23 @@
         state.allPlayers = players;
         computeKeys(players);
         renderPlayers(players);
+        const params = new URLSearchParams(window.location.search);
+        const editId = params.get("edit");
+        if (editId) {
+          const player = state.players.find((item) => item.id === editId);
+          if (player) {
+            setMode("edit");
+            editingId = editId;
+            addError.textContent = "";
+            addForm.elements.name.value = player.name || "";
+            addForm.elements.nickname.value = player.nickname || "";
+            addForm.elements.position.value = player.position || "";
+            addMemberSince.value = String(
+              player?.membership?.memberSinceYear || currentYear
+            );
+            openModal(addModal);
+          }
+        }
       })
       .catch(console.error);
   }

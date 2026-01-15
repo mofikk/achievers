@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Archievers FC - Attendance Summary</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar">
+        <div class="brand">Archievers FC</div>
+        <nav class="nav">
+          <a href="index.html" class="nav-link">Dashboard</a>
+          <a href="players.html" class="nav-link">Players</a>
+          <a href="payments.html" class="nav-link">Payments</a>
+          <a href="obligations.html" class="nav-link">Obligations</a>
+          <a href="attendance.html" class="nav-link">Attendance</a>
+          <a href="attendance-summary.html" class="nav-link">Attendance Summary</a>
+          <a href="stats.html" class="nav-link">Stats</a>
+          <a href="settings.html" class="nav-link">Settings</a>
+        </nav>
+      </aside>
+      <div class="content">
+        <header class="topbar">
+          <h1>Archievers FC</h1>
+        </header>
+        <main class="main">
+          <div class="page-title">
+            <div class="page-title-row">
+              <div>
+                <h2>Attendance Summary</h2>
+                <p>Trends and streaks per player.</p>
+              </div>
+              <div class="page-title-actions">
+                <label class="form-field">
+                  <span>Range</span>
+                  <select class="input" id="summary-range">
+                    <option value="4">Last 4 Saturdays</option>
+                    <option value="8">Last 8 Saturdays</option>
+                    <option value="12">Last 12 Saturdays</option>
+                  </select>
+                </label>
+                <input
+                  id="summary-search"
+                  class="input"
+                  type="search"
+                  placeholder="Search name or nickname..."
+                />
+                <span id="summary-count" class="muted"></span>
+              </div>
+            </div>
+          </div>
+
+          <section class="panel">
+            <div class="grid-2">
+              <div>
+                <h3>Top Attendance %</h3>
+                <ul class="leaderboard" id="summary-top-percent"></ul>
+              </div>
+              <div>
+                <h3>Top Streaks</h3>
+                <ul class="leaderboard" id="summary-top-streaks"></ul>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Nickname</th>
+                  <th>Present</th>
+                  <th>Total</th>
+                  <th>Attendance %</th>
+                  <th>Current Streak</th>
+                </tr>
+              </thead>
+              <tbody id="summary-body"></tbody>
+            </table>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script src="js/pages/attendance-summary.js"></script>
+  </body>
+</html>

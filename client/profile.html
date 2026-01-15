@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Archievers FC - Player Profile</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar">
+        <div class="brand">Archievers FC</div>
+        <nav class="nav">
+          <a href="index.html" class="nav-link">Dashboard</a>
+          <a href="players.html" class="nav-link">Players</a>
+          <a href="payments.html" class="nav-link">Payments</a>
+          <a href="obligations.html" class="nav-link">Obligations</a>
+          <a href="attendance.html" class="nav-link">Attendance</a>
+          <a href="attendance-summary.html" class="nav-link">Attendance Summary</a>
+          <a href="stats.html" class="nav-link">Stats</a>
+          <a href="settings.html" class="nav-link">Settings</a>
+        </nav>
+      </aside>
+      <div class="content">
+        <header class="topbar">
+          <h1>Archievers FC</h1>
+        </header>
+        <main class="main">
+          <div class="profile-header">
+            <div>
+              <button class="ghost-btn" type="button" id="profile-back">Back to Players</button>
+              <h2 id="profile-name">Player</h2>
+              <p class="muted" id="profile-meta"></p>
+            </div>
+            <div class="profile-actions">
+              <a class="action-btn" id="profile-edit" href="players.html">Edit Player</a>
+              <a class="ghost-btn" id="profile-payments" href="payments.html">Open in Payments</a>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <section class="panel">
+              <h3>Payments Summary</h3>
+              <div class="form-grid">
+                <label class="form-field">
+                  <span>Season Year</span>
+                  <input class="input" id="profile-year" type="text" readonly />
+                </label>
+                <label class="form-field">
+                  <span>Month</span>
+                  <select class="input" id="profile-month"></select>
+                </label>
+              </div>
+              <div class="detail-grid">
+                <div class="detail-item">
+                  <span>Yearly</span>
+                  <strong id="profile-yearly"></strong>
+                </div>
+                <div class="detail-item">
+                  <span>Monthly</span>
+                  <strong id="profile-monthly"></strong>
+                </div>
+              </div>
+            </section>
+
+            <section class="panel">
+              <h3>Attendance</h3>
+              <p class="muted" id="profile-streak"></p>
+              <ul class="activity" id="profile-attendance"></ul>
+            </section>
+          </div>
+
+          <div class="grid-3">
+            <section class="panel">
+              <h3>Stats</h3>
+              <div class="detail-grid">
+                <div class="detail-item">
+                  <span>Goals</span>
+                  <strong id="profile-goals"></strong>
+                </div>
+                <div class="detail-item">
+                  <span>Assists</span>
+                  <strong id="profile-assists"></strong>
+                </div>
+                <div class="detail-item">
+                  <span>Yellow</span>
+                  <strong id="profile-yellow"></strong>
+                </div>
+                <div class="detail-item">
+                  <span>Red</span>
+                  <strong id="profile-red"></strong>
+                </div>
+              </div>
+            </section>
+
+            <section class="panel">
+              <h3>Fines</h3>
+              <div class="detail-grid">
+                <div class="detail-item">
+                  <span>Cards Owed</span>
+                  <strong id="profile-cards-owed"></strong>
+                </div>
+                <div class="detail-item">
+                  <span>Fine Owed</span>
+                  <strong id="profile-fine-owed"></strong>
+                </div>
+                <div class="detail-item">
+                  <span>Status</span>
+                  <strong id="profile-fine-status"></strong>
+                </div>
+              </div>
+            </section>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script src="js/pages/profile.js"></script>
+  </body>
+</html>
