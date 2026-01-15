@@ -144,15 +144,17 @@
 
       const row = document.createElement("tr");
       row.innerHTML = `
-        <td>${player.name || ""}</td>
-        <td>${player.nickname || "-"}</td>
-        <td>${formatCurrency(monthlyOwed)}</td>
-        <td>${formatCurrency(yearlyOwed)}</td>
-        <td>${formatCurrency(fines.fineOwed)}</td>
-        <td>${formatCurrency(totalOwed)}</td>
-        <td><span class="pill ${status.className}">${status.text}</span></td>
-        <td>
-          <a class="action-btn" href="profile.html?id=${player.id}">View Profile</a>
+        <td data-label="Name">${player.name || ""}</td>
+        <td data-label="Nickname">${player.nickname || "-"}</td>
+        <td data-label="Monthly Owed">${formatCurrency(monthlyOwed)}</td>
+        <td data-label="Yearly Owed">${formatCurrency(yearlyOwed)}</td>
+        <td data-label="Fines Owed">${formatCurrency(fines.fineOwed)}</td>
+        <td data-label="Total Owed">${formatCurrency(totalOwed)}</td>
+        <td data-label="Status"><span class="pill ${status.className}">${status.text}</span></td>
+        <td data-label="Actions">
+          <div class="actions">
+            <a class="action-btn" href="profile.html?id=${player.id}">View Profile</a>
+          </div>
         </td>
       `;
       body.appendChild(row);

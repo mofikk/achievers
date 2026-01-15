@@ -8,7 +8,7 @@
   </head>
   <body>
     <div class="app">
-      <aside class="sidebar">
+      <aside class="sidebar" id="sidebar">
         <div class="brand">Archievers FC</div>
         <nav class="nav">
           <a href="index.html" class="nav-link">Dashboard</a>
@@ -22,8 +22,12 @@
           <a href="settings.html" class="nav-link">Settings</a>
         </nav>
       </aside>
+      <div class="nav-overlay hidden" id="nav-overlay"></div>
       <div class="content">
         <header class="topbar">
+          <button class="menu-btn" id="menu-btn" aria-label="Open menu" aria-expanded="false">
+            ☰
+          </button>
           <h1>Archievers FC</h1>
         </header>
         <main class="main">
@@ -99,7 +103,7 @@
             <p class="muted">
               Fees apply from the selected month onward until another rule overrides it.
             </p>
-            <div class="table-scroll">
+            <div class="table-wrap">
               <table class="table schedule-table">
                 <thead>
                   <tr>

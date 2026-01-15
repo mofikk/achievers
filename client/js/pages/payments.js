@@ -192,11 +192,15 @@
 
       const row = document.createElement("tr");
       row.innerHTML = `
-        <td>${player.name || ""}</td>
-        <td>${player.nickname || "-"}</td>
-        <td>${renderBadge(yearlyStatusText)}</td>
-        <td>${renderBadge(monthlyStatusText)}</td>
-        <td><button class="action-btn" data-id="${player.id}">View</button></td>
+        <td data-label="Name">${player.name || ""}</td>
+        <td data-label="Nickname">${player.nickname || "-"}</td>
+        <td data-label="Yearly">${renderBadge(yearlyStatusText)}</td>
+        <td data-label="Monthly">${renderBadge(monthlyStatusText)}</td>
+        <td data-label="Actions">
+          <div class="actions">
+            <button class="action-btn" data-id="${player.id}">View</button>
+          </div>
+        </td>
       `;
       body.appendChild(row);
     });

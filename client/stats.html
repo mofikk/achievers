@@ -8,7 +8,7 @@
   </head>
   <body>
     <div class="app">
-      <aside class="sidebar">
+      <aside class="sidebar" id="sidebar">
         <div class="brand">Archievers FC</div>
         <nav class="nav">
           <a href="index.html" class="nav-link">Dashboard</a>
@@ -18,11 +18,16 @@
           <a href="attendance.html" class="nav-link">Attendance</a>
           <a href="attendance-summary.html" class="nav-link">Attendance Summary</a>
           <a href="stats.html" class="nav-link">Stats</a>
+          <a href="reports.html" class="nav-link">Reports</a>
           <a href="settings.html" class="nav-link">Settings</a>
         </nav>
       </aside>
+      <div class="nav-overlay hidden" id="nav-overlay"></div>
       <div class="content">
         <header class="topbar">
+          <button class="menu-btn" id="menu-btn" aria-label="Open menu" aria-expanded="false">
+            ☰
+          </button>
           <h1>Archievers FC</h1>
         </header>
         <main class="main">
@@ -48,23 +53,25 @@
               </div>
             </div>
 
-            <table class="table">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Nickname</th>
-                  <th class="sortable" data-key="goals">Goals</th>
-                  <th class="sortable" data-key="assists">Assists</th>
-                  <th class="sortable" data-key="yellow">Yellow</th>
-                  <th class="sortable" data-key="red">Red</th>
-                  <th>Cards Owed</th>
-                  <th>Fine Owed</th>
-                  <th>Fine Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody id="stats-body"></tbody>
-            </table>
+            <div class="table-wrap">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Nickname</th>
+                    <th class="sortable" data-key="goals">Goals</th>
+                    <th class="sortable" data-key="assists">Assists</th>
+                    <th class="sortable" data-key="yellow">Yellow</th>
+                    <th class="sortable" data-key="red">Red</th>
+                    <th>Cards Owed</th>
+                    <th>Fine Owed</th>
+                    <th>Fine Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="stats-body"></tbody>
+              </table>
+            </div>
           </section>
         </main>
       </div>

@@ -125,10 +125,10 @@
 
       const row = document.createElement("tr");
       row.innerHTML = `
-        <td>${player.name || ""}</td>
-        <td>${formatCurrency(paid)}</td>
-        <td>${formatCurrency(remaining)}</td>
-        <td><span class="pill ${status.className}">${status.text}</span></td>
+        <td data-label="Name">${player.name || ""}</td>
+        <td data-label="Paid">${formatCurrency(paid)}</td>
+        <td data-label="Remaining">${formatCurrency(remaining)}</td>
+        <td data-label="Status"><span class="pill ${status.className}">${status.text}</span></td>
       `;
       monthlyBody.appendChild(row);
     });
@@ -160,10 +160,10 @@
 
       const row = document.createElement("tr");
       row.innerHTML = `
-        <td>${player.name || ""}</td>
-        <td>${formatCurrency(paid)}</td>
-        <td>${formatCurrency(remaining)}</td>
-        <td><span class="pill ${status.className}">${status.text}</span></td>
+        <td data-label="Name">${player.name || ""}</td>
+        <td data-label="Paid">${formatCurrency(paid)}</td>
+        <td data-label="Remaining">${formatCurrency(remaining)}</td>
+        <td data-label="Status"><span class="pill ${status.className}">${status.text}</span></td>
       `;
       yearlyBody.appendChild(row);
     });
@@ -220,11 +220,11 @@
 
       const row = document.createElement("tr");
       row.innerHTML = `
-        <td>${player.name || ""}</td>
-        <td>${owedYellow}</td>
-        <td>${owedRed}</td>
-        <td>${formatCurrency(amountOwed)}</td>
-        <td><span class="pill ${statusClass}">${status}</span></td>
+        <td data-label="Name">${player.name || ""}</td>
+        <td data-label="Yellow Owed">${owedYellow}</td>
+        <td data-label="Red Owed">${owedRed}</td>
+        <td data-label="Amount Owed">${formatCurrency(amountOwed)}</td>
+        <td data-label="Status"><span class="pill ${statusClass}">${status}</span></td>
       `;
       finesBody.appendChild(row);
     });

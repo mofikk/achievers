@@ -133,15 +133,17 @@
       const status = getStatus(player);
       const row = document.createElement("tr");
       row.innerHTML = `
-        <td>${player.name || ""}</td>
-        <td>${player.nickname || "-"}</td>
-        <td>${formatPosition(player.position)}</td>
-        <td>${status.yearly}</td>
-        <td>${status.monthly}</td>
-        <td>
-          <button class="action-btn" data-id="${player.id}">View</button>
-          <button class="ghost-btn" data-edit-id="${player.id}">Edit</button>
-          <a class="ghost-btn" href="profile.html?id=${player.id}">View Profile</a>
+        <td data-label="Name">${player.name || ""}</td>
+        <td data-label="Nickname">${player.nickname || "-"}</td>
+        <td data-label="Position">${formatPosition(player.position)}</td>
+        <td data-label="Yearly">${status.yearly}</td>
+        <td data-label="Monthly">${status.monthly}</td>
+        <td data-label="Actions">
+          <div class="actions">
+            <button class="action-btn" data-id="${player.id}">View</button>
+            <button class="ghost-btn" data-edit-id="${player.id}">Edit</button>
+            <a class="ghost-btn" href="profile.html?id=${player.id}">View Profile</a>
+          </div>
         </td>
       `;
       body.appendChild(row);
