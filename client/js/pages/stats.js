@@ -12,6 +12,8 @@
   const assistsInput = document.getElementById("stats-assists");
   const yellowInput = document.getElementById("stats-yellow");
   const redInput = document.getElementById("stats-red");
+  const yellowPaidInput = document.getElementById("stats-yellow-paid");
+  const redPaidInput = document.getElementById("stats-red-paid");
 
   if (
     !body ||
@@ -25,10 +27,15 @@
     !goalsInput ||
     !assistsInput ||
     !yellowInput ||
-    !redInput
+    !redInput ||
+    !yellowPaidInput ||
+    !redPaidInput
   ) {
     return;
   }
+
+  const FINE_YELLOW = 500;
+  const FINE_RED = 1000;
 
   const state = {
     players: [],
@@ -50,6 +57,25 @@
       yellow: safeNumber(player?.stats?.yellow),
       red: safeNumber(player?.stats?.red)
     };
+  }
+
+  function getDiscipline(player) {
+    return {
+      yellowPaid: safeNumber(player?.discipline?.yellowPaid),
+      redPaid: safeNumber(player?.discipline?.redPaid)
+    };
+  }
+
+  function getFineSummary(player) {
+    const stats = getStats(player);
+    const discipline = getDiscipline(player);
+    const owedYellow = Math.max(0, stats.yellow - discipline.yellowPaid);
+    const owedRed = Math.max(0, stats.red - discipline.redPaid);
+    const fineOwed = owedYellow * FINE_YELLOW + owedRed * FINE_RED;
+    const totalPaid = discipline.yellowPaid + discipline.redPaid;
+    const status =
+      fineOwed === 0 ? "paid" : totalPaid === 0 ? "pending" : "incomplete";
+    return { owedYellow, owedRed, fineOwed, status };
   }
 
   function sortPlayers(players) {
@@ -77,6 +103,7 @@
     body.innerHTML = "";
     sorted.forEach((player) => {
       const stats = getStats(player);
+      const fines = getFineSummary(player);
       const row = document.createElement("tr");
       row.innerHTML = `
         <td>${player.name || ""}</td>
@@ -85,6 +112,9 @@
         <td>${stats.assists}</td>
         <td>${stats.yellow}</td>
         <td>${stats.red}</td>
+        <td>Y:${fines.owedYellow} R:${fines.owedRed}</td>
+        <td>\u20a6${fines.fineOwed}</td>
+        <td><span class="badge ${fines.status}">${fines.status}</span></td>
         <td><button class="action-btn" data-id="${player.id}">Edit</button></td>
       `;
       body.appendChild(row);
@@ -108,10 +138,13 @@
     modalName.textContent = player.name || "";
     errorEl.textContent = "";
     const stats = getStats(player);
+    const discipline = getDiscipline(player);
     goalsInput.value = String(stats.goals);
     assistsInput.value = String(stats.assists);
     yellowInput.value = String(stats.yellow);
     redInput.value = String(stats.red);
+    yellowPaidInput.value = String(discipline.yellowPaid);
+    redPaidInput.value = String(discipline.redPaid);
     modal.classList.remove("hidden");
     modal.setAttribute("aria-hidden", "false");
   }
@@ -179,7 +212,11 @@
       goals: safeNumber(goalsInput.value),
       assists: safeNumber(assistsInput.value),
       yellow: safeNumber(yellowInput.value),
-      red: safeNumber(redInput.value)
+      red: safeNumber(redInput.value),
+      discipline: {
+        yellowPaid: safeNumber(yellowPaidInput.value),
+        redPaid: safeNumber(redPaidInput.value)
+      }
     };
 
     setSaving(true);

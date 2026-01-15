@@ -397,6 +397,30 @@ body {
   height: 16px;
 }
 
+.data-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  color: var(--ink);
+  text-decoration: none;
+  font-weight: 600;
+  background: #ffffff;
+}
+
+.btn:hover {
+  border-color: #c3cad3;
+}
+
 .detail-grid {
   display: grid;
   gap: 12px;

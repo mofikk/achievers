@@ -290,7 +290,60 @@ router.patch("/:id/stats", async (req, res, next) => {
       return;
     }
 
+    const disciplineInput = req.body.discipline || {};
+    const existingDiscipline = player.discipline || { yellowPaid: 0, redPaid: 0 };
+    const yellowPaid = Number.isFinite(Number(disciplineInput.yellowPaid))
+      ? Number(disciplineInput.yellowPaid)
+      : Number(existingDiscipline.yellowPaid) || 0;
+    const redPaid = Number.isFinite(Number(disciplineInput.redPaid))
+      ? Number(disciplineInput.redPaid)
+      : Number(existingDiscipline.redPaid) || 0;
+
+    const cappedYellowPaid = Math.max(0, Math.min(yellowPaid, yellow));
+    const cappedRedPaid = Math.max(0, Math.min(redPaid, red));
+
     player.stats = { goals, assists, yellow, red };
+    player.discipline = {
+      yellowPaid: cappedYellowPaid,
+      redPaid: cappedRedPaid
+    };
+
+    await writeDb(db);
+    res.json(player);
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.patch("/:id/discipline", async (req, res, next) => {
+  try {
+    const db = await readDb();
+    const players = db.players || [];
+    const player = players.find((item) => item.id === req.params.id);
+
+    if (!player) {
+      res.status(404).json({ ok: false });
+      return;
+    }
+
+    const yellowPaid = Number(req.body.yellowPaid);
+    const redPaid = Number(req.body.redPaid);
+    if (
+      !Number.isFinite(yellowPaid) ||
+      !Number.isFinite(redPaid) ||
+      yellowPaid < 0 ||
+      redPaid < 0
+    ) {
+      res.status(400).send("Discipline payments must be non-negative numbers.");
+      return;
+    }
+
+    const yellowTotal = Number(player?.stats?.yellow) || 0;
+    const redTotal = Number(player?.stats?.red) || 0;
+    player.discipline = {
+      yellowPaid: Math.min(yellowPaid, yellowTotal),
+      redPaid: Math.min(redPaid, redTotal)
+    };
 
     await writeDb(db);
     res.json(player);

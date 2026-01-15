@@ -55,6 +55,9 @@
                   <th class="sortable" data-key="assists">Assists</th>
                   <th class="sortable" data-key="yellow">Yellow</th>
                   <th class="sortable" data-key="red">Red</th>
+                  <th>Cards Owed</th>
+                  <th>Fine Owed</th>
+                  <th>Fine Status</th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -86,6 +89,14 @@
           <label class="form-field">
             <span>Red</span>
             <input class="input" id="stats-red" type="number" min="0" />
+          </label>
+          <label class="form-field">
+            <span>Yellow Paid</span>
+            <input class="input" id="stats-yellow-paid" type="number" min="0" />
+          </label>
+          <label class="form-field">
+            <span>Red Paid</span>
+            <input class="input" id="stats-red-paid" type="number" min="0" />
           </label>
         </div>
         <div class="form-error" id="stats-error" role="alert"></div>
