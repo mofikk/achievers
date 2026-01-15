@@ -33,6 +33,11 @@ async function writeDb(data) {
   await fs.writeFile(dbPath, json, "utf-8");
 }
 
+function formatDisplayName(player) {
+  if (!player) return "Player";
+  return player.nickname ? `${player.name} (${player.nickname})` : player.name;
+}
+
 async function readSettings() {
   const settingsPath = path.join(__dirname, "..", "data", "settings.json");
   const raw = await fs.readFile(settingsPath, "utf-8");
@@ -108,7 +113,7 @@ router.post("/", async (req, res, next) => {
     db.players = players;
 
     await writeDb(db);
-    await logActivity(`New member joined: ${name}`);
+    await logActivity(`New member joined: ${formatDisplayName(player)}`);
     res.status(201).json(player);
   } catch (err) {
     next(err);
@@ -167,8 +172,10 @@ router.patch("/:id/payments", async (req, res, next) => {
 
     const prevYearlyPaid = Number(player.payments.yearly?.[yearKey]?.paid) || 0;
     const prevMonthlyPaid = Number(player.payments.monthly?.[monthKey]?.paid) || 0;
-    const prevYearlyExpected = Number(player.payments.yearly?.[yearKey]?.expected) || yearlyExpected;
-    const prevMonthlyExpected = Number(player.payments.monthly?.[monthKey]?.expected) || monthlyExpected;
+    const prevYearlyExpected =
+      Number(player.payments.yearly?.[yearKey]?.expected) || yearlyExpected;
+    const prevMonthlyExpected =
+      Number(player.payments.monthly?.[monthKey]?.expected) || monthlyExpected;
 
     player.payments.yearly[yearKey] = {
       expected: yearlyExpected,
@@ -180,11 +187,20 @@ router.patch("/:id/payments", async (req, res, next) => {
     };
 
     await writeDb(db);
-    if (prevYearlyPaid < prevYearlyExpected && yearlyPaid >= yearlyExpected) {
-      await logActivity(`Yearly payment completed: ${player.name || "Player"}`);
+    const prevYearlyCleared = prevYearlyPaid >= prevYearlyExpected;
+    const newYearlyCleared = yearlyPaid >= yearlyExpected;
+    if (!prevYearlyCleared && newYearlyCleared) {
+      await logActivity(
+        `Yearly subscription cleared: ${formatDisplayName(player)} (${yearKey})`
+      );
     }
-    if (prevMonthlyPaid < prevMonthlyExpected && monthlyPaid >= monthlyExpected) {
-      await logActivity(`Monthly payment completed: ${player.name || "Player"}`);
+
+    const prevMonthlyCleared = prevMonthlyPaid >= prevMonthlyExpected;
+    const newMonthlyCleared = monthlyPaid >= monthlyExpected;
+    if (!prevMonthlyCleared && newMonthlyCleared) {
+      await logActivity(
+        `Monthly payment cleared: ${formatDisplayName(player)} (${monthKey})`
+      );
     }
     res.json(player);
   } catch (err) {
@@ -344,7 +360,7 @@ router.patch("/:id/stats", async (req, res, next) => {
       Math.max(0, red - cappedRedPaid) * redFine;
 
     if (prevOwed > 0 && newOwed === 0) {
-      await logActivity(`Fines settled: ${player.name || "Player"}`);
+      await logActivity(`Fines settled: ${formatDisplayName(player)}`);
     }
     res.json(player);
   } catch (err) {
@@ -377,12 +393,25 @@ router.patch("/:id/discipline", async (req, res, next) => {
 
     const yellowTotal = Number(player?.stats?.yellow) || 0;
     const redTotal = Number(player?.stats?.red) || 0;
+    const previousDiscipline = player.discipline || { yellowPaid: 0, redPaid: 0 };
+    const settings = await readSettings();
+    const yellowFine = settings.discipline?.yellowFine ?? 500;
+    const redFine = settings.discipline?.redFine ?? 1000;
+    const prevOwed =
+      Math.max(0, yellowTotal - (previousDiscipline.yellowPaid || 0)) * yellowFine +
+      Math.max(0, redTotal - (previousDiscipline.redPaid || 0)) * redFine;
     player.discipline = {
       yellowPaid: Math.min(yellowPaid, yellowTotal),
       redPaid: Math.min(redPaid, redTotal)
     };
 
     await writeDb(db);
+    const newOwed =
+      Math.max(0, yellowTotal - player.discipline.yellowPaid) * yellowFine +
+      Math.max(0, redTotal - player.discipline.redPaid) * redFine;
+    if (prevOwed > 0 && newOwed === 0) {
+      await logActivity(`Fines settled: ${formatDisplayName(player)}`);
+    }
     res.json(player);
   } catch (err) {
     next(err);

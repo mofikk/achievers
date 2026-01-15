@@ -31,6 +31,10 @@
 
           <section class="cards">
             <div class="card">
+              <h3>Total Members</h3>
+              <div class="card-value" id="total-members">0</div>
+            </div>
+            <div class="card">
               <h3>Yearly Paid</h3>
               <div class="card-value" id="yearly-paid">0</div>
             </div>
@@ -45,6 +49,10 @@
             <div class="card">
               <h3>Monthly Pending</h3>
               <div class="card-value" id="monthly-pending">0</div>
+            </div>
+            <div class="card">
+              <h3>Best Streak</h3>
+              <div class="card-value" id="best-streak">0 weeks</div>
             </div>
           </section>
 
@@ -66,6 +74,12 @@
             </div>
             <div class="empty-state hidden" id="performers-empty">No stats yet.</div>
             <ul class="leaderboard" id="performers-list"></ul>
+          </section>
+
+          <section class="panel">
+            <h3>Attendance Streaks</h3>
+            <div class="empty-state hidden" id="streaks-empty">No attendance recorded yet.</div>
+            <ul class="leaderboard" id="streaks-list"></ul>
           </section>
         </main>
       </div>

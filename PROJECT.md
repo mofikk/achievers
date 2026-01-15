@@ -44,6 +44,7 @@ Archievers FC is a football community management system that tracks players, att
 - Payment status counts for yearly/monthly
 - Recent activity timeline
 - Top performers by goals, assists, G+A, yellow, red
+- Total members and attendance streaks
 
 ## Discipline fines
 - Fine amounts are configurable in Settings
