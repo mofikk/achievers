@@ -30,7 +30,57 @@
           </div>
 
           <section class="panel">
-            <div class="empty-state">Settings UI coming soon.</div>
+            <div class="settings-grid">
+              <div class="settings-section">
+                <h3 class="section-title">Club</h3>
+                <label class="form-field">
+                  <span>Club Name</span>
+                  <input class="input" id="setting-club-name" type="text" />
+                </label>
+                <label class="form-field">
+                  <span>Season</span>
+                  <input class="input" id="setting-season" type="number" min="2000" />
+                </label>
+                <label class="form-field">
+                  <span>Currency Symbol</span>
+                  <input class="input" id="setting-currency" type="text" maxlength="3" />
+                </label>
+              </div>
+
+              <div class="settings-section">
+                <h3 class="section-title">Fees</h3>
+                <label class="form-field">
+                  <span>Monthly Fee</span>
+                  <input class="input" id="setting-fee-monthly" type="number" min="0" />
+                </label>
+                <label class="form-field">
+                  <span>New Member Yearly Fee</span>
+                  <input class="input" id="setting-fee-new" type="number" min="0" />
+                </label>
+                <label class="form-field">
+                  <span>Renewal Yearly Fee</span>
+                  <input class="input" id="setting-fee-renewal" type="number" min="0" />
+                </label>
+              </div>
+
+              <div class="settings-section">
+                <h3 class="section-title">Attendance</h3>
+                <label class="form-field">
+                  <span>Attendance Start Date</span>
+                  <input class="input" id="setting-attendance-start" type="date" />
+                </label>
+                <label class="form-field checkbox-field">
+                  <input id="setting-attendance-lock" type="checkbox" />
+                  <span>Lock Future Dates</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="form-error" id="settings-error" role="alert"></div>
+            <div class="modal-actions">
+              <button class="ghost-btn" type="button" id="settings-reset">Reset to Defaults</button>
+              <button class="action-btn" type="button" id="settings-save">Save Settings</button>
+            </div>
           </section>
         </main>
       </div>

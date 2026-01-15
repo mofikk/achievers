@@ -23,7 +23,9 @@
     return;
   }
 
-  const MIN_DATE = "2026-01-10";
+  const defaultSettings = {
+    attendance: { startDate: "2026-01-10", lockFuture: true }
+  };
   const monthLabels = [
     "Jan",
     "Feb",
@@ -44,7 +46,8 @@
     players: [],
     attendance: {},
     filteredIds: [],
-    selectedDate: ""
+    selectedDate: "",
+    settings: defaultSettings
   };
   let isFuture = false;
 
@@ -58,7 +61,7 @@
     while (date.getMonth() === monthIndex) {
       if (date.getDay() === 6) {
         const dateStr = formatDate(year, monthIndex, date.getDate());
-        if (dateStr >= MIN_DATE) {
+        if (dateStr >= state.settings.attendance.startDate) {
           dates.push(dateStr);
         }
       }
@@ -118,6 +121,7 @@
   }
 
   function isFutureDate(dateStr) {
+    if (!state.settings.attendance.lockFuture) return false;
     const selected = new Date(`${dateStr}T00:00:00`);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -210,6 +214,17 @@
       .catch(console.error);
   }
 
+  function loadSettings() {
+    return window
+      .apiFetch("/settings")
+      .then((settings) => {
+        state.settings = settings;
+      })
+      .catch(() => {
+        state.settings = defaultSettings;
+      });
+  }
+
   monthSelect.addEventListener("change", populateDates);
   dateSelect.addEventListener("change", updateAttendanceFromDate);
   searchInput.addEventListener("input", renderTable);
@@ -260,5 +275,5 @@
       });
   });
 
-  loadPlayers();
+  loadSettings().finally(loadPlayers);
 })();

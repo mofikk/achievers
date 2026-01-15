@@ -5,6 +5,7 @@ const morgan = require("morgan");
 
 const playersRouter = require("./routes/players");
 const attendanceRouter = require("./routes/attendance");
+const settingsRouter = require("./routes/settings");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -21,6 +22,7 @@ app.get("/api/health", (req, res) => {
 
 app.use("/api/players", playersRouter);
 app.use("/api/attendance", attendanceRouter);
+app.use("/api/settings", settingsRouter);
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);

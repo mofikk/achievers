@@ -21,6 +21,12 @@
   const monthlyStatus = document.getElementById("monthly-status");
   const searchInput = document.getElementById("payments-search");
   const countEl = document.getElementById("payments-count");
+  const yearlyExpectedLabel = document.getElementById("yearly-expected-label");
+  const yearlyPaidLabel = document.getElementById("yearly-paid-label");
+  const yearlyRemainingLabel = document.getElementById("yearly-remaining-label");
+  const monthlyExpectedLabel = document.getElementById("monthly-expected-label");
+  const monthlyPaidLabel = document.getElementById("monthly-paid-label");
+  const monthlyRemainingLabel = document.getElementById("monthly-remaining-label");
 
   if (
     !body ||
@@ -42,12 +48,21 @@
     !monthlyRemaining ||
     !monthlyStatus ||
     !searchInput ||
-    !countEl
+    !countEl ||
+    !yearlyExpectedLabel ||
+    !yearlyPaidLabel ||
+    !yearlyRemainingLabel ||
+    !monthlyExpectedLabel ||
+    !monthlyPaidLabel ||
+    !monthlyRemainingLabel
   ) {
     return;
   }
 
-  const DEFAULT_MONTHLY_EXPECTED = 3000;
+  const defaultSettings = {
+    currencySymbol: "\u20a6",
+    fees: { monthly: 3000, newMemberYearly: 5000, renewalYearly: 2500 }
+  };
 
   const state = {
     players: [],
@@ -56,7 +71,8 @@
     yearKey: null,
     monthKey: null,
     years: [],
-    months: []
+    months: [],
+    settings: defaultSettings
   };
 
   function getNowYear() {
@@ -122,7 +138,10 @@
   function getYearlyPayment(player, yearKey) {
     const yearly = player?.payments?.yearly?.[yearKey];
     const memberSinceYear = getMemberSinceYear(player);
-    const expected = Number(yearKey) === memberSinceYear ? 5000 : 2500;
+    const expected =
+      Number(yearKey) === memberSinceYear
+        ? state.settings.fees.newMemberYearly
+        : state.settings.fees.renewalYearly;
     return {
       expected,
       paid: Number.isFinite(Number(yearly?.paid)) ? Number(yearly.paid) : 0
@@ -132,7 +151,7 @@
   function getMonthlyPayment(player, monthKey) {
     const monthly = player?.payments?.monthly?.[monthKey];
     return {
-      expected: DEFAULT_MONTHLY_EXPECTED,
+      expected: state.settings.fees.monthly,
       paid: Number.isFinite(Number(monthly?.paid)) ? Number(monthly.paid) : 0
     };
   }
@@ -265,6 +284,30 @@
       .catch(console.error);
   }
 
+  function setCurrencyLabels() {
+    const symbol = state.settings.currencySymbol || "";
+    const suffix = symbol ? ` (${symbol})` : "";
+    yearlyExpectedLabel.textContent = `Expected${suffix}`;
+    yearlyPaidLabel.textContent = `Paid${suffix}`;
+    yearlyRemainingLabel.textContent = `Remaining${suffix}`;
+    monthlyExpectedLabel.textContent = `Expected${suffix}`;
+    monthlyPaidLabel.textContent = `Paid${suffix}`;
+    monthlyRemainingLabel.textContent = `Remaining${suffix}`;
+  }
+
+  function loadSettings() {
+    return window
+      .apiFetch("/settings")
+      .then((settings) => {
+        state.settings = settings;
+        setCurrencyLabels();
+      })
+      .catch(() => {
+        state.settings = defaultSettings;
+        setCurrencyLabels();
+      });
+  }
+
   body.addEventListener("click", (event) => {
     const target = event.target;
     if (!target.classList.contains("action-btn")) return;
@@ -362,5 +405,5 @@
       });
   });
 
-  loadPlayers();
+  loadSettings().finally(loadPlayers);
 })();
