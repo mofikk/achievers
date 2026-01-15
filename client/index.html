@@ -31,26 +31,41 @@
 
           <section class="cards">
             <div class="card">
-              <h3>Total Players</h3>
-              <div class="card-value" id="total-players">0</div>
+              <h3>Yearly Paid</h3>
+              <div class="card-value" id="yearly-paid">0</div>
             </div>
             <div class="card">
-              <h3>Paid This Month</h3>
-              <div class="card-value" id="paid-month">0</div>
+              <h3>Yearly Pending</h3>
+              <div class="card-value" id="yearly-pending">0</div>
             </div>
             <div class="card">
-              <h3>Pending This Month</h3>
-              <div class="card-value" id="pending-month">0</div>
+              <h3>Monthly Paid</h3>
+              <div class="card-value" id="monthly-paid">0</div>
+            </div>
+            <div class="card">
+              <h3>Monthly Pending</h3>
+              <div class="card-value" id="monthly-pending">0</div>
             </div>
           </section>
 
           <section class="panel">
             <h3>Recent Activity</h3>
-            <ul class="activity">
-              <li>Samuel Okoro marked attendance (2025-01-19)</li>
-              <li>Kofi Mensah paid monthly subscription (2025-01-18)</li>
-              <li>Training session logged (2025-01-17)</li>
-            </ul>
+            <ul class="activity" id="activity-list"></ul>
+          </section>
+
+          <section class="panel">
+            <div class="page-title-row">
+              <h3>Top Performers</h3>
+              <div class="tab-group">
+                <button class="tab-btn active" data-tab="goals">Goals</button>
+                <button class="tab-btn" data-tab="assists">Assists</button>
+                <button class="tab-btn" data-tab="ga">G+A</button>
+                <button class="tab-btn" data-tab="yellow">Yellow</button>
+                <button class="tab-btn" data-tab="red">Red</button>
+              </div>
+            </div>
+            <div class="empty-state hidden" id="performers-empty">No stats yet.</div>
+            <ul class="leaderboard" id="performers-list"></ul>
           </section>
         </main>
       </div>

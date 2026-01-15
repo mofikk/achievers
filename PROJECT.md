@@ -21,6 +21,7 @@ Archievers FC is a football community management system that tracks players, att
 - Stats editing with season totals per player
 - Card fines tracking with yellow/red payments
 - Settings stored in `server/data/settings.json`
+- Dashboard synced with payments, activity, and top performers
 
 ## Subscription rules
 - Yearly subscriptions: `paid` or `pending`
@@ -38,6 +39,11 @@ Archievers FC is a football community management system that tracks players, att
 
 ## Data tools
 - CSV exports for players, payments, attendance, and stats
+
+## Dashboard
+- Payment status counts for yearly/monthly
+- Recent activity timeline
+- Top performers by goals, assists, G+A, yellow, red
 
 ## Discipline fines
 - Fine amounts are configurable in Settings

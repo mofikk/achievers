@@ -2,6 +2,7 @@ const fs = require("fs/promises");
 const path = require("path");
 const express = require("express");
 const { nanoid } = require("nanoid");
+const { logActivity } = require("./activity");
 
 const router = express.Router();
 const dbPath = path.join(__dirname, "..", "data", "db.json");
@@ -30,6 +31,12 @@ async function readDb() {
 async function writeDb(data) {
   const json = JSON.stringify(data, null, 2);
   await fs.writeFile(dbPath, json, "utf-8");
+}
+
+async function readSettings() {
+  const settingsPath = path.join(__dirname, "..", "data", "settings.json");
+  const raw = await fs.readFile(settingsPath, "utf-8");
+  return JSON.parse(raw);
 }
 
 router.get("/", async (req, res, next) => {
@@ -101,6 +108,7 @@ router.post("/", async (req, res, next) => {
     db.players = players;
 
     await writeDb(db);
+    await logActivity(`New member joined: ${name}`);
     res.status(201).json(player);
   } catch (err) {
     next(err);
@@ -157,6 +165,11 @@ router.patch("/:id/payments", async (req, res, next) => {
       player.payments.monthly = {};
     }
 
+    const prevYearlyPaid = Number(player.payments.yearly?.[yearKey]?.paid) || 0;
+    const prevMonthlyPaid = Number(player.payments.monthly?.[monthKey]?.paid) || 0;
+    const prevYearlyExpected = Number(player.payments.yearly?.[yearKey]?.expected) || yearlyExpected;
+    const prevMonthlyExpected = Number(player.payments.monthly?.[monthKey]?.expected) || monthlyExpected;
+
     player.payments.yearly[yearKey] = {
       expected: yearlyExpected,
       paid: yearlyPaid
@@ -167,6 +180,12 @@ router.patch("/:id/payments", async (req, res, next) => {
     };
 
     await writeDb(db);
+    if (prevYearlyPaid < prevYearlyExpected && yearlyPaid >= yearlyExpected) {
+      await logActivity(`Yearly payment completed: ${player.name || "Player"}`);
+    }
+    if (prevMonthlyPaid < prevMonthlyExpected && monthlyPaid >= monthlyExpected) {
+      await logActivity(`Monthly payment completed: ${player.name || "Player"}`);
+    }
     res.json(player);
   } catch (err) {
     next(err);
@@ -291,7 +310,9 @@ router.patch("/:id/stats", async (req, res, next) => {
     }
 
     const disciplineInput = req.body.discipline || {};
-    const existingDiscipline = player.discipline || { yellowPaid: 0, redPaid: 0 };
+    const previousStats = player.stats || {};
+    const previousDiscipline = player.discipline || { yellowPaid: 0, redPaid: 0 };
+    const existingDiscipline = previousDiscipline;
     const yellowPaid = Number.isFinite(Number(disciplineInput.yellowPaid))
       ? Number(disciplineInput.yellowPaid)
       : Number(existingDiscipline.yellowPaid) || 0;
@@ -302,6 +323,15 @@ router.patch("/:id/stats", async (req, res, next) => {
     const cappedYellowPaid = Math.max(0, Math.min(yellowPaid, yellow));
     const cappedRedPaid = Math.max(0, Math.min(redPaid, red));
 
+    const settings = await readSettings();
+    const yellowFine = settings.discipline?.yellowFine ?? 500;
+    const redFine = settings.discipline?.redFine ?? 1000;
+    const prevYellow = Number(previousStats.yellow) || 0;
+    const prevRed = Number(previousStats.red) || 0;
+    const prevOwed =
+      Math.max(0, prevYellow - (previousDiscipline.yellowPaid || 0)) * yellowFine +
+      Math.max(0, prevRed - (previousDiscipline.redPaid || 0)) * redFine;
+
     player.stats = { goals, assists, yellow, red };
     player.discipline = {
       yellowPaid: cappedYellowPaid,
@@ -309,6 +339,13 @@ router.patch("/:id/stats", async (req, res, next) => {
     };
 
     await writeDb(db);
+    const newOwed =
+      Math.max(0, yellow - cappedYellowPaid) * yellowFine +
+      Math.max(0, red - cappedRedPaid) * redFine;
+
+    if (prevOwed > 0 && newOwed === 0) {
+      await logActivity(`Fines settled: ${player.name || "Player"}`);
+    }
     res.json(player);
   } catch (err) {
     next(err);
