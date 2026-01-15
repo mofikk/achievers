@@ -48,6 +48,7 @@ Archievers FC is a football community management system that tracks players, att
 
 ## Settings controls
 - Fees are controlled by settings values
+- Monthly fee schedule rules apply from the selected month onward and can be edited in Settings
 - Attendance start date and future-date lock are controlled by settings
 
 ## Data tools

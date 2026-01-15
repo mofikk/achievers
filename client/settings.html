@@ -53,11 +53,6 @@
               <div class="settings-section">
                 <h3 class="section-title">Fees</h3>
                 <label class="form-field">
-                  <span>Monthly Schedule</span>
-                  <input class="input" id="setting-fee-monthly" type="text" readonly />
-                  <small class="helper-text">Managed by schedule policy</small>
-                </label>
-                <label class="form-field">
                   <span>New Member Yearly Fee</span>
                   <input class="input" id="setting-fee-new" type="number" min="0" />
                 </label>
@@ -97,6 +92,29 @@
               <button class="ghost-btn" type="button" id="settings-reset">Reset to Defaults</button>
               <button class="action-btn" type="button" id="settings-save">Save Settings</button>
             </div>
+          </section>
+
+          <section class="panel">
+            <h3 class="section-title">Monthly Fee Schedule</h3>
+            <p class="muted">
+              Fees apply from the selected month onward until another rule overrides it.
+            </p>
+            <div class="table-scroll">
+              <table class="table schedule-table">
+                <thead>
+                  <tr>
+                    <th>From (YYYY-MM)</th>
+                    <th>Amount (\u20a6)</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="monthly-schedule-body"></tbody>
+              </table>
+            </div>
+            <div class="modal-actions">
+              <button class="ghost-btn" type="button" id="add-schedule-rule">Add rule</button>
+            </div>
+            <p class="muted">Example: 2026-01 = 2000, 2026-02 = 3000</p>
           </section>
 
           <section class="panel">

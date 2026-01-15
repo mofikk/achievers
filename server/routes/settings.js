@@ -5,14 +5,36 @@ const express = require("express");
 const router = express.Router();
 const settingsPath = path.join(__dirname, "..", "data", "settings.json");
 
-async function readSettings() {
-  const raw = await fs.readFile(settingsPath, "utf-8");
-  return JSON.parse(raw);
-}
-
 async function writeSettings(data) {
   const json = JSON.stringify(data, null, 2);
   await fs.writeFile(settingsPath, json, "utf-8");
+}
+
+async function readSettings() {
+  const raw = await fs.readFile(settingsPath, "utf-8");
+  const parsed = JSON.parse(raw);
+  const fees = parsed.fees || {};
+  const schedule =
+    Array.isArray(fees.monthlySchedule) && fees.monthlySchedule.length
+      ? fees.monthlySchedule
+      : null;
+  const legacyMonthly = Number(fees.monthly);
+
+  if (!schedule && Number.isFinite(legacyMonthly)) {
+    const seasonYear = Number(parsed.season) || new Date().getFullYear();
+    const migrated = {
+      ...parsed,
+      fees: {
+        ...fees,
+        monthlySchedule: [{ from: `${seasonYear}-01`, amount: legacyMonthly }]
+      }
+    };
+    delete migrated.fees.monthly;
+    await writeSettings(migrated);
+    return migrated;
+  }
+
+  return parsed;
 }
 
 function isNonEmptyString(value) {
@@ -60,18 +82,31 @@ router.patch("/", async (req, res, next) => {
       return;
     }
 
-    const scheduleValidated = schedule
-      .map((item) => ({
-        from: String(item.from || "").trim(),
-        amount: Number(item.amount)
-      }))
-      .filter((item) => item.from && Number.isFinite(item.amount) && item.amount >= 0);
-
     const fromPattern = /^\d{4}-\d{2}$/;
-    const hasInvalidFrom = scheduleValidated.some((item) => !fromPattern.test(item.from));
+    const scheduleValidated = schedule.map((item) => ({
+      from: String(item.from || "").trim(),
+      amount: Number(item.amount)
+    }));
 
-    if (scheduleValidated.length !== schedule.length || hasInvalidFrom) {
-      res.status(400).send("Monthly schedule entries are invalid.");
+    const hasInvalidEntry = scheduleValidated.some(
+      (item) =>
+        !fromPattern.test(item.from) || !Number.isFinite(item.amount) || item.amount < 0
+    );
+
+    if (hasInvalidEntry) {
+      res.status(400).send("Monthly schedule entries must use YYYY-MM and valid amounts.");
+      return;
+    }
+
+    const seen = new Set();
+    const hasDuplicates = scheduleValidated.some((item) => {
+      if (seen.has(item.from)) return true;
+      seen.add(item.from);
+      return false;
+    });
+
+    if (hasDuplicates) {
+      res.status(400).send("Monthly schedule cannot contain duplicate months.");
       return;
     }
 

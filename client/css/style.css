@@ -336,6 +336,22 @@ body {
   letter-spacing: 0.7px;
 }
 
+.table-scroll {
+  overflow-x: auto;
+}
+
+.schedule-table {
+  min-width: 520px;
+}
+
+.schedule-table .input {
+  width: 100%;
+}
+
+.schedule-table .ghost-btn {
+  padding: 6px 10px;
+}
+
 .action-btn {
   border: none;
   background: var(--accent);
