@@ -411,7 +411,8 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px;
+  padding: 16px;
+  overflow-y: auto;
   z-index: 20;
 }
 
@@ -423,9 +424,9 @@ body {
   background: var(--surface);
   border-radius: 14px;
   padding: 20px;
-  width: min(520px, 100%);
+  width: min(720px, 100%);
   box-shadow: var(--shadow);
-  max-height: 90vh;
+  max-height: calc(100vh - 32px);
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -433,6 +434,23 @@ body {
 
 .modal-header h3 {
   font-size: 20px;
+}
+
+.modal-header {
+  flex: 0 0 auto;
+}
+
+.modal-content form {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.modal-body {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding-right: 6px;
 }
 
 .form-grid {
@@ -593,12 +611,18 @@ body {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
+  flex: 0 0 auto;
+  position: sticky;
+  bottom: 0;
+  background: var(--surface);
+  padding-top: 12px;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
 }
 
 .modal-body-scroll {
   overflow-y: auto;
-  padding-right: 8px;
-  max-height: calc(90vh - 180px);
+  padding-right: 6px;
+  max-height: calc(100vh - 220px);
 }
 
 .ghost-btn {

@@ -78,63 +78,65 @@
           <h3 id="player-modal-title">Add Player</h3>
         </div>
         <form id="player-form">
-          <div class="form-grid">
-            <label class="form-field">
-              <span>Name</span>
-              <input class="input" name="name" type="text" required />
-            </label>
-            <label class="form-field">
-              <span>Nickname</span>
-              <input class="input" name="nickname" type="text" />
-            </label>
-            <label class="form-field">
-              <span>Email</span>
-              <input class="input" name="email" type="email" />
-            </label>
-            <label class="form-field">
-              <span>Member since (year)</span>
-              <input class="input" name="memberSinceYear" type="number" min="2000" required />
-            </label>
-            <label class="form-field">
-              <span>Position</span>
-              <select class="input" name="position" required>
-                <option value="">Select position</option>
-                <option value="FW">Forward (FW)</option>
-                <option value="CM">Midfielder (CM)</option>
-                <option value="CDM">Midfielder (CDM)</option>
-                <option value="CAM">Midfielder (CAM)</option>
-                <option value="LM">Midfielder (LM)</option>
-                <option value="RM">Midfielder (RM)</option>
-                <option value="CB">Defender (CB)</option>
-                <option value="RB">Defender (RB)</option>
-                <option value="LB">Defender (LB)</option>
-                <option value="LW">Winger (LW)</option>
-                <option value="RW">Winger (RW)</option>
-              </select>
-            </label>
-          </div>
-          <details class="detail-group">
-            <summary class="muted">Initial Payments (optional)</summary>
+          <div class="modal-body">
             <div class="form-grid">
               <label class="form-field">
-                <span>Month Key (YYYY-MM)</span>
-                <input class="input" name="initialMonthKey" type="text" placeholder="2026-01" />
+                <span>Name</span>
+                <input class="input" name="name" type="text" required />
               </label>
               <label class="form-field">
-                <span>Monthly Paid</span>
-                <input class="input" name="initialMonthlyPaid" type="number" min="0" value="0" />
+                <span>Nickname</span>
+                <input class="input" name="nickname" type="text" />
               </label>
               <label class="form-field">
-                <span>Year Key (YYYY)</span>
-                <input class="input" name="initialYearKey" type="number" min="2000" />
+                <span>Email</span>
+                <input class="input" name="email" type="email" />
               </label>
               <label class="form-field">
-                <span>Yearly Paid</span>
-                <input class="input" name="initialYearlyPaid" type="number" min="0" value="0" />
+                <span>Member since (year)</span>
+                <input class="input" name="memberSinceYear" type="number" min="2000" required />
+              </label>
+              <label class="form-field">
+                <span>Position</span>
+                <select class="input" name="position" required>
+                  <option value="">Select position</option>
+                  <option value="FW">Forward (FW)</option>
+                  <option value="CM">Midfielder (CM)</option>
+                  <option value="CDM">Midfielder (CDM)</option>
+                  <option value="CAM">Midfielder (CAM)</option>
+                  <option value="LM">Midfielder (LM)</option>
+                  <option value="RM">Midfielder (RM)</option>
+                  <option value="CB">Defender (CB)</option>
+                  <option value="RB">Defender (RB)</option>
+                  <option value="LB">Defender (LB)</option>
+                  <option value="LW">Winger (LW)</option>
+                  <option value="RW">Winger (RW)</option>
+                </select>
               </label>
             </div>
-          </details>
-          <div class="form-error" id="player-error" role="alert"></div>
+            <details class="detail-group">
+              <summary class="muted">Initial Payments (optional)</summary>
+              <div class="form-grid">
+                <label class="form-field">
+                  <span>Month Key (YYYY-MM)</span>
+                  <input class="input" name="initialMonthKey" type="text" placeholder="2026-01" />
+                </label>
+                <label class="form-field">
+                  <span>Monthly Paid</span>
+                  <input class="input" name="initialMonthlyPaid" type="number" min="0" value="0" />
+                </label>
+                <label class="form-field">
+                  <span>Year Key (YYYY)</span>
+                  <input class="input" name="initialYearKey" type="number" min="2000" />
+                </label>
+                <label class="form-field">
+                  <span>Yearly Paid</span>
+                  <input class="input" name="initialYearlyPaid" type="number" min="0" value="0" />
+                </label>
+              </div>
+            </details>
+            <div class="form-error" id="player-error" role="alert"></div>
+          </div>
           <div class="modal-actions">
             <button class="ghost-btn" type="button" id="cancel-player-btn">Cancel</button>
             <button class="action-btn" type="submit">Save</button>
@@ -153,29 +155,31 @@
         <div class="modal-header">
           <h3 id="view-player-title">Player Details</h3>
         </div>
-        <div class="detail-grid">
-          <div class="detail-item">
-            <span>Name</span>
-            <strong id="view-name"></strong>
+        <div class="modal-body">
+          <div class="detail-grid">
+            <div class="detail-item">
+              <span>Name</span>
+              <strong id="view-name"></strong>
+            </div>
+            <div class="detail-item">
+              <span>Nickname</span>
+              <strong id="view-nickname"></strong>
+            </div>
+            <div class="detail-item">
+              <span>Position</span>
+              <strong id="view-position"></strong>
+            </div>
+            <div class="detail-item">
+              <span>Yearly</span>
+              <strong id="view-yearly"></strong>
+            </div>
+            <div class="detail-item">
+              <span>Monthly</span>
+              <strong id="view-monthly"></strong>
+            </div>
           </div>
-          <div class="detail-item">
-            <span>Nickname</span>
-            <strong id="view-nickname"></strong>
-          </div>
-          <div class="detail-item">
-            <span>Position</span>
-            <strong id="view-position"></strong>
-          </div>
-          <div class="detail-item">
-            <span>Yearly</span>
-            <strong id="view-yearly"></strong>
-          </div>
-          <div class="detail-item">
-            <span>Monthly</span>
-            <strong id="view-monthly"></strong>
-          </div>
+          <div class="form-error" id="view-error" role="alert"></div>
         </div>
-        <div class="form-error" id="view-error" role="alert"></div>
         <div class="modal-actions">
           <button class="ghost-btn" type="button" id="close-view-btn">Close</button>
           <button class="danger-btn" type="button" id="delete-player-btn">

@@ -81,73 +81,73 @@
         <div class="modal-header">
           <h3 id="payments-modal-title">Payments: <span id="payments-player-name"></span></h3>
         </div>
-        <p class="muted" id="member-since-label"></p>
-        <div class="modal-body-scroll">
+        <div class="modal-body">
+          <p class="muted" id="member-since-label"></p>
           <div class="payment-sections">
-          <div class="payment-section">
-            <h4 class="section-title">Yearly</h4>
-            <div class="form-grid">
-              <label class="form-field">
-                <span>Year</span>
-                <select class="input" id="yearly-year"></select>
-              </label>
-              <label class="form-field">
-                <span id="yearly-expected-label">Expected</span>
-                <input class="input" id="yearly-expected" type="number" min="0" readonly />
-                <small class="helper-text">Set automatically by policy</small>
-              </label>
-              <label class="form-field">
-                <span id="yearly-paid-label">Paid</span>
-                <input class="input" id="yearly-paid" type="number" min="0" />
-              </label>
-              <label class="form-field">
-                <span id="yearly-remaining-label">Remaining</span>
-                <input class="input" id="yearly-remaining" type="number" readonly />
-              </label>
-              <div class="form-field">
-                <span>Status</span>
-                <div class="badge-preview">
-                  <span class="badge pending" id="yearly-status">Pending</span>
+            <div class="payment-section">
+              <h4 class="section-title">Yearly</h4>
+              <div class="form-grid">
+                <label class="form-field">
+                  <span>Year</span>
+                  <select class="input" id="yearly-year"></select>
+                </label>
+                <label class="form-field">
+                  <span id="yearly-expected-label">Expected</span>
+                  <input class="input" id="yearly-expected" type="number" min="0" readonly />
+                  <small class="helper-text">Set automatically by policy</small>
+                </label>
+                <label class="form-field">
+                  <span id="yearly-paid-label">Paid</span>
+                  <input class="input" id="yearly-paid" type="number" min="0" />
+                </label>
+                <label class="form-field">
+                  <span id="yearly-remaining-label">Remaining</span>
+                  <input class="input" id="yearly-remaining" type="number" readonly />
+                </label>
+                <div class="form-field">
+                  <span>Status</span>
+                  <div class="badge-preview">
+                    <span class="badge pending" id="yearly-status">Pending</span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          <div class="payment-section">
-            <h4 class="section-title">Monthly</h4>
-            <div class="form-grid">
-              <label class="form-field">
-                <span>Year</span>
-                <select class="input" id="monthly-year"></select>
-              </label>
-              <label class="form-field">
-                <span>Month</span>
-                <select class="input" id="monthly-month"></select>
-              </label>
-              <label class="form-field">
-                <span id="monthly-expected-label">Expected</span>
-                <input class="input" id="monthly-expected" type="number" min="0" readonly />
-                <small class="helper-text">Set automatically by policy</small>
-              </label>
-              <label class="form-field">
-                <span id="monthly-paid-label">Paid</span>
-                <input class="input" id="monthly-paid" type="number" min="0" />
-              </label>
-              <label class="form-field">
-                <span id="monthly-remaining-label">Remaining</span>
-                <input class="input" id="monthly-remaining" type="number" readonly />
-              </label>
-              <div class="form-field">
-                <span>Status</span>
-                <div class="badge-preview">
-                  <span class="badge pending" id="monthly-status">Pending</span>
+            <div class="payment-section">
+              <h4 class="section-title">Monthly</h4>
+              <div class="form-grid">
+                <label class="form-field">
+                  <span>Year</span>
+                  <select class="input" id="monthly-year"></select>
+                </label>
+                <label class="form-field">
+                  <span>Month</span>
+                  <select class="input" id="monthly-month"></select>
+                </label>
+                <label class="form-field">
+                  <span id="monthly-expected-label">Expected</span>
+                  <input class="input" id="monthly-expected" type="number" min="0" readonly />
+                  <small class="helper-text">Set automatically by policy</small>
+                </label>
+                <label class="form-field">
+                  <span id="monthly-paid-label">Paid</span>
+                  <input class="input" id="monthly-paid" type="number" min="0" />
+                </label>
+                <label class="form-field">
+                  <span id="monthly-remaining-label">Remaining</span>
+                  <input class="input" id="monthly-remaining" type="number" readonly />
+                </label>
+                <div class="form-field">
+                  <span>Status</span>
+                  <div class="badge-preview">
+                    <span class="badge pending" id="monthly-status">Pending</span>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-          </div>
+          <div class="form-error" id="payments-error" role="alert"></div>
         </div>
-        <div class="form-error" id="payments-error" role="alert"></div>
         <div class="modal-actions">
           <button class="ghost-btn" type="button" id="payments-close">Close</button>
           <button class="action-btn" type="button" id="payments-save">Save</button>
