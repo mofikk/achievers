@@ -7,6 +7,8 @@
   const addError = document.getElementById("player-error");
   const addSaveBtn = addForm.querySelector("button[type=\"submit\"]");
   const addMemberSince = addForm.querySelector("input[name=\"memberSinceYear\"]");
+  const searchInput = document.getElementById("players-search");
+  const countEl = document.getElementById("players-count");
 
   const viewModal = document.getElementById("view-player-modal");
   const closeViewBtn = document.getElementById("close-view-btn");
@@ -37,6 +39,8 @@
     !viewPosition ||
     !viewYearly ||
     !viewMonthly ||
+    !searchInput ||
+    !countEl ||
     !modalTitle
   ) {
     return;
@@ -61,6 +65,7 @@
 
   const state = {
     players: [],
+    allPlayers: [],
     yearKey: null,
     monthKey: null
   };
@@ -120,6 +125,8 @@
       `;
       body.appendChild(row);
     });
+
+    countEl.textContent = `Showing ${players.length} of ${state.allPlayers.length} players`;
   }
 
   function loadPlayers() {
@@ -127,6 +134,7 @@
       .apiFetch("/players")
       .then((players) => {
         state.players = players;
+        state.allPlayers = players;
         computeKeys(players);
         renderPlayers(players);
       })
@@ -290,6 +298,20 @@
       .finally(() => {
         setAddLoading(false);
       });
+  });
+
+  searchInput.addEventListener("input", () => {
+    const query = searchInput.value.trim().toLowerCase();
+    if (!query) {
+      renderPlayers(state.allPlayers);
+      return;
+    }
+    const filtered = state.allPlayers.filter((player) => {
+      const name = String(player.name || "").toLowerCase();
+      const nickname = String(player.nickname || "").toLowerCase();
+      return name.includes(query) || nickname.includes(query);
+    });
+    renderPlayers(filtered);
   });
 
   deleteBtn.addEventListener("click", () => {

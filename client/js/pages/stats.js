@@ -6,6 +6,7 @@
   const errorEl = document.getElementById("stats-error");
   const cancelBtn = document.getElementById("stats-cancel");
   const saveBtn = document.getElementById("stats-save");
+  const countEl = document.getElementById("stats-count");
 
   const goalsInput = document.getElementById("stats-goals");
   const assistsInput = document.getElementById("stats-assists");
@@ -20,6 +21,7 @@
     !errorEl ||
     !cancelBtn ||
     !saveBtn ||
+    !countEl ||
     !goalsInput ||
     !assistsInput ||
     !yellowInput ||
@@ -30,6 +32,7 @@
 
   const state = {
     players: [],
+    allPlayers: [],
     editingId: null,
     sortKey: "goals",
     sortDir: "desc"
@@ -64,7 +67,7 @@
 
   function renderTable() {
     const search = searchInput.value.trim().toLowerCase();
-    const filtered = state.players.filter((player) => {
+    const filtered = state.allPlayers.filter((player) => {
       const name = String(player.name || "").toLowerCase();
       const nickname = String(player.nickname || "").toLowerCase();
       return !search || name.includes(search) || nickname.includes(search);
@@ -86,6 +89,8 @@
       `;
       body.appendChild(row);
     });
+
+    countEl.textContent = `Showing ${sorted.length} of ${state.allPlayers.length} players`;
   }
 
   function setSortIndicator() {
@@ -128,6 +133,7 @@
       .apiFetch("/players")
       .then((players) => {
         state.players = players;
+        state.allPlayers = players;
         renderTable();
         setSortIndicator();
       })

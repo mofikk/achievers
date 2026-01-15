@@ -19,6 +19,8 @@
   const monthlyPaid = document.getElementById("monthly-paid");
   const monthlyRemaining = document.getElementById("monthly-remaining");
   const monthlyStatus = document.getElementById("monthly-status");
+  const searchInput = document.getElementById("payments-search");
+  const countEl = document.getElementById("payments-count");
 
   if (
     !body ||
@@ -38,7 +40,9 @@
     !monthlyExpected ||
     !monthlyPaid ||
     !monthlyRemaining ||
-    !monthlyStatus
+    !monthlyStatus ||
+    !searchInput ||
+    !countEl
   ) {
     return;
   }
@@ -47,6 +51,7 @@
 
   const state = {
     players: [],
+    allPlayers: [],
     selectedId: null,
     yearKey: null,
     monthKey: null,
@@ -154,6 +159,8 @@
       `;
       body.appendChild(row);
     });
+
+    countEl.textContent = `Showing ${players.length} of ${state.allPlayers.length} players`;
   }
 
   function buildAvailableKeys(players) {
@@ -249,6 +256,7 @@
       .apiFetch("/players")
       .then((players) => {
         state.players = players;
+        state.allPlayers = players;
         state.yearKey = getLatestKey(players, "yearly", getNowYear());
         state.monthKey = getLatestKey(players, "monthly", getNowMonth());
         buildAvailableKeys(players);
@@ -266,6 +274,20 @@
     state.selectedId = playerId;
     fillModal(player);
     openModal();
+  });
+
+  searchInput.addEventListener("input", () => {
+    const query = searchInput.value.trim().toLowerCase();
+    if (!query) {
+      renderTable(state.allPlayers);
+      return;
+    }
+    const filtered = state.allPlayers.filter((player) => {
+      const name = String(player.name || "").toLowerCase();
+      const nickname = String(player.nickname || "").toLowerCase();
+      return name.includes(query) || nickname.includes(query);
+    });
+    renderTable(filtered);
   });
 
   closeBtn.addEventListener("click", closeModal);
