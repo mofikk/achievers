@@ -1,1 +1,23 @@
 node_modules/
+# ===== Archievers FC – Runtime & Data =====
+
+# Node
+node_modules/
+
+# Local env files
+.env
+.env.local
+
+# ===== Generated backups (Season rollover / imports) =====
+server/data/backups/
+server/data/backups/**
+
+# Optional: ignore temporary import files (if ever used)
+server/data/imports/
+server/data/imports/**
+
+# ===== OS / Editor junk =====
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

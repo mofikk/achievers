@@ -1,11 +1,17 @@
 {
   "clubName": "Archievers FC",
-  "season": 2027,
+  "season": 2026,
   "currencySymbol": "₦",
   "fees": {
     "monthlySchedule": [
-      { "from": "2026-01", "amount": 2000 },
-      { "from": "2026-02", "amount": 3000 }
+      {
+        "from": "2026-01",
+        "amount": 2000
+      },
+      {
+        "from": "2026-02",
+        "amount": 3000
+      }
     ],
     "newMemberYearly": 5000,
     "renewalYearly": 2500

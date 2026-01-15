@@ -3,20 +3,31 @@
     {
       "id": "p001",
       "name": "Samuel Okoro",
-      "position": "Forward",
+      "position": "FW",
       "subscriptions": {
-        "year": { "2025": "paid" },
+        "year": {
+          "2025": "paid"
+        },
         "months": {
           "2025-01": "paid",
           "2025-02": "paid",
           "2025-03": "pending"
         }
       },
-      "stats": { "goals": 6, "assists": 2, "yellow": 1, "red": 0 },
-      "attendance": {
-        "2025-01-05": true,
-        "2025-01-12": true,
-        "2025-01-19": false
+      "stats": {
+        "goals": 6,
+        "assists": 2,
+        "yellow": 1,
+        "red": 0
+      },
+      "attendance": {},
+      "payments": {
+        "yearly": {},
+        "monthly": {}
+      },
+      "nickname": "",
+      "membership": {
+        "memberSinceYear": 2026
       }
     },
     {
@@ -24,18 +35,25 @@
       "name": "Kofi Mensah",
       "position": "Midfielder",
       "subscriptions": {
-        "year": { "2025": "pending" },
+        "year": {
+          "2025": "pending"
+        },
         "months": {
           "2025-01": "paid",
           "2025-02": "incomplete",
           "2025-03": "pending"
         }
       },
-      "stats": { "goals": 2, "assists": 5, "yellow": 0, "red": 0 },
-      "attendance": {
-        "2025-01-05": true,
-        "2025-01-12": true,
-        "2025-01-19": true
+      "stats": {
+        "goals": 2,
+        "assists": 5,
+        "yellow": 0,
+        "red": 0
+      },
+      "attendance": {},
+      "payments": {
+        "yearly": {},
+        "monthly": {}
       }
     },
     {
@@ -43,18 +61,29 @@
       "name": "Emeka Nwosu",
       "position": "Defender",
       "subscriptions": {
-        "year": { "2025": "paid" },
+        "year": {
+          "2025": "paid"
+        },
         "months": {
           "2025-01": "paid",
           "2025-02": "paid",
           "2025-03": "paid"
         }
       },
-      "stats": { "goals": 1, "assists": 1, "yellow": 2, "red": 0 },
-      "attendance": {
-        "2025-01-05": true,
-        "2025-01-12": false,
-        "2025-01-19": true
+      "stats": {
+        "goals": 1,
+        "assists": 1,
+        "yellow": 2,
+        "red": 0
+      },
+      "attendance": {},
+      "discipline": {
+        "yellowPaid": 2,
+        "redPaid": 0
+      },
+      "payments": {
+        "yearly": {},
+        "monthly": {}
       }
     },
     {
@@ -62,37 +91,103 @@
       "name": "Ibrahim Sule",
       "position": "Goalkeeper",
       "subscriptions": {
-        "year": { "2025": "paid" },
+        "year": {
+          "2025": "paid"
+        },
         "months": {
           "2025-01": "paid",
           "2025-02": "pending",
           "2025-03": "pending"
         }
       },
-      "stats": { "goals": 0, "assists": 0, "yellow": 0, "red": 0 },
-      "attendance": {
-        "2025-01-05": true,
-        "2025-01-12": true,
-        "2025-01-19": true
+      "stats": {
+        "goals": 0,
+        "assists": 0,
+        "yellow": 0,
+        "red": 0
+      },
+      "attendance": {},
+      "payments": {
+        "yearly": {},
+        "monthly": {}
       }
     },
     {
-      "id": "p005",
-      "name": "Tunde Adebayo",
-      "position": "Winger",
+      "id": "BqC44qy6",
+      "name": "Frank",
+      "nickname": "Mofikk",
+      "position": "CB",
       "subscriptions": {
-        "year": { "2025": "pending" },
+        "year": {
+          "2026": "pending"
+        },
         "months": {
-          "2025-01": "pending",
-          "2025-02": "pending",
-          "2025-03": "pending"
+          "2026-01": "pending"
         }
       },
-      "stats": { "goals": 3, "assists": 4, "yellow": 1, "red": 1 },
-      "attendance": {
-        "2025-01-05": false,
-        "2025-01-12": true,
-        "2025-01-19": false
+      "stats": {
+        "goals": 0,
+        "assists": 0,
+        "yellow": 0,
+        "red": 0
+      },
+      "attendance": {},
+      "payments": {
+        "yearly": {
+          "2026": {
+            "expected": 5000,
+            "paid": 5000
+          }
+        },
+        "monthly": {
+          "2026-01": {
+            "expected": 2000,
+            "paid": 2000
+          }
+        }
+      },
+      "email": "",
+      "membership": {
+        "memberSinceYear": 2026
+      }
+    },
+    {
+      "id": "VRMEsHAm",
+      "name": "Femi",
+      "nickname": "FM",
+      "position": "FW",
+      "email": "",
+      "membership": {
+        "memberSinceYear": 2024
+      },
+      "subscriptions": {
+        "year": {
+          "2026": "pending"
+        },
+        "months": {
+          "2026-01": "pending"
+        }
+      },
+      "stats": {
+        "goals": 0,
+        "assists": 0,
+        "yellow": 0,
+        "red": 0
+      },
+      "attendance": {},
+      "payments": {
+        "yearly": {
+          "2026": {
+            "expected": 5000,
+            "paid": 2500
+          }
+        },
+        "monthly": {
+          "2026-01": {
+            "expected": 2000,
+            "paid": 2000
+          }
+        }
       }
     }
   ]
