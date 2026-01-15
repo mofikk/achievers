@@ -124,16 +124,20 @@
       const fines = getFineSummary(player);
       const row = document.createElement("tr");
       row.innerHTML = `
-        <td>${player.name || ""}</td>
-        <td>${player.nickname || "-"}</td>
-        <td>${stats.goals}</td>
-        <td>${stats.assists}</td>
-        <td>${stats.yellow}</td>
-        <td>${stats.red}</td>
-        <td>Y:${fines.owedYellow} R:${fines.owedRed}</td>
-        <td>\u20a6${fines.fineOwed}</td>
-        <td><span class="badge ${fines.status}">${fines.statusLabel}</span></td>
-        <td><button class="action-btn" data-id="${player.id}">Edit</button></td>
+        <td data-label="Name">${player.name || ""}</td>
+        <td data-label="Nickname">${player.nickname || "-"}</td>
+        <td data-label="Goals">${stats.goals}</td>
+        <td data-label="Assists">${stats.assists}</td>
+        <td data-label="Yellow">${stats.yellow}</td>
+        <td data-label="Red">${stats.red}</td>
+        <td data-label="Cards Owed">Y:${fines.owedYellow} R:${fines.owedRed}</td>
+        <td data-label="Fine Owed">\u20a6${fines.fineOwed}</td>
+        <td data-label="Fine Status"><span class="badge ${fines.status}">${fines.statusLabel}</span></td>
+        <td data-label="Actions">
+          <div class="actions">
+            <button class="action-btn" data-id="${player.id}">Edit</button>
+          </div>
+        </td>
       `;
       body.appendChild(row);
     });

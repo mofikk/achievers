@@ -97,10 +97,10 @@
     const amountValue = Number.isFinite(Number(item?.amount)) ? Number(item.amount) : 0;
 
     row.innerHTML = `
-      <td>
+      <td data-label="From (YYYY-MM)">
         <input class="input schedule-input schedule-from" type="month" value="${fromValue}" />
       </td>
-      <td>
+      <td data-label="Amount (\u20a6)">
         <input
           class="input schedule-input schedule-amount"
           type="number"
@@ -109,7 +109,7 @@
           value="${amountValue}"
         />
       </td>
-      <td>
+      <td data-label="Action">
         <button class="ghost-btn schedule-remove" type="button">Remove</button>
       </td>
     `;

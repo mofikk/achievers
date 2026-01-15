@@ -105,12 +105,12 @@
 
       const row = document.createElement("tr");
       row.innerHTML = `
-        <td>${player.name || ""}</td>
-        <td>${player.nickname || "-"}</td>
-        <td>${present}</td>
-        <td>${total}</td>
-        <td>${percent}%</td>
-        <td>${streak}</td>
+        <td data-label="Name">${player.name || ""}</td>
+        <td data-label="Nickname">${player.nickname || "-"}</td>
+        <td data-label="Present">${present}</td>
+        <td data-label="Total">${total}</td>
+        <td data-label="Attendance %">${percent}%</td>
+        <td data-label="Current Streak">${streak}</td>
       `;
       body.appendChild(row);
 

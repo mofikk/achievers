@@ -16,6 +16,12 @@
   padding: 0;
 }
 
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
 body {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   background: linear-gradient(135deg, #edf2ff, #f8fafc);
@@ -31,6 +37,7 @@ body.nav-open {
   display: grid;
   grid-template-columns: 240px 1fr;
   min-height: 100vh;
+  max-width: 100%;
 }
 
 .sidebar {
@@ -69,6 +76,7 @@ body.nav-open {
 .content {
   display: grid;
   grid-template-rows: auto 1fr;
+  max-width: 100%;
 }
 
 .topbar {
@@ -89,6 +97,7 @@ body.nav-open {
   padding: 28px 32px 40px;
   display: grid;
   gap: 24px;
+  max-width: 100%;
 }
 
 .page-title h2 {
@@ -218,6 +227,7 @@ body.nav-open {
   padding: 20px;
   border-radius: 14px;
   box-shadow: var(--shadow);
+  width: 100%;
 }
 
 .card h3 {
@@ -239,6 +249,7 @@ body.nav-open {
   padding: 20px;
   border-radius: 14px;
   box-shadow: var(--shadow);
+  width: 100%;
 }
 
 .activity {
@@ -767,6 +778,10 @@ body.nav-open {
     align-items: center;
     justify-content: center;
   }
+
+  .settings-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 600px) {
@@ -822,6 +837,61 @@ body.nav-open {
   }
 
   .table.responsive td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: var(--muted);
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .settings-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .settings-grid .input,
+  .settings-grid select,
+  .settings-grid button {
+    max-width: 100%;
+  }
+
+  .settings-grid .action-btn,
+  .settings-grid .ghost-btn,
+  .settings-grid .danger-btn,
+  .season-tools .modal-actions .action-btn,
+  .season-tools .modal-actions .ghost-btn {
+    width: 100%;
+  }
+
+  .season-tools .modal-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+@media (max-width: 480px) {
+  .schedule-table thead {
+    display: none;
+  }
+
+  .schedule-table tr {
+    display: block;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 12px;
+  }
+
+  .schedule-table td {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 0;
+    border: none;
+  }
+
+  .schedule-table td::before {
     content: attr(data-label);
     font-weight: 600;
     color: var(--muted);
