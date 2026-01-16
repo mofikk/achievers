@@ -32,8 +32,11 @@
     if (!type) return "—";
     if (type === "member_joined") return "Member joined";
     if (type === "monthly_cleared") return "Monthly cleared";
+    if (type === "monthly_updated") return "Monthly updated";
     if (type === "yearly_cleared") return "Yearly cleared";
+    if (type === "yearly_updated") return "Yearly updated";
     if (type === "fines_cleared") return "Fines cleared";
+    if (type === "visitor_promoted") return "Visitor promoted";
     return type;
   }
 

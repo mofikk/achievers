@@ -52,6 +52,7 @@ body.nav-open {
   font-weight: 700;
   letter-spacing: 0.5px;
   margin-bottom: 32px;
+  margin-left: 60px;
 }
 
 .nav {
@@ -72,6 +73,54 @@ body.nav-open {
 .nav-link.active {
   background: rgba(255, 255, 255, 0.12);
   color: #ffffff;
+}
+
+/* Dropdown groups in sidebar */
+.nav-dropdown {
+  display: block;
+  margin-top: 6px;
+}
+
+.nav-group-toggle {
+  color: #d0d8ff;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.nav-dropdown>summary::-webkit-details-marker {
+  display: none;
+}
+
+.nav-group-toggle:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+}
+
+.nav-group-toggle::after {
+  content: "v";
+  float: right;
+  opacity: 0.8;
+  transition: transform 0.2s ease;
+}
+
+.nav-dropdown[open]>.nav-group-toggle::after {
+  transform: rotate(180deg);
+}
+
+.nav-sub {
+  display: grid;
+  gap: 8px;
+  margin-top: 8px;
+  padding-left: 12px;
+}
+
+.nav-sub .nav-link {
+  padding-left: 18px;
 }
 
 .content {
@@ -281,6 +330,63 @@ body.nav-open {
   margin-top: 12px;
   display: flex;
   justify-content: flex-end;
+}
+
+.notes-fab {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 30;
+  background: var(--accent);
+  color: #ffffff;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 999px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: var(--shadow);
+}
+
+.notes-count {
+  background: #ffffff;
+  color: var(--accent);
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.notes-list {
+  display: grid;
+  gap: 12px;
+}
+
+.note-card {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  background: #ffffff;
+  display: grid;
+  gap: 8px;
+}
+
+.note-meta {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.note-text {
+  white-space: pre-wrap;
+}
+
+.note-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
 }
 
 .tab-group {
@@ -751,12 +857,43 @@ textarea.input {
   border: 1px solid var(--border);
   background: #ffffff;
   color: var(--ink);
-  width: 40px;
-  height: 40px;
+  min-width: 40px;
+  min-height: 40px;
+  padding: 6px;
   border-radius: 10px;
   font-size: 18px;
   cursor: pointer;
   display: none;
+  position: relative;
+  z-index: 21;
+}
+
+.menu-btn .hamburger {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 20px;
+  height: 14px;
+}
+
+.menu-btn .hamburger span {
+  display: block;
+  height: 2px;
+  background: var(--ink);
+  border-radius: 2px;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.menu-btn.is-open .hamburger span:nth-child(1) {
+  transform: translateY(6px) rotate(45deg);
+}
+
+.menu-btn.is-open .hamburger span:nth-child(2) {
+  opacity: 0;
+}
+
+.menu-btn.is-open .hamburger span:nth-child(3) {
+  transform: translateY(-6px) rotate(-45deg);
 }
 
 .nav-overlay {
@@ -810,6 +947,14 @@ textarea.input {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    z-index: 30;
+  }
+
+  body.nav-open #menu-btn {
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    z-index: 30;
   }
 
   .settings-grid {
@@ -818,6 +963,7 @@ textarea.input {
 }
 
 @media (max-width: 600px) {
+
   .topbar,
   .main {
     padding: 16px;
@@ -937,6 +1083,7 @@ textarea.input {
 }
 
 @media (max-width: 520px) {
+
   .modal-actions,
   .form-actions,
   .tool-actions {

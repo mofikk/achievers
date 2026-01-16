@@ -7,6 +7,9 @@
   const monthlyBody = document.getElementById("monthly-body");
   const yearlyBody = document.getElementById("yearly-body");
   const finesBody = document.getElementById("fines-body");
+  const visitorDateSelect = document.getElementById("visitor-report-date");
+  const visitorsTotals = document.getElementById("visitors-totals");
+  const visitorsBody = document.getElementById("visitors-body");
 
   if (
     !monthSelect ||
@@ -16,7 +19,10 @@
     !finesTotals ||
     !monthlyBody ||
     !yearlyBody ||
-    !finesBody
+    !finesBody ||
+    !visitorDateSelect ||
+    !visitorsTotals ||
+    !visitorsBody
   ) {
     return;
   }
@@ -37,9 +43,11 @@
 
   const state = {
     players: [],
+    visitors: [],
     settings: defaultSettings,
     months: [],
-    years: []
+    years: [],
+    visitorSessions: []
   };
 
   function formatCurrency(amount) {
@@ -93,21 +101,33 @@
     state.years = Array.from(years).sort();
   }
 
+  function buildSaturdayList(startDate, endDate) {
+    const dates = [];
+    const cursor = new Date(`${startDate}T00:00:00`);
+    const end = new Date(`${endDate}T00:00:00`);
+    if (Number.isNaN(cursor.getTime()) || Number.isNaN(end.getTime())) return dates;
+
+    while (cursor.getDay() !== 6) {
+      cursor.setDate(cursor.getDate() + 1);
+    }
+
+    while (cursor <= end) {
+      const dateStr = cursor.toISOString().slice(0, 10);
+      dates.push(dateStr);
+      cursor.setDate(cursor.getDate() + 7);
+    }
+    return dates;
+  }
+
   function getMonthlyExpected(monthKey) {
-    const schedule = state.settings.fees.monthlySchedule || [];
-    if (!schedule.length) return 0;
-    const sorted = [...schedule].sort((a, b) => a.from.localeCompare(b.from));
-    let candidate = sorted[0].amount;
-    sorted.forEach((item) => {
-      if (item.from <= monthKey) candidate = item.amount;
-    });
-    return candidate;
+    return window.paymentStatus.getMonthlyExpected(state.settings, monthKey);
   }
 
   function computeStatus(expected, paid) {
-    if (paid >= expected) return { text: "Cleared", className: "paid" };
-    if (paid === 0) return { text: "Pending", className: "pending" };
-    return { text: "Incomplete", className: "incomplete" };
+    const status = window.paymentStatus.statusFromPaid(expected, paid).status;
+    if (status === "PAID") return { text: "Cleared", className: "paid" };
+    if (status === "INCOMPLETE") return { text: "Incomplete", className: "incomplete" };
+    return { text: "Pending", className: "pending" };
   }
 
   function renderMonthly() {
@@ -147,11 +167,11 @@
 
     yearlyBody.innerHTML = "";
     state.players.forEach((player) => {
-      const memberSinceYear = getMemberSinceYear(player);
-      const expected =
-        Number(yearKey) === memberSinceYear
-          ? state.settings.fees.newMemberYearly
-          : state.settings.fees.renewalYearly;
+      const expected = window.paymentStatus.getYearlyExpected(
+        state.settings,
+        player,
+        yearKey
+      );
       const paid = Number(player?.payments?.yearly?.[yearKey]?.paid) || 0;
       const remaining = Math.max(0, expected - paid);
       const status = computeStatus(expected, paid);
@@ -236,26 +256,73 @@
     `;
   }
 
+  function renderVisitorsReport() {
+    const sessionDate = visitorDateSelect.value;
+    const expectedTotal = state.visitors.length * 1000;
+    let collected = 0;
+    visitorsBody.innerHTML = "";
+
+    state.visitors.forEach((visitor) => {
+      const paid = Number(visitor?.payments?.sessions?.[sessionDate]?.paid) || 0;
+      const summary = window.paymentStatus.statusFromPaid(1000, paid);
+      const remaining = summary.remaining;
+      const status =
+        summary.status === "PAID"
+          ? { text: "Cleared", className: "paid" }
+          : summary.status === "INCOMPLETE"
+            ? { text: "Incomplete", className: "incomplete" }
+            : { text: "Pending", className: "pending" };
+      collected += Math.min(paid, 1000);
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td data-label="Name">${visitor.name || ""}</td>
+        <td data-label="Paid">${formatCurrency(paid)}</td>
+        <td data-label="Remaining">${formatCurrency(remaining)}</td>
+        <td data-label="Status"><span class="pill ${status.className}">${status.text}</span></td>
+      `;
+      visitorsBody.appendChild(row);
+    });
+
+    visitorsTotals.innerHTML = `
+      <div class="detail-item"><span>Total Expected</span><strong>${formatCurrency(expectedTotal)}</strong></div>
+      <div class="detail-item"><span>Total Collected</span><strong>${formatCurrency(collected)}</strong></div>
+      <div class="detail-item"><span>Outstanding</span><strong>${formatCurrency(expectedTotal - collected)}</strong></div>
+    `;
+  }
+
   function renderAll() {
     renderMonthly();
     renderYearly();
     renderFines();
+    renderVisitorsReport();
   }
 
   function loadData() {
     Promise.all([
       window.apiFetch("/settings").catch(() => defaultSettings),
-      window.apiFetch("/players")
+      window.apiFetch("/players"),
+      window.apiFetch("/visitors")
     ])
-      .then(([settings, players]) => {
+      .then(([settings, players, visitors]) => {
         state.settings = settings || defaultSettings;
         state.players = players;
+        state.visitors = visitors || [];
         buildFilters(players);
         const latestMonth = getLatestMonth(players);
         const defaultMonth = latestMonth || "";
         const defaultYear = String(state.settings.season);
         buildOptions(monthSelect, state.months, defaultMonth);
         buildOptions(yearSelect, state.years, defaultYear);
+        const todayStr = new Date().toISOString().slice(0, 10);
+        state.visitorSessions = buildSaturdayList(
+          state.settings.attendance.startDate,
+          todayStr
+        );
+        buildOptions(
+          visitorDateSelect,
+          state.visitorSessions,
+          state.visitorSessions[state.visitorSessions.length - 1] || ""
+        );
         renderAll();
       })
       .catch(console.error);
@@ -263,6 +330,7 @@
 
   monthSelect.addEventListener("change", renderAll);
   yearSelect.addEventListener("change", renderAll);
+  visitorDateSelect.addEventListener("change", renderVisitorsReport);
 
   loadData();
 })();

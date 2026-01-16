@@ -1,65 +1,56 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Archievers FC - Obligations</title>
-    <link rel="stylesheet" href="css/style.css" />
-  </head>
-  <body>
-    <div class="app">
-      <aside class="sidebar" id="sidebar">
-        <div class="brand">Archievers FC</div>
-        <nav class="nav">
-          <a href="index.html" class="nav-link">Dashboard</a>
-          <a href="players.html" class="nav-link">Players</a>
-          <a href="payments.html" class="nav-link">Payments</a>
-          <a href="obligations.html" class="nav-link">Obligations</a>
-          <a href="attendance.html" class="nav-link">Attendance</a>
-          <a href="attendance-summary.html" class="nav-link">Attendance Summary</a>
-          <a href="stats.html" class="nav-link">Stats</a>
-          <a href="reports.html" class="nav-link">Reports</a>`n          <a href="activity.html" class="nav-link">Activity Logs</a>
-          <a href="settings.html" class="nav-link">Settings</a>
-        </nav>
-      </aside>
-      <div class="nav-overlay hidden" id="nav-overlay"></div>
-      <div class="content">
-        <header class="topbar">
-          <button class="menu-btn" id="menu-btn" aria-label="Open menu" aria-expanded="false">
-            ☰
-          </button>
-          <h1>Archievers FC</h1>
-        </header>
-        <main class="main">
-          <div class="page-title">
-            <div class="page-title-row">
-              <div>
-                <h2>Outstanding Obligations</h2>
-                <p>Combined view of fees and fines.</p>
-              </div>
-              <div class="page-title-actions">
-                <label class="form-field">
-                  <span>Month</span>
-                  <select class="input" id="obligation-month"></select>
-                </label>
-                <label class="form-field">
-                  <span>Year</span>
-                  <select class="input" id="obligation-year"></select>
-                </label>
-                <input
-                  id="obligation-search"
-                  class="input"
-                  type="search"
-                  placeholder="Search name or nickname..."
-                />
-                <span id="obligation-count" class="muted"></span>
-              </div>
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Archievers FC - Obligations</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+  <div class="app">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">Archievers FC</div>
+      <div id="sidebar-slot"></div>
+    </aside>
+    <div class="nav-overlay hidden" id="nav-overlay"></div>
+    <div class="content">
+      <header class="topbar">
+        <button class="menu-btn" id="menu-btn" aria-label="Open menu" aria-controls="sidebar" aria-expanded="false">
+          <span class="hamburger" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+          </span>
+        </button>
+        <h1>Archievers FC</h1>
+      </header>
+      <main class="main">
+        <div class="page-title">
+          <div class="page-title-row">
+            <div>
+              <h2>Outstanding Obligations</h2>
+              <p>Combined view of fees and fines.</p>
+            </div>
+            <div class="page-title-actions">
+              <label class="form-field">
+                <span>Month</span>
+                <select class="input" id="obligation-month"></select>
+              </label>
+              <label class="form-field">
+                <span>Year</span>
+                <select class="input" id="obligation-year"></select>
+              </label>
+              <input id="obligation-search" class="input" type="search" placeholder="Search name or nickname..." />
+              <span id="obligation-count" class="muted"></span>
             </div>
           </div>
+        </div>
 
-          <section class="panel">
-            <div class="table-wrap">
-              <table class="table responsive">
+        <section class="panel">
+          <div class="table-wrap">
+            <table class="table responsive">
               <thead>
                 <tr>
                   <th>Name</th>
@@ -73,14 +64,16 @@
                 </tr>
               </thead>
               <tbody id="obligation-body"></tbody>
-              </table>
-            </div>
-          </section>
-        </main>
-      </div>
+            </table>
+          </div>
+        </section>
+      </main>
     </div>
+  </div>
 
+  <script src="js/sidebar-loader.js"></script>
     <script src="js/app.js"></script>
-    <script src="js/pages/obligations.js"></script>
-  </body>
+  <script src="js/pages/obligations.js"></script>
+</body>
+
 </html>

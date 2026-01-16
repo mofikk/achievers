@@ -58,14 +58,7 @@
   }
 
   function getMonthlyExpected(monthKey) {
-    const schedule = state.settings.fees.monthlySchedule || [];
-    if (!schedule.length) return 0;
-    const sorted = [...schedule].sort((a, b) => a.from.localeCompare(b.from));
-    let candidate = sorted[0].amount;
-    sorted.forEach((item) => {
-      if (item.from <= monthKey) candidate = item.amount;
-    });
-    return candidate;
+    return window.paymentStatus.getMonthlyExpected(state.settings, monthKey);
   }
 
   function buildFilters(players) {
@@ -125,10 +118,11 @@
 
     const rows = players.map((player) => {
       const memberSinceYear = getMemberSinceYear(player);
-      const yearlyExpected =
-        Number(yearKey) === memberSinceYear
-          ? state.settings.fees.newMemberYearly
-          : state.settings.fees.renewalYearly;
+      const yearlyExpected = window.paymentStatus.getYearlyExpected(
+        state.settings,
+        player,
+        yearKey
+      );
       const yearlyPaid = Number(player?.payments?.yearly?.[yearKey]?.paid) || 0;
       const yearlyOwed = Math.max(0, yearlyExpected - yearlyPaid);
 

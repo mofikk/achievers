@@ -87,14 +87,7 @@
   };
 
   function getMonthlyExpected(monthKey) {
-    const schedule = state.settings.fees.monthlySchedule || [];
-    if (!schedule.length) return 0;
-    const sorted = [...schedule].sort((a, b) => a.from.localeCompare(b.from));
-    let candidate = sorted[0].amount;
-    sorted.forEach((item) => {
-      if (item.from <= monthKey) candidate = item.amount;
-    });
-    return candidate;
+    return window.paymentStatus.getMonthlyExpected(state.settings, monthKey);
   }
 
   function getNowYear() {
@@ -136,21 +129,16 @@
   }
 
   function updateMemberSinceLabel(player, selectedYear) {
-    const memberSinceYear = getMemberSinceYear(player);
+    const memberSinceYear =
+      Number(player?.membership?.memberSinceYear) || Number(getNowYear());
     const label =
       Number(selectedYear) === memberSinceYear ? "New member year" : "Renewal";
     memberSinceLabel.textContent = `Member since: ${memberSinceYear} (${label})`;
   }
 
   function deriveStatus(expected, paid) {
-    const expectedNum = Number(expected);
-    const paidNum = Number(paid);
-    if (expectedNum <= 0) {
-      return paidNum > 0 ? "incomplete" : "pending";
-    }
-    if (paidNum >= expectedNum) return "paid";
-    if (paidNum > 0) return "incomplete";
-    return "pending";
+    const status = window.paymentStatus.statusFromPaid(expected, paid).status;
+    return status === "PAID" ? "paid" : status === "INCOMPLETE" ? "incomplete" : "pending";
   }
 
   function formatStatusLabel(status) {
@@ -159,11 +147,7 @@
 
   function getYearlyPayment(player, yearKey) {
     const yearly = player?.payments?.yearly?.[yearKey];
-    const memberSinceYear = getMemberSinceYear(player);
-    const expected =
-      Number(yearKey) === memberSinceYear
-        ? state.settings.fees.newMemberYearly
-        : state.settings.fees.renewalYearly;
+    const expected = window.paymentStatus.getYearlyExpected(state.settings, player, yearKey);
     return {
       expected,
       paid: Number.isFinite(Number(yearly?.paid)) ? Number(yearly.paid) : 0

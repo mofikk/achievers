@@ -10,25 +10,18 @@
     <div class="app">
       <aside class="sidebar" id="sidebar">
         <div class="brand">Archievers FC</div>
-        <nav class="nav">
-          <a href="index.html" class="nav-link">Dashboard</a>
-          <a href="players.html" class="nav-link">Players</a>
-          <a href="payments.html" class="nav-link">Payments</a>
-          <a href="obligations.html" class="nav-link">Obligations</a>
-          <a href="attendance.html" class="nav-link">Attendance</a>
-          <a href="attendance-summary.html" class="nav-link">Attendance Summary</a>
-          <a href="stats.html" class="nav-link">Stats</a>
-          <a href="reports.html" class="nav-link">Reports</a>
-          <a href="activity.html" class="nav-link">Activity Logs</a>
-          <a href="settings.html" class="nav-link">Settings</a>
-        </nav>
+        <div id="sidebar-slot"></div>
       </aside>
       <div class="nav-overlay hidden" id="nav-overlay"></div>
       <div class="content">
         <header class="topbar">
-          <button class="menu-btn" id="menu-btn" aria-label="Open menu" aria-expanded="false">
-            ☰
-          </button>
+          <button class="menu-btn" id="menu-btn" aria-label="Open menu" aria-controls="sidebar" aria-expanded="false">
+          <span class="hamburger" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+          </span>
+        </button>
           <h1>Archievers FC</h1>
         </header>
         <main class="main">
@@ -53,8 +46,11 @@
                   <option value="">All types</option>
                   <option value="member_joined">Member joined</option>
                   <option value="monthly_cleared">Monthly cleared</option>
+                  <option value="monthly_updated">Monthly updated</option>
                   <option value="yearly_cleared">Yearly cleared</option>
+                  <option value="yearly_updated">Yearly updated</option>
                   <option value="fines_cleared">Fines cleared</option>
+                  <option value="visitor_promoted">Visitor promoted</option>
                 </select>
               </label>
               <label class="form-field">
@@ -84,6 +80,7 @@
       </div>
     </div>
 
+    <script src="js/sidebar-loader.js"></script>
     <script src="js/app.js"></script>
     <script src="js/pages/activity.js"></script>
   </body>

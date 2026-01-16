@@ -1,6 +1,11 @@
 const fs = require("fs/promises");
 const path = require("path");
 const express = require("express");
+const {
+  getMonthlyExpected,
+  getYearlyExpected,
+  statusFromPaid
+} = require("../lib/paymentStatus");
 
 const router = express.Router();
 const dbPath = path.join(__dirname, "..", "data", "db.json");
@@ -38,24 +43,6 @@ function getMemberSinceYear(player, currentYear) {
     return years[0];
   }
   return currentYear;
-}
-
-function deriveStatus(expected, paid) {
-  if (expected <= 0) return paid > 0 ? "incomplete" : "pending";
-  if (paid >= expected) return "paid";
-  if (paid > 0) return "incomplete";
-  return "pending";
-}
-
-function getMonthlyExpected(settings, monthKey) {
-  const schedule = settings.fees?.monthlySchedule || [];
-  if (!schedule.length) return 0;
-  const sorted = [...schedule].sort((a, b) => a.from.localeCompare(b.from));
-  let candidate = sorted[0].amount;
-  sorted.forEach((item) => {
-    if (item.from <= monthKey) candidate = item.amount;
-  });
-  return candidate;
 }
 
 router.get("/players.csv", async (req, res, next) => {
@@ -97,15 +84,12 @@ router.get("/payments.csv", async (req, res, next) => {
       const monthKey = months.sort().slice(-1)[0] || "";
       const yearlyRecord = player?.payments?.yearly?.[yearKey] || {};
       const monthlyRecord = player?.payments?.monthly?.[monthKey] || {};
-      const yearlyExpected =
-        Number(yearKey) === memberSinceYear
-          ? settings.fees.newMemberYearly
-          : settings.fees.renewalYearly;
+      const yearlyExpected = getYearlyExpected(settings, player, yearKey);
       const monthlyExpected = monthKey ? getMonthlyExpected(settings, monthKey) : 0;
       const yearlyPaid = Number(yearlyRecord.paid) || 0;
       const monthlyPaid = Number(monthlyRecord.paid) || 0;
-      const yearlyStatus = deriveStatus(yearlyExpected, yearlyPaid);
-      const monthlyStatus = deriveStatus(monthlyExpected, monthlyPaid);
+      const yearlyStatus = statusFromPaid(yearlyExpected, yearlyPaid).status.toLowerCase();
+      const monthlyStatus = statusFromPaid(monthlyExpected, monthlyPaid).status.toLowerCase();
 
       return [
         player.id,

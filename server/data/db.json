@@ -1,118 +1,6 @@
 {
   "players": [
     {
-      "id": "p001",
-      "name": "Samuel Okoro",
-      "position": "FW",
-      "subscriptions": {
-        "year": {
-          "2025": "paid"
-        },
-        "months": {
-          "2025-01": "paid",
-          "2025-02": "paid",
-          "2025-03": "pending"
-        }
-      },
-      "stats": {
-        "goals": 6,
-        "assists": 2,
-        "yellow": 1,
-        "red": 0
-      },
-      "attendance": {},
-      "payments": {
-        "yearly": {},
-        "monthly": {}
-      },
-      "nickname": "",
-      "membership": {
-        "memberSinceYear": 2026
-      }
-    },
-    {
-      "id": "p002",
-      "name": "Kofi Mensah",
-      "position": "Midfielder",
-      "subscriptions": {
-        "year": {
-          "2025": "pending"
-        },
-        "months": {
-          "2025-01": "paid",
-          "2025-02": "incomplete",
-          "2025-03": "pending"
-        }
-      },
-      "stats": {
-        "goals": 2,
-        "assists": 5,
-        "yellow": 0,
-        "red": 0
-      },
-      "attendance": {},
-      "payments": {
-        "yearly": {},
-        "monthly": {}
-      }
-    },
-    {
-      "id": "p003",
-      "name": "Emeka Nwosu",
-      "position": "Defender",
-      "subscriptions": {
-        "year": {
-          "2025": "paid"
-        },
-        "months": {
-          "2025-01": "paid",
-          "2025-02": "paid",
-          "2025-03": "paid"
-        }
-      },
-      "stats": {
-        "goals": 1,
-        "assists": 1,
-        "yellow": 2,
-        "red": 0
-      },
-      "attendance": {},
-      "discipline": {
-        "yellowPaid": 2,
-        "redPaid": 0
-      },
-      "payments": {
-        "yearly": {},
-        "monthly": {}
-      }
-    },
-    {
-      "id": "p004",
-      "name": "Ibrahim Sule",
-      "position": "Goalkeeper",
-      "subscriptions": {
-        "year": {
-          "2025": "paid"
-        },
-        "months": {
-          "2025-01": "paid",
-          "2025-02": "pending",
-          "2025-03": "pending"
-        }
-      },
-      "stats": {
-        "goals": 0,
-        "assists": 0,
-        "yellow": 0,
-        "red": 0
-      },
-      "attendance": {},
-      "payments": {
-        "yearly": {},
-        "monthly": {}
-      }
-    },
-    {
       "id": "BqC44qy6",
       "name": "Frank",
       "nickname": "Mofikk",
@@ -126,12 +14,14 @@
         }
       },
       "stats": {
-        "goals": 0,
+        "goals": 1,
         "assists": 0,
         "yellow": 0,
         "red": 0
       },
-      "attendance": {},
+      "attendance": {
+        "2026-01-10": true
+      },
       "payments": {
         "yearly": {
           "2026": {
@@ -149,7 +39,12 @@
       "email": "",
       "membership": {
         "memberSinceYear": 2026
-      }
+      },
+      "discipline": {
+        "yellowPaid": 0,
+        "redPaid": 0
+      },
+      "createdAt": "1970-01-01T00:00:00.000Z"
     },
     {
       "id": "VRMEsHAm",
@@ -169,12 +64,14 @@
         }
       },
       "stats": {
-        "goals": 0,
+        "goals": 3,
         "assists": 0,
         "yellow": 0,
         "red": 0
       },
-      "attendance": {},
+      "attendance": {
+        "2026-01-10": true
+      },
       "payments": {
         "yearly": {
           "2026": {
@@ -188,6 +85,787 @@
             "paid": 2000
           }
         }
+      },
+      "discipline": {
+        "yellowPaid": 0,
+        "redPaid": 0
+      },
+      "createdAt": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "AvrcyEHr",
+      "name": "Chizzy",
+      "nickname": "Chizzy",
+      "position": "FW",
+      "email": "",
+      "membership": {
+        "memberSinceYear": 2024
+      },
+      "subscriptions": {
+        "year": {
+          "2026": "pending"
+        },
+        "months": {
+          "2026-01": "pending"
+        }
+      },
+      "stats": {
+        "goals": 0,
+        "assists": 0,
+        "yellow": 0,
+        "red": 0
+      },
+      "attendance": {
+        "2026-01-10": true
+      },
+      "payments": {
+        "yearly": {
+          "2026": {
+            "expected": 2500,
+            "paid": 2500
+          }
+        },
+        "monthly": {
+          "2026-01": {
+            "expected": 2000,
+            "paid": 2000
+          }
+        }
+      },
+      "createdAt": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "AcAFH2W8",
+      "name": "Charles Okoli",
+      "nickname": "Charlie",
+      "position": "CB",
+      "email": "",
+      "membership": {
+        "memberSinceYear": 2024
+      },
+      "createdAt": "2026-01-16T12:44:12.596Z",
+      "subscriptions": {
+        "year": {
+          "2026": "pending"
+        },
+        "months": {
+          "2026-01": "pending"
+        }
+      },
+      "stats": {
+        "goals": 0,
+        "assists": 0,
+        "yellow": 0,
+        "red": 0
+      },
+      "attendance": {
+        "2026-01-10": true
+      },
+      "payments": {
+        "yearly": {
+          "2026": {
+            "expected": 2500,
+            "paid": 2500
+          }
+        },
+        "monthly": {
+          "2026-01": {
+            "expected": 2000,
+            "paid": 2000
+          }
+        }
+      }
+    },
+    {
+      "id": "TXgAQez7",
+      "name": "Emmanuel Okusanya",
+      "nickname": "Kidda",
+      "position": "RB",
+      "email": "",
+      "membership": {
+        "memberSinceYear": 2025
+      },
+      "createdAt": "2026-01-16T13:01:51.097Z",
+      "subscriptions": {
+        "year": {
+          "2026": "pending"
+        },
+        "months": {
+          "2026-01": "pending"
+        }
+      },
+      "stats": {
+        "goals": 0,
+        "assists": 0,
+        "yellow": 0,
+        "red": 0
+      },
+      "attendance": {
+        "2026-01-10": true
+      },
+      "payments": {
+        "yearly": {
+          "2026": {
+            "expected": 2500,
+            "paid": 2500
+          }
+        },
+        "monthly": {
+          "2026-01": {
+            "expected": 2000,
+            "paid": 2000
+          }
+        }
+      }
+    },
+    {
+      "id": "Iny77BdB",
+      "name": "Kingsley Okpala",
+      "nickname": "Energy",
+      "position": "CB",
+      "email": "",
+      "membership": {
+        "memberSinceYear": 2024
+      },
+      "createdAt": "2026-01-16T13:03:15.041Z",
+      "subscriptions": {
+        "year": {
+          "2026": "pending"
+        },
+        "months": {
+          "2026-01": "pending"
+        }
+      },
+      "stats": {
+        "goals": 0,
+        "assists": 0,
+        "yellow": 0,
+        "red": 0
+      },
+      "attendance": {
+        "2026-01-10": true
+      },
+      "payments": {
+        "yearly": {
+          "2026": {
+            "expected": 2500,
+            "paid": 2500
+          }
+        },
+        "monthly": {
+          "2026-01": {
+            "expected": 2000,
+            "paid": 2000
+          }
+        }
+      }
+    },
+    {
+      "id": "RO1IsAD0",
+      "name": "Jimmy Isaac",
+      "nickname": "Jimmy",
+      "position": "CB",
+      "email": "",
+      "membership": {
+        "memberSinceYear": 2026
+      },
+      "createdAt": "2026-01-16T13:03:58.930Z",
+      "subscriptions": {
+        "year": {
+          "2026": "pending"
+        },
+        "months": {
+          "2026-01": "pending"
+        }
+      },
+      "stats": {
+        "goals": 0,
+        "assists": 0,
+        "yellow": 0,
+        "red": 0
+      },
+      "attendance": {
+        "2026-01-10": true
+      },
+      "payments": {
+        "yearly": {
+          "2026": {
+            "expected": 5000,
+            "paid": 5000
+          }
+        },
+        "monthly": {
+          "2026-01": {
+            "expected": 2000,
+            "paid": 2000
+          }
+        }
+      }
+    },
+    {
+      "id": "mgQA7H-A",
+      "name": "Gabby",
+      "nickname": "Gabby",
+      "position": "CM",
+      "email": "",
+      "membership": {
+        "memberSinceYear": 2025
+      },
+      "createdAt": "2026-01-16T13:04:29.338Z",
+      "subscriptions": {
+        "year": {
+          "2026": "pending"
+        },
+        "months": {
+          "2026-01": "pending"
+        }
+      },
+      "stats": {
+        "goals": 1,
+        "assists": 0,
+        "yellow": 0,
+        "red": 0
+      },
+      "attendance": {
+        "2026-01-10": true
+      },
+      "payments": {
+        "yearly": {
+          "2026": {
+            "expected": 2500,
+            "paid": 2500
+          }
+        },
+        "monthly": {
+          "2026-01": {
+            "expected": 2000,
+            "paid": 2000
+          }
+        }
+      },
+      "discipline": {
+        "yellowPaid": 0,
+        "redPaid": 0
+      }
+    },
+    {
+      "id": "zepbBFdu",
+      "name": "Gbenga Adebiyi",
+      "nickname": "Gbenga",
+      "position": "CB",
+      "email": "",
+      "membership": {
+        "memberSinceYear": 2025
+      },
+      "createdAt": "2026-01-16T13:07:10.007Z",
+      "subscriptions": {
+        "year": {
+          "2026": "pending"
+        },
+        "months": {
+          "2026-01": "pending"
+        }
+      },
+      "stats": {
+        "goals": 0,
+        "assists": 0,
+        "yellow": 0,
+        "red": 0
+      },
+      "attendance": {
+        "2026-01-10": true
+      },
+      "payments": {
+        "yearly": {
+          "2026": {
+            "expected": 2500,
+            "paid": 2500
+          }
+        },
+        "monthly": {
+          "2026-01": {
+            "expected": 2000,
+            "paid": 2000
+          }
+        }
+      }
+    },
+    {
+      "id": "g6vNolg8",
+      "name": "Ifeanyi JohnPaul",
+      "nickname": "Jp",
+      "position": "CM",
+      "email": "",
+      "membership": {
+        "memberSinceYear": 2024
+      },
+      "createdAt": "2026-01-16T13:08:16.045Z",
+      "subscriptions": {
+        "year": {
+          "2026": "pending"
+        },
+        "months": {
+          "2026-01": "pending"
+        }
+      },
+      "stats": {
+        "goals": 0,
+        "assists": 0,
+        "yellow": 0,
+        "red": 0
+      },
+      "attendance": {
+        "2026-01-10": true
+      },
+      "payments": {
+        "yearly": {
+          "2026": {
+            "expected": 5000,
+            "paid": 2500
+          }
+        },
+        "monthly": {
+          "2026-01": {
+            "expected": 2000,
+            "paid": 2000
+          }
+        }
+      }
+    },
+    {
+      "id": "oKyh5fBO",
+      "name": "Kayode Bakare",
+      "nickname": "Kayode",
+      "position": "CAM",
+      "email": "",
+      "membership": {
+        "memberSinceYear": 2024
+      },
+      "createdAt": "2026-01-16T13:12:43.258Z",
+      "subscriptions": {
+        "year": {
+          "2026": "pending"
+        },
+        "months": {
+          "2026-01": "pending"
+        }
+      },
+      "stats": {
+        "goals": 0,
+        "assists": 0,
+        "yellow": 0,
+        "red": 0
+      },
+      "attendance": {
+        "2026-01-10": true
+      },
+      "payments": {
+        "yearly": {
+          "2026": {
+            "expected": 2500,
+            "paid": 2500
+          }
+        },
+        "monthly": {
+          "2026-01": {
+            "expected": 2000,
+            "paid": 2000
+          }
+        }
+      }
+    },
+    {
+      "id": "bSbpIAKy",
+      "name": "Davies Awanbor",
+      "nickname": "Yuwa",
+      "position": "FW",
+      "email": "",
+      "membership": {
+        "memberSinceYear": 2024
+      },
+      "createdAt": "2026-01-16T13:13:59.951Z",
+      "subscriptions": {
+        "year": {
+          "2026": "pending"
+        },
+        "months": {
+          "2026-01": "pending"
+        }
+      },
+      "stats": {
+        "goals": 3,
+        "assists": 0,
+        "yellow": 0,
+        "red": 0
+      },
+      "attendance": {
+        "2026-01-10": true
+      },
+      "payments": {
+        "yearly": {
+          "2026": {
+            "expected": 2500,
+            "paid": 2500
+          }
+        },
+        "monthly": {
+          "2026-01": {
+            "expected": 2000,
+            "paid": 2000
+          }
+        }
+      },
+      "discipline": {
+        "yellowPaid": 0,
+        "redPaid": 0
+      }
+    },
+    {
+      "id": "qXnh2eop",
+      "name": "Taiwo",
+      "nickname": "Taiwo",
+      "position": "LW",
+      "email": "",
+      "membership": {
+        "memberSinceYear": 2026
+      },
+      "createdAt": "2026-01-16T13:18:04.900Z",
+      "subscriptions": {
+        "year": {
+          "2026": "pending"
+        },
+        "months": {
+          "2026-01": "pending"
+        }
+      },
+      "stats": {
+        "goals": 1,
+        "assists": 0,
+        "yellow": 0,
+        "red": 0
+      },
+      "attendance": {
+        "2026-01-10": true
+      },
+      "payments": {
+        "yearly": {
+          "2026": {
+            "expected": 5000,
+            "paid": 0
+          }
+        },
+        "monthly": {
+          "2026-01": {
+            "expected": 2000,
+            "paid": 0
+          }
+        }
+      },
+      "discipline": {
+        "yellowPaid": 0,
+        "redPaid": 0
+      }
+    },
+    {
+      "id": "oJlxEEsM",
+      "name": "Ovansa",
+      "nickname": "Ovansa",
+      "position": "FW",
+      "email": "",
+      "membership": {
+        "memberSinceYear": 2025
+      },
+      "createdAt": "2026-01-16T13:18:34.106Z",
+      "subscriptions": {
+        "year": {
+          "2026": "pending"
+        },
+        "months": {
+          "2026-01": "pending"
+        }
+      },
+      "stats": {
+        "goals": 0,
+        "assists": 0,
+        "yellow": 0,
+        "red": 0
+      },
+      "attendance": {
+        "2026-01-10": true
+      },
+      "payments": {
+        "yearly": {
+          "2026": {
+            "expected": 2500,
+            "paid": 0
+          }
+        },
+        "monthly": {
+          "2026-01": {
+            "expected": 2000,
+            "paid": 0
+          }
+        }
+      }
+    },
+    {
+      "id": "kXT3QseE",
+      "name": "Alex",
+      "nickname": "Highest-Paid",
+      "position": "LW",
+      "email": "",
+      "membership": {
+        "memberSinceYear": 2025
+      },
+      "createdAt": "2026-01-16T13:19:24.015Z",
+      "subscriptions": {
+        "year": {
+          "2026": "pending"
+        },
+        "months": {
+          "2026-01": "pending"
+        }
+      },
+      "stats": {
+        "goals": 0,
+        "assists": 0,
+        "yellow": 0,
+        "red": 0
+      },
+      "attendance": {
+        "2026-01-10": true
+      },
+      "payments": {
+        "yearly": {
+          "2026": {
+            "expected": 2500,
+            "paid": 0
+          }
+        },
+        "monthly": {
+          "2026-01": {
+            "expected": 2000,
+            "paid": 0
+          }
+        }
+      }
+    },
+    {
+      "id": "jJeD_eRM",
+      "name": "Ibrahim Sanisu",
+      "nickname": "Ibro",
+      "position": "RW",
+      "email": "",
+      "membership": {
+        "memberSinceYear": 2025
+      },
+      "createdAt": "2026-01-16T13:20:18.101Z",
+      "subscriptions": {
+        "year": {
+          "2026": "pending"
+        },
+        "months": {
+          "2026-01": "pending"
+        }
+      },
+      "stats": {
+        "goals": 0,
+        "assists": 0,
+        "yellow": 0,
+        "red": 0
+      },
+      "attendance": {
+        "2026-01-10": true
+      },
+      "payments": {
+        "yearly": {
+          "2026": {
+            "expected": 2500,
+            "paid": 2500
+          }
+        },
+        "monthly": {
+          "2026-01": {
+            "expected": 2000,
+            "paid": 2000
+          }
+        }
+      }
+    },
+    {
+      "id": "sl8x0J6n",
+      "name": "Tobi",
+      "nickname": "Tobi",
+      "position": "CB",
+      "email": "",
+      "membership": {
+        "memberSinceYear": 2024
+      },
+      "createdAt": "2026-01-16T13:21:04.150Z",
+      "subscriptions": {
+        "year": {
+          "2026": "pending"
+        },
+        "months": {
+          "2026-01": "pending"
+        }
+      },
+      "stats": {
+        "goals": 0,
+        "assists": 0,
+        "yellow": 1,
+        "red": 0
+      },
+      "attendance": {
+        "2026-01-10": true
+      },
+      "payments": {
+        "yearly": {
+          "2026": {
+            "expected": 2500,
+            "paid": 0
+          }
+        },
+        "monthly": {
+          "2026-01": {
+            "expected": 2000,
+            "paid": 1000
+          }
+        }
+      },
+      "discipline": {
+        "yellowPaid": 0,
+        "redPaid": 0
+      }
+    },
+    {
+      "id": "AozbQgDs",
+      "name": "Nonso",
+      "nickname": "Charlie",
+      "position": "RM",
+      "email": "",
+      "membership": {
+        "memberSinceYear": 2025
+      },
+      "createdAt": "2026-01-16T13:37:26.913Z",
+      "subscriptions": {
+        "year": {
+          "2026": "pending"
+        },
+        "months": {
+          "2026-01": "pending"
+        }
+      },
+      "stats": {
+        "goals": 0,
+        "assists": 0,
+        "yellow": 0,
+        "red": 0
+      },
+      "attendance": {
+        "2026-01-10": true
+      },
+      "payments": {
+        "yearly": {
+          "2026": {
+            "expected": 2500,
+            "paid": 0
+          }
+        },
+        "monthly": {
+          "2026-01": {
+            "expected": 2000,
+            "paid": 0
+          }
+        }
+      }
+    },
+    {
+      "id": "tt5LYdYN",
+      "name": "Jibril",
+      "nickname": "Jibril",
+      "position": "RM",
+      "email": "",
+      "membership": {
+        "memberSinceYear": 2024
+      },
+      "createdAt": "2026-01-16T13:38:14.454Z",
+      "subscriptions": {
+        "year": {
+          "2026": "pending"
+        },
+        "months": {
+          "2026-01": "pending"
+        }
+      },
+      "stats": {
+        "goals": 0,
+        "assists": 0,
+        "yellow": 0,
+        "red": 0
+      },
+      "attendance": {
+        "2026-01-10": true
+      },
+      "payments": {
+        "yearly": {
+          "2026": {
+            "expected": 2500,
+            "paid": 0
+          }
+        },
+        "monthly": {
+          "2026-01": {
+            "expected": 2000,
+            "paid": 0
+          }
+        }
+      }
+    },
+    {
+      "id": "cMq1UUVf",
+      "name": "Taribo",
+      "nickname": "Taribo",
+      "position": "FW",
+      "email": "",
+      "membership": {
+        "memberSinceYear": 2026
+      },
+      "createdAt": "2026-01-16T13:39:13.222Z",
+      "subscriptions": {
+        "year": {
+          "2026": "pending"
+        },
+        "months": {
+          "2026-01": "pending"
+        }
+      },
+      "stats": {
+        "goals": 2,
+        "assists": 0,
+        "yellow": 0,
+        "red": 0
+      },
+      "attendance": {
+        "2026-01-10": true
+      },
+      "payments": {
+        "yearly": {
+          "2026": {
+            "expected": 5000,
+            "paid": 0
+          }
+        },
+        "monthly": {
+          "2026-01": {
+            "expected": 2000,
+            "paid": 0
+          }
+        }
+      },
+      "discipline": {
+        "yellowPaid": 0,
+        "redPaid": 0
       }
     }
   ]

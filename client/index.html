@@ -1,101 +1,99 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Archievers FC - Dashboard</title>
-    <link rel="stylesheet" href="css/style.css" />
-  </head>
-  <body>
-    <div class="app">
-      <aside class="sidebar" id="sidebar">
-        <div class="brand">Archievers FC</div>
-        <nav class="nav">
-          <a href="index.html" class="nav-link">Dashboard</a>
-          <a href="players.html" class="nav-link">Players</a>
-          <a href="payments.html" class="nav-link">Payments</a>
-          <a href="obligations.html" class="nav-link">Obligations</a>
-          <a href="attendance.html" class="nav-link">Attendance</a>
-          <a href="attendance-summary.html" class="nav-link">Attendance Summary</a>
-          <a href="stats.html" class="nav-link">Stats</a>
-          <a href="reports.html" class="nav-link">Reports</a>`n          <a href="activity.html" class="nav-link">Activity Logs</a>
-          <a href="settings.html" class="nav-link">Settings</a>
-        </nav>
-      </aside>
-      <div class="nav-overlay hidden" id="nav-overlay"></div>
-      <div class="content">
-        <header class="topbar">
-          <button class="menu-btn" id="menu-btn" aria-label="Open menu" aria-expanded="false">
-            ☰
-          </button>
-          <h1>Archievers FC</h1>
-        </header>
-        <main class="main">
-          <div class="page-title">
-            <h2>Dashboard</h2>
-            <p>Snapshot of the squad and subscriptions.</p>
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Archievers FC - Dashboard</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+  <div class="app">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">Archievers FC</div>
+      <div id="sidebar-slot"></div>
+    </aside>
+    <div class="nav-overlay hidden" id="nav-overlay"></div>
+    <div class="content">
+      <header class="topbar">
+        <button class="menu-btn" id="menu-btn" aria-label="Open menu" aria-controls="sidebar" aria-expanded="false">
+          <span class="hamburger" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+          </span>
+        </button>
+        <h1>Archievers FC</h1>
+      </header>
+      <main class="main">
+        <div class="page-title">
+          <h2>Dashboard</h2>
+          <p>Snapshot of the squad and subscriptions.</p>
+        </div>
+
+        <section class="cards">
+          <div class="card">
+            <h3>Total Members</h3>
+            <div class="card-value" id="total-members">0</div>
           </div>
+          <div class="card">
+            <h3>Yearly Paid</h3>
+            <div class="card-value" id="yearly-paid">0</div>
+          </div>
+          <div class="card">
+            <h3>Yearly Pending</h3>
+            <div class="card-value" id="yearly-pending">0</div>
+          </div>
+          <div class="card">
+            <h3>Monthly Paid</h3>
+            <div class="card-value" id="monthly-paid">0</div>
+          </div>
+          <div class="card">
+            <h3>Monthly Pending</h3>
+            <div class="card-value" id="monthly-pending">0</div>
+          </div>
+          <div class="card">
+            <h3>Best Streak</h3>
+            <div class="card-value" id="best-streak">0 weeks</div>
+          </div>
+        </section>
 
-          <section class="cards">
-            <div class="card">
-              <h3>Total Members</h3>
-              <div class="card-value" id="total-members">0</div>
-            </div>
-            <div class="card">
-              <h3>Yearly Paid</h3>
-              <div class="card-value" id="yearly-paid">0</div>
-            </div>
-            <div class="card">
-              <h3>Yearly Pending</h3>
-              <div class="card-value" id="yearly-pending">0</div>
-            </div>
-            <div class="card">
-              <h3>Monthly Paid</h3>
-              <div class="card-value" id="monthly-paid">0</div>
-            </div>
-            <div class="card">
-              <h3>Monthly Pending</h3>
-              <div class="card-value" id="monthly-pending">0</div>
-            </div>
-            <div class="card">
-              <h3>Best Streak</h3>
-              <div class="card-value" id="best-streak">0 weeks</div>
-            </div>
-          </section>
+        <section class="panel">
+          <h3>Recent Activity</h3>
+          <ul class="activity" id="activity-list"></ul>
+          <div class="activity-actions">
+            <a class="ghost-btn" href="activity.html">Show more</a>
+          </div>
+        </section>
 
-          <section class="panel">
-            <h3>Recent Activity</h3>
-            <ul class="activity" id="activity-list"></ul>
-            <div class="activity-actions">
-              <a class="ghost-btn" href="activity.html">Show more</a>
+        <section class="panel">
+          <div class="page-title-row">
+            <h3>Top Performers</h3>
+            <div class="tab-group">
+              <button class="tab-btn active" data-tab="goals">Goals</button>
+              <button class="tab-btn" data-tab="assists">Assists</button>
+              <button class="tab-btn" data-tab="ga">G+A</button>
+              <button class="tab-btn" data-tab="yellow">Yellow</button>
+              <button class="tab-btn" data-tab="red">Red</button>
             </div>
-          </section>
+          </div>
+          <div class="empty-state hidden" id="performers-empty">No stats yet.</div>
+          <ul class="leaderboard" id="performers-list"></ul>
+        </section>
 
-          <section class="panel">
-            <div class="page-title-row">
-              <h3>Top Performers</h3>
-              <div class="tab-group">
-                <button class="tab-btn active" data-tab="goals">Goals</button>
-                <button class="tab-btn" data-tab="assists">Assists</button>
-                <button class="tab-btn" data-tab="ga">G+A</button>
-                <button class="tab-btn" data-tab="yellow">Yellow</button>
-                <button class="tab-btn" data-tab="red">Red</button>
-              </div>
-            </div>
-            <div class="empty-state hidden" id="performers-empty">No stats yet.</div>
-            <ul class="leaderboard" id="performers-list"></ul>
-          </section>
-
-          <section class="panel">
-            <h3>Attendance Streaks</h3>
-            <div class="empty-state hidden" id="streaks-empty">No attendance recorded yet.</div>
-            <ul class="leaderboard" id="streaks-list"></ul>
-          </section>
-        </main>
-      </div>
+        <section class="panel">
+          <h3>Attendance Streaks</h3>
+          <div class="empty-state hidden" id="streaks-empty">No attendance recorded yet.</div>
+          <ul class="leaderboard" id="streaks-list"></ul>
+        </section>
+      </main>
     </div>
+  </div>
 
+  <script src="js/sidebar-loader.js"></script>
     <script src="js/app.js"></script>
-    <script src="js/pages/dashboard.js"></script>
-  </body>
+  <script src="js/pages/dashboard.js"></script>
+</body>
+
 </html>

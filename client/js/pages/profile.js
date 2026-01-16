@@ -101,37 +101,48 @@
     const player = state.player;
     if (!player) return;
     const seasonYear = String(state.settings.season);
-    const memberSinceYear = getMemberSinceYear(player);
-    const yearlyExpected =
-      Number(seasonYear) === memberSinceYear
-        ? state.settings.fees.newMemberYearly
-        : state.settings.fees.renewalYearly;
+    const yearlyExpected = window.paymentStatus.getYearlyExpected(
+      state.settings,
+      player,
+      seasonYear
+    );
     const yearlyPaid = Number(player?.payments?.yearly?.[seasonYear]?.paid) || 0;
-    const yearlyStatus = yearlyPaid >= yearlyExpected ? "Cleared" : "Pending";
+    const yearlyStatus = window.paymentStatus.statusFromPaid(yearlyExpected, yearlyPaid);
 
     const monthKey = monthSelect.value;
-    const monthlyExpected = getMonthlyExpected(monthKey);
+    const monthlyExpected = window.paymentStatus.getMonthlyExpected(
+      state.settings,
+      monthKey
+    );
     const monthlyPaid = Number(player?.payments?.monthly?.[monthKey]?.paid) || 0;
-    const monthlyStatus = monthlyPaid >= monthlyExpected ? "Cleared" : "Pending";
+    const monthlyStatus = window.paymentStatus.statusFromPaid(monthlyExpected, monthlyPaid);
+
+    const formatStatus = (status) =>
+      status === "PAID" ? "Paid" : status === "INCOMPLETE" ? "Incomplete" : "Pending";
 
     yearInput.value = seasonYear;
-    yearlyEl.textContent = `${yearlyStatus} • ${formatCurrency(yearlyPaid)} / ${formatCurrency(
-      yearlyExpected
-    )}`;
-    monthlyEl.textContent = `${monthlyStatus} • ${formatCurrency(monthlyPaid)} / ${formatCurrency(
-      monthlyExpected
-    )}`;
+    yearlyEl.textContent = `${formatStatus(yearlyStatus.status)} - ${formatCurrency(
+      yearlyPaid
+    )} / ${formatCurrency(yearlyExpected)}`;
+    monthlyEl.textContent = `${formatStatus(monthlyStatus.status)} - ${formatCurrency(
+      monthlyPaid
+    )} / ${formatCurrency(monthlyExpected)}`;
   }
 
-  function getMonthlyExpected(monthKey) {
-    const schedule = state.settings.fees.monthlySchedule || [];
-    if (!schedule.length) return 0;
-    const sorted = [...schedule].sort((a, b) => a.from.localeCompare(b.from));
-    let candidate = sorted[0].amount;
-    sorted.forEach((item) => {
-      if (item.from <= monthKey) candidate = item.amount;
+  function isSaturday(dateStr) {
+    const date = new Date(`${dateStr}T00:00:00`);
+    return !Number.isNaN(date.getTime()) && date.getDay() === 6;
+  }
+
+  function getLatestAttendanceDate(player, minDate, maxDate) {
+    const keys = Object.keys(player?.attendance || {}).filter((date) => {
+      if (!isSaturday(date)) return false;
+      if (minDate && date < minDate) return false;
+      if (maxDate && date > maxDate) return false;
+      return true;
     });
-    return candidate;
+    keys.sort();
+    return keys[keys.length - 1] || "";
   }
 
   function buildSaturdayList(startDate, endDate) {
@@ -166,13 +177,32 @@
     const player = state.player;
     if (!player) return;
     const todayStr = new Date().toISOString().slice(0, 10);
-    const saturdays = buildSaturdayList(state.settings.attendance.startDate, todayStr);
+    const startDate = state.settings.attendance.startDate;
+    const lockFuture = state.settings.attendance.lockFuture !== false;
+    const latestRecorded = getLatestAttendanceDate(player, startDate);
+    const endDate = lockFuture
+      ? todayStr
+      : latestRecorded && latestRecorded > todayStr
+        ? latestRecorded
+        : todayStr;
+    const seasonYear = String(state.settings.season || new Date().getFullYear());
+    const saturdays = buildSaturdayList(startDate, endDate).filter((date) => {
+      if (!date.startsWith(`${seasonYear}-`)) return false;
+      return isSaturday(date);
+    });
     const lastSix = saturdays.slice(-6);
     attendanceList.innerHTML = "";
+    if (!lastSix.length) {
+      const item = document.createElement("li");
+      item.textContent = "No attendance yet.";
+      attendanceList.appendChild(item);
+      streakEl.textContent = "Current streak: 0 weeks";
+      return;
+    }
     lastSix.forEach((date) => {
       const present = player?.attendance?.[date] === true;
       const item = document.createElement("li");
-      item.textContent = `${date} • ${present ? "Present" : "Absent"}`;
+      item.textContent = `${date} - ${present ? "Present" : "Absent"}`;
       attendanceList.appendChild(item);
     });
     const streak = computeStreak(player, saturdays);
@@ -216,7 +246,7 @@
     const player = state.player;
     if (!player) return;
     nameEl.textContent = player.name || "Player";
-    metaEl.textContent = `${player.position || ""} • Member since ${
+    metaEl.textContent = `${player.position || ""} - Member since ${player?.membership?.memberSinceYear || state.settings.season}`;
       player?.membership?.memberSinceYear || state.settings.season
     }`;
     editLink.href = `players.html?edit=${player.id}`;

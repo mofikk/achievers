@@ -251,12 +251,24 @@ router.patch("/:id/payments", async (req, res, next) => {
     };
 
     await writeDb(db);
+    const settings = await readSettings();
+    const currencySymbol = settings.currencySymbol || "\u20a6";
+    const yearlyChanged =
+      prevYearlyPaid !== yearlyPaid || prevYearlyExpected !== yearlyExpected;
+    const monthlyChanged =
+      prevMonthlyPaid !== monthlyPaid || prevMonthlyExpected !== monthlyExpected;
     const prevYearlyCleared = prevYearlyPaid >= prevYearlyExpected;
     const newYearlyCleared = yearlyPaid >= yearlyExpected;
     if (!prevYearlyCleared && newYearlyCleared) {
       await logActivity(
         `Yearly subscription cleared: ${formatDisplayName(player)} (${yearKey})`,
         "yearly_cleared"
+      );
+    }
+    if (yearlyChanged) {
+      await logActivity(
+        `Yearly payment updated: ${formatDisplayName(player)} (${yearKey}) ${currencySymbol}${yearlyPaid}/${currencySymbol}${yearlyExpected}`,
+        "yearly_updated"
       );
     }
 
@@ -266,6 +278,12 @@ router.patch("/:id/payments", async (req, res, next) => {
       await logActivity(
         `Monthly payment cleared: ${formatDisplayName(player)} (${monthKey})`,
         "monthly_cleared"
+      );
+    }
+    if (monthlyChanged) {
+      await logActivity(
+        `Monthly payment updated: ${formatDisplayName(player)} (${monthKey}) ${currencySymbol}${monthlyPaid}/${currencySymbol}${monthlyExpected}`,
+        "monthly_updated"
       );
     }
     res.json(player);

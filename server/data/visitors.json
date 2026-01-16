@@ -1,0 +1,50 @@
+[
+  {
+    "id": "fGsi9KsA",
+    "name": "uche",
+    "nickname": "",
+    "notes": "",
+    "createdAt": "2026-01-16T18:03:14.459Z",
+    "attendance": {},
+    "payments": {
+      "sessions": {
+        "2026-01-09": {
+          "expected": 1000,
+          "paid": 1000
+        }
+      }
+    },
+    "stats": {
+      "yellow": 0,
+      "red": 0
+    },
+    "discipline": {
+      "yellowPaid": 0,
+      "redPaid": 0
+    }
+  },
+  {
+    "id": "5nl8v2_E",
+    "name": "Nonso",
+    "nickname": "Nonso",
+    "notes": "",
+    "createdAt": "2026-01-16T20:52:59.447Z",
+    "attendance": {},
+    "payments": {
+      "sessions": {
+        "2026-01-09": {
+          "expected": 1000,
+          "paid": 1000
+        }
+      }
+    },
+    "stats": {
+      "yellow": 0,
+      "red": 0
+    },
+    "discipline": {
+      "yellowPaid": 0,
+      "redPaid": 0
+    }
+  }
+]

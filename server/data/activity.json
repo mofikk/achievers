@@ -23,5 +23,242 @@
     "id": "r-N6UwA1wL",
     "message": "Monthly payment cleared: Frank (Mofikk) (2026-01)",
     "timestamp": 1768498872285
+  },
+  {
+    "id": "9UDR3wavQw",
+    "message": "Monthly payment cleared: Chizzy (Chizzy) (2026-01)",
+    "timestamp": 1768567336481
+  },
+  {
+    "id": "8wa9Cb-r7d",
+    "message": "Yearly subscription cleared: Chizzy (Chizzy) (2026)",
+    "timestamp": 1768567336486
+  },
+  {
+    "id": "AWcTbSgiUZ",
+    "message": "New member joined: Chizzy (Chizzy)",
+    "timestamp": 1768567336491
+  },
+  {
+    "id": "BG14MSsvbn",
+    "message": "Monthly payment cleared: Charles Okoli (Charlie) (2026-01)",
+    "timestamp": 1768567452598,
+    "type": "monthly_cleared"
+  },
+  {
+    "id": "dIYv8ANzl6",
+    "message": "Yearly subscription cleared: Charles Okoli (Charlie) (2026)",
+    "timestamp": 1768567452602,
+    "type": "yearly_cleared"
+  },
+  {
+    "id": "Y5GAf4EylB",
+    "message": "New member joined: Charles Okoli (Charlie)",
+    "timestamp": 1768567452606,
+    "type": "member_joined"
+  },
+  {
+    "id": "RX_zZs02q6",
+    "message": "Monthly payment cleared: Emmanuel Okusanya (Kidda) (2026-01)",
+    "timestamp": 1768568511098,
+    "type": "monthly_cleared"
+  },
+  {
+    "id": "oCzfpChxRN",
+    "message": "Yearly subscription cleared: Emmanuel Okusanya (Kidda) (2026)",
+    "timestamp": 1768568511103,
+    "type": "yearly_cleared"
+  },
+  {
+    "id": "qXM67sypxg",
+    "message": "New member joined: Emmanuel Okusanya (Kidda)",
+    "timestamp": 1768568511109,
+    "type": "member_joined"
+  },
+  {
+    "id": "ZaHgSkt5a1",
+    "message": "Monthly payment cleared: Kingsley Okpala (Kingsley) (2026-01)",
+    "timestamp": 1768568595042,
+    "type": "monthly_cleared"
+  },
+  {
+    "id": "OrBEzHOzCO",
+    "message": "Yearly subscription cleared: Kingsley Okpala (Kingsley) (2026)",
+    "timestamp": 1768568595045,
+    "type": "yearly_cleared"
+  },
+  {
+    "id": "CIGgWM0YfA",
+    "message": "New member joined: Kingsley Okpala (Kingsley)",
+    "timestamp": 1768568595050,
+    "type": "member_joined"
+  },
+  {
+    "id": "V8Lbn6-eTw",
+    "message": "Monthly payment cleared: Jimmy Isaac (Jimmy) (2026-01)",
+    "timestamp": 1768568638931,
+    "type": "monthly_cleared"
+  },
+  {
+    "id": "NPAhNN_9MU",
+    "message": "Yearly subscription cleared: Jimmy Isaac (Jimmy) (2026)",
+    "timestamp": 1768568638934,
+    "type": "yearly_cleared"
+  },
+  {
+    "id": "xZ4gvCms40",
+    "message": "New member joined: Jimmy Isaac (Jimmy)",
+    "timestamp": 1768568638938,
+    "type": "member_joined"
+  },
+  {
+    "id": "-Xefi22Qbw",
+    "message": "Monthly payment cleared: Gabby (Gabby) (2026-01)",
+    "timestamp": 1768568669339,
+    "type": "monthly_cleared"
+  },
+  {
+    "id": "foQU7UomNQ",
+    "message": "Yearly subscription cleared: Gabby (Gabby) (2026)",
+    "timestamp": 1768568669341,
+    "type": "yearly_cleared"
+  },
+  {
+    "id": "ZpTkMnVX0k",
+    "message": "New member joined: Gabby (Gabby)",
+    "timestamp": 1768568669346,
+    "type": "member_joined"
+  },
+  {
+    "id": "3JcAWeYb_O",
+    "message": "Monthly payment cleared: Gbenga Adebiyi (Gbenga) (2026-01)",
+    "timestamp": 1768568830008,
+    "type": "monthly_cleared"
+  },
+  {
+    "id": "eMJBRnsE2h",
+    "message": "Yearly subscription cleared: Gbenga Adebiyi (Gbenga) (2026)",
+    "timestamp": 1768568830012,
+    "type": "yearly_cleared"
+  },
+  {
+    "id": "nzuEcvX3cB",
+    "message": "New member joined: Gbenga Adebiyi (Gbenga)",
+    "timestamp": 1768568830017,
+    "type": "member_joined"
+  },
+  {
+    "id": "3_zxx6kumX",
+    "message": "Monthly payment cleared: Ifeanyi JohnPaul (Jp) (2026-01)",
+    "timestamp": 1768568896046,
+    "type": "monthly_cleared"
+  },
+  {
+    "id": "nK7BEnMP8_",
+    "message": "New member joined: Ifeanyi JohnPaul (Jp)",
+    "timestamp": 1768568896052,
+    "type": "member_joined"
+  },
+  {
+    "id": "yAeP_qW-1v",
+    "message": "Monthly payment cleared: Kayode Bakare (Kayode) (2026-01)",
+    "timestamp": 1768569163259,
+    "type": "monthly_cleared"
+  },
+  {
+    "id": "D7_VGRj_Qe",
+    "message": "Yearly subscription cleared: Kayode Bakare (Kayode) (2026)",
+    "timestamp": 1768569163262,
+    "type": "yearly_cleared"
+  },
+  {
+    "id": "EtnN45igMp",
+    "message": "New member joined: Kayode Bakare (Kayode)",
+    "timestamp": 1768569163268,
+    "type": "member_joined"
+  },
+  {
+    "id": "UKCE4OnxkC",
+    "message": "Monthly payment cleared: Davies Awanbor (Yuwa) (2026-01)",
+    "timestamp": 1768569239952,
+    "type": "monthly_cleared"
+  },
+  {
+    "id": "3ymTBTy3va",
+    "message": "Yearly subscription cleared: Davies Awanbor (Yuwa) (2026)",
+    "timestamp": 1768569239955,
+    "type": "yearly_cleared"
+  },
+  {
+    "id": "6kXCkR4Kb2",
+    "message": "New member joined: Davies Awanbor (Yuwa)",
+    "timestamp": 1768569239960,
+    "type": "member_joined"
+  },
+  {
+    "id": "WR0nlr9TrF",
+    "message": "New member joined: Taiwo (Taiwo)",
+    "timestamp": 1768569484903,
+    "type": "member_joined"
+  },
+  {
+    "id": "K_8gxi0Sd-",
+    "message": "New member joined: Ovansa (Ovansa)",
+    "timestamp": 1768569514108,
+    "type": "member_joined"
+  },
+  {
+    "id": "pryad0fltz",
+    "message": "New member joined: Alex (Highest-Paid)",
+    "timestamp": 1768569564017,
+    "type": "member_joined"
+  },
+  {
+    "id": "B7FlX_vWz7",
+    "message": "Monthly payment cleared: Ibrahim Sanisu (Ibro) (2026-01)",
+    "timestamp": 1768569618102,
+    "type": "monthly_cleared"
+  },
+  {
+    "id": "g7Yt1cIDVt",
+    "message": "Yearly subscription cleared: Ibrahim Sanisu (Ibro) (2026)",
+    "timestamp": 1768569618106,
+    "type": "yearly_cleared"
+  },
+  {
+    "id": "Qy2Kmzcnia",
+    "message": "New member joined: Ibrahim Sanisu (Ibro)",
+    "timestamp": 1768569618111,
+    "type": "member_joined"
+  },
+  {
+    "id": "X_CqMnE6Xj",
+    "message": "New member joined: Tobi (Tobi)",
+    "timestamp": 1768569664153,
+    "type": "member_joined"
+  },
+  {
+    "id": "TTWqXc-xzR",
+    "message": "New member joined: Nonso (Charlie)",
+    "timestamp": 1768570646917,
+    "type": "member_joined"
+  },
+  {
+    "id": "46hMNW27Vd",
+    "message": "New member joined: Jibril (Jibril)",
+    "timestamp": 1768570694458,
+    "type": "member_joined"
+  },
+  {
+    "id": "SRmXjrs6Na",
+    "message": "New member joined: Taribo (Taribo)",
+    "timestamp": 1768570753225,
+    "type": "member_joined"
+  },
+  {
+    "id": "UfTn9JgFaL",
+    "message": "Fines settled: Femi (FM)",
+    "timestamp": 1768570807842,
+    "type": "fines_cleared"
   }
 ]

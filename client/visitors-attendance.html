@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Archievers FC - Visitors Attendance</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar" id="sidebar">
+        <div class="brand">Archievers FC</div>
+        <div id="sidebar-slot"></div>
+      </aside>
+      <div class="nav-overlay hidden" id="nav-overlay"></div>
+      <div class="content">
+        <header class="topbar">
+          <button class="menu-btn" id="menu-btn" aria-label="Open menu" aria-controls="sidebar" aria-expanded="false">
+          <span class="hamburger" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+          </span>
+        </button>
+          <h1>Archievers FC</h1>
+        </header>
+        <main class="main">
+          <div class="page-title">
+            <h2>Visitors Attendance</h2>
+            <p>Track visitor attendance by session.</p>
+          </div>
+
+          <section class="panel">
+            <div class="controls-row">
+              <label class="form-field">
+                <span>Month</span>
+                <select class="input" id="visitor-month"></select>
+              </label>
+              <label class="form-field">
+                <span>Session Date</span>
+                <select class="input" id="visitor-date"></select>
+              </label>
+              <label class="form-field">
+                <span>Search</span>
+                <input class="input" id="visitor-search" type="text" placeholder="Name or nickname" />
+              </label>
+              <div class="control-actions">
+                <button class="ghost-btn" type="button" id="mark-present">Mark all Present</button>
+                <button class="ghost-btn" type="button" id="mark-absent">Mark all Absent</button>
+                <button class="action-btn" type="button" id="save-attendance">Save</button>
+              </div>
+            </div>
+
+            <div class="summary-bar" id="visitor-summary">Present: 0 | Absent: 0</div>
+            <div class="hint-text" id="visitor-hint"></div>
+
+            <div class="table-wrap">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Nickname</th>
+                    <th>Present</th>
+                  </tr>
+                </thead>
+                <tbody id="visitor-body"></tbody>
+              </table>
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <script src="js/sidebar-loader.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/pages/visitors-attendance.js"></script>
+  </body>
+</html>

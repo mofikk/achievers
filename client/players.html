@@ -1,60 +1,51 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Archievers FC - Players</title>
-    <link rel="stylesheet" href="css/style.css" />
-  </head>
-  <body>
-    <div class="app">
-      <aside class="sidebar" id="sidebar">
-        <div class="brand">Archievers FC</div>
-        <nav class="nav">
-          <a href="index.html" class="nav-link">Dashboard</a>
-          <a href="players.html" class="nav-link">Players</a>
-          <a href="payments.html" class="nav-link">Payments</a>
-          <a href="obligations.html" class="nav-link">Obligations</a>
-          <a href="attendance.html" class="nav-link">Attendance</a>
-          <a href="attendance-summary.html" class="nav-link">Attendance Summary</a>
-          <a href="stats.html" class="nav-link">Stats</a>
-          <a href="reports.html" class="nav-link">Reports</a>`n          <a href="activity.html" class="nav-link">Activity Logs</a>
-          <a href="settings.html" class="nav-link">Settings</a>
-        </nav>
-      </aside>
-      <div class="nav-overlay hidden" id="nav-overlay"></div>
-      <div class="content">
-        <header class="topbar">
-          <button class="menu-btn" id="menu-btn" aria-label="Open menu" aria-expanded="false">
-            ☰
-          </button>
-          <h1>Archievers FC</h1>
-        </header>
-        <main class="main">
-          <div class="page-title">
-            <div class="page-title-row">
-              <div>
-                <h2>Players</h2>
-                <p>Roster and subscription status.</p>
-              </div>
-              <div class="page-title-actions">
-                <input
-                  id="players-search"
-                  class="input"
-                  type="search"
-                  placeholder="Search name or nickname..."
-                />
-                <span id="players-count" class="muted"></span>
-                <button class="action-btn" id="add-player-btn" type="button">
-                  Add Player
-                </button>
-              </div>
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Archievers FC - Players</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+  <div class="app">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">Archievers FC</div>
+      <div id="sidebar-slot"></div>
+    </aside>
+    <div class="nav-overlay hidden" id="nav-overlay"></div>
+    <div class="content">
+      <header class="topbar">
+        <button class="menu-btn" id="menu-btn" aria-label="Open menu" aria-controls="sidebar" aria-expanded="false">
+          <span class="hamburger" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+          </span>
+        </button>
+        <h1>Archievers FC</h1>
+      </header>
+      <main class="main">
+        <div class="page-title">
+          <div class="page-title-row">
+            <div>
+              <h2>Players</h2>
+              <p>Roster and subscription status.</p>
+            </div>
+            <div class="page-title-actions">
+              <input id="players-search" class="input" type="search" placeholder="Search name or nickname..." />
+              <span id="players-count" class="muted"></span>
+              <button class="action-btn" id="add-player-btn" type="button">
+                Add Player
+              </button>
             </div>
           </div>
+        </div>
 
-          <section class="panel">
-            <div class="table-wrap">
-              <table class="table responsive">
+        <section class="panel">
+          <div class="table-wrap">
+            <table class="table responsive">
               <thead>
                 <tr>
                   <th>Name</th>
@@ -66,150 +57,142 @@
                 </tr>
               </thead>
               <tbody id="players-body"></tbody>
-              </table>
-            </div>
-          </section>
-        </main>
-      </div>
+            </table>
+          </div>
+        </section>
+      </main>
     </div>
+  </div>
 
-    <div class="modal hidden" id="player-modal" aria-hidden="true">
-      <div
-        class="modal-content"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="player-modal-title"
-      >
-        <div class="modal-header">
-          <h3 id="player-modal-title">Add Player</h3>
-        </div>
-        <form id="player-form">
-          <div class="modal-body">
+  <div class="modal hidden" id="player-modal" aria-hidden="true">
+    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="player-modal-title">
+      <div class="modal-header">
+        <h3 id="player-modal-title">Add Player</h3>
+      </div>
+      <form id="player-form">
+        <div class="modal-body">
+          <div class="form-grid">
+            <label class="form-field">
+              <span>Name</span>
+              <input class="input" name="name" type="text" required />
+            </label>
+            <label class="form-field">
+              <span>Nickname</span>
+              <input class="input" name="nickname" type="text" />
+            </label>
+            <label class="form-field">
+              <span>Email</span>
+              <input class="input" name="email" type="email" />
+            </label>
+            <label class="form-field">
+              <span>Member since (year)</span>
+              <input class="input" name="memberSinceYear" type="number" min="2000" required />
+            </label>
+            <label class="form-field">
+              <span>Position</span>
+              <select class="input" name="position" required>
+                <option value="">Select position</option>
+                <option value="FW">Forward (FW)</option>
+                <option value="CM">Midfielder (CM)</option>
+                <option value="CDM">Midfielder (CDM)</option>
+                <option value="CAM">Midfielder (CAM)</option>
+                <option value="LM">Midfielder (LM)</option>
+                <option value="RM">Midfielder (RM)</option>
+                <option value="CB">Defender (CB)</option>
+                <option value="RB">Defender (RB)</option>
+                <option value="LB">Defender (LB)</option>
+                <option value="LW">Winger (LW)</option>
+                <option value="RW">Winger (RW)</option>
+              </select>
+            </label>
+          </div>
+          <details class="detail-group">
+            <summary class="muted">Initial Payments (optional)</summary>
             <div class="form-grid">
-              <label class="form-field">
-                <span>Name</span>
-                <input class="input" name="name" type="text" required />
-              </label>
-              <label class="form-field">
-                <span>Nickname</span>
-                <input class="input" name="nickname" type="text" />
-              </label>
-              <label class="form-field">
-                <span>Email</span>
-                <input class="input" name="email" type="email" />
-              </label>
-              <label class="form-field">
-                <span>Member since (year)</span>
-                <input class="input" name="memberSinceYear" type="number" min="2000" required />
-              </label>
-              <label class="form-field">
-                <span>Position</span>
-                <select class="input" name="position" required>
-                  <option value="">Select position</option>
-                  <option value="FW">Forward (FW)</option>
-                  <option value="CM">Midfielder (CM)</option>
-                  <option value="CDM">Midfielder (CDM)</option>
-                  <option value="CAM">Midfielder (CAM)</option>
-                  <option value="LM">Midfielder (LM)</option>
-                  <option value="RM">Midfielder (RM)</option>
-                  <option value="CB">Defender (CB)</option>
-                  <option value="RB">Defender (RB)</option>
-                  <option value="LB">Defender (LB)</option>
-                  <option value="LW">Winger (LW)</option>
-                  <option value="RW">Winger (RW)</option>
-                </select>
-              </label>
-            </div>
-            <details class="detail-group">
-              <summary class="muted">Initial Payments (optional)</summary>
-              <div class="form-grid">
               <label class="form-field">
                 <span>Month Key (YYYY-MM)</span>
                 <input class="input" name="initialMonthKey" type="month" value="2026-01" />
               </label>
-                <label class="form-field">
-                  <span>Monthly Paid</span>
-                  <input class="input" name="initialMonthlyPaid" type="number" min="0" value="0" />
-                </label>
-                <label class="form-field">
-                  <span>Year Key (YYYY)</span>
-                  <input class="input" name="initialYearKey" type="number" min="2000" />
-                </label>
-                <label class="form-field">
-                  <span>Yearly Paid</span>
-                  <input class="input" name="initialYearlyPaid" type="number" min="0" value="0" />
-                </label>
-              </div>
-            </details>
-            <div class="form-error" id="player-error" role="alert"></div>
-          </div>
-          <div class="modal-actions">
-            <button class="ghost-btn" type="button" id="cancel-player-btn">Cancel</button>
-            <button class="action-btn" type="submit">Save</button>
-          </div>
-        </form>
-      </div>
-    </div>
-
-    <div class="modal hidden" id="view-player-modal" aria-hidden="true">
-      <div
-        class="modal-content"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="view-player-title"
-      >
-        <div class="modal-header">
-          <h3 id="view-player-title">Player Details</h3>
-        </div>
-        <div class="modal-body">
-          <div class="detail-grid">
-            <div class="detail-item">
-              <span>Name</span>
-              <strong id="view-name"></strong>
+              <label class="form-field">
+                <span>Monthly Paid</span>
+                <input class="input" name="initialMonthlyPaid" type="number" min="0" value="0" />
+              </label>
+              <label class="form-field">
+                <span>Year Key (YYYY)</span>
+                <input class="input" name="initialYearKey" type="number" min="2000" />
+              </label>
+              <label class="form-field">
+                <span>Yearly Paid</span>
+                <input class="input" name="initialYearlyPaid" type="number" min="0" value="0" />
+              </label>
             </div>
-            <div class="detail-item">
-              <span>Nickname</span>
-              <strong id="view-nickname"></strong>
-            </div>
-            <div class="detail-item">
-              <span>Position</span>
-              <strong id="view-position"></strong>
-            </div>
-            <div class="detail-item">
-              <span>Yearly</span>
-              <strong id="view-yearly"></strong>
-            </div>
-            <div class="detail-item">
-              <span>Monthly</span>
-              <strong id="view-monthly"></strong>
-            </div>
-          </div>
-          <div class="form-error" id="view-error" role="alert"></div>
+          </details>
+          <div class="form-error" id="player-error" role="alert"></div>
         </div>
         <div class="modal-actions">
-          <button class="ghost-btn" type="button" id="close-view-btn">Close</button>
-          <button class="danger-btn" type="button" id="delete-player-btn">
-            Delete Player
-          </button>
+          <button class="ghost-btn" type="button" id="cancel-player-btn">Cancel</button>
+          <button class="action-btn" type="submit">Save</button>
         </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal hidden" id="view-player-modal" aria-hidden="true">
+    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="view-player-title">
+      <div class="modal-header">
+        <h3 id="view-player-title">Player Details</h3>
+      </div>
+      <div class="modal-body">
+        <div class="detail-grid">
+          <div class="detail-item">
+            <span>Name</span>
+            <strong id="view-name"></strong>
+          </div>
+          <div class="detail-item">
+            <span>Nickname</span>
+            <strong id="view-nickname"></strong>
+          </div>
+          <div class="detail-item">
+            <span>Position</span>
+            <strong id="view-position"></strong>
+          </div>
+          <div class="detail-item">
+            <span>Yearly</span>
+            <strong id="view-yearly"></strong>
+          </div>
+          <div class="detail-item">
+            <span>Monthly</span>
+            <strong id="view-monthly"></strong>
+          </div>
+        </div>
+        <div class="form-error" id="view-error" role="alert"></div>
+      </div>
+      <div class="modal-actions">
+        <button class="ghost-btn" type="button" id="close-view-btn">Close</button>
+        <button class="danger-btn" type="button" id="delete-player-btn">
+          Delete Player
+        </button>
       </div>
     </div>
+  </div>
 
-    <div class="modal hidden" id="delete-player-modal" aria-hidden="true">
-      <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="delete-player-title">
-        <div class="modal-header">
-          <h3 id="delete-player-title">Delete player?</h3>
-        </div>
-        <p id="delete-player-text" class="muted"></p>
-        <p class="muted">This action cannot be undone.</p>
-        <div class="modal-actions">
-          <button class="ghost-btn" type="button" id="delete-cancel">Cancel</button>
-          <button class="danger-btn" type="button" id="delete-confirm">Delete</button>
-        </div>
+  <div class="modal hidden" id="delete-player-modal" aria-hidden="true">
+    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="delete-player-title">
+      <div class="modal-header">
+        <h3 id="delete-player-title">Delete player?</h3>
+      </div>
+      <p id="delete-player-text" class="muted"></p>
+      <p class="muted">This action cannot be undone.</p>
+      <div class="modal-actions">
+        <button class="ghost-btn" type="button" id="delete-cancel">Cancel</button>
+        <button class="danger-btn" type="button" id="delete-confirm">Delete</button>
       </div>
     </div>
+  </div>
 
+  <script src="js/sidebar-loader.js"></script>
     <script src="js/app.js"></script>
-    <script src="js/pages/players.js"></script>
-  </body>
+  <script src="js/pages/players.js"></script>
+</body>
+
 </html>

@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Archievers FC - Visitors Stats</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar" id="sidebar">
+        <div class="brand">Archievers FC</div>
+        <div id="sidebar-slot"></div>
+      </aside>
+      <div class="nav-overlay hidden" id="nav-overlay"></div>
+      <div class="content">
+        <header class="topbar">
+          <button class="menu-btn" id="menu-btn" aria-label="Open menu" aria-controls="sidebar" aria-expanded="false">
+          <span class="hamburger" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+          </span>
+        </button>
+          <h1>Archievers FC</h1>
+        </header>
+        <main class="main">
+          <div class="page-title">
+            <div class="page-title-row">
+              <div>
+                <h2>Visitors Stats</h2>
+                <p>Cards and fines for visitors.</p>
+              </div>
+              <div class="page-title-actions">
+                <input
+                  class="input"
+                  id="visitors-search"
+                  type="search"
+                  placeholder="Search name or nickname..."
+                />
+                <span id="visitors-count" class="muted"></span>
+              </div>
+            </div>
+          </div>
+
+          <section class="panel">
+            <div class="table-wrap">
+              <table class="table responsive">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Nickname</th>
+                    <th>Yellow</th>
+                    <th>Red</th>
+                    <th>Fine Owed</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="visitors-body"></tbody>
+              </table>
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <div class="modal hidden" id="visitor-stats-modal" aria-hidden="true">
+      <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="visitor-stats-title">
+        <div class="modal-header">
+          <h3 id="visitor-stats-title">Update Visitor Cards</h3>
+        </div>
+        <div class="modal-body">
+          <div class="form-grid">
+            <label class="form-field">
+              <span>Yellow</span>
+              <input class="input" id="visitor-yellow" type="number" min="0" />
+            </label>
+            <label class="form-field">
+              <span>Red</span>
+              <input class="input" id="visitor-red" type="number" min="0" />
+            </label>
+            <label class="form-field">
+              <span>Yellow Paid</span>
+              <input class="input" id="visitor-yellow-paid" type="number" min="0" />
+            </label>
+            <label class="form-field">
+              <span>Red Paid</span>
+              <input class="input" id="visitor-red-paid" type="number" min="0" />
+            </label>
+          </div>
+          <div class="form-error" id="visitor-stats-error" role="alert"></div>
+        </div>
+        <div class="modal-actions">
+          <button class="ghost-btn" type="button" id="visitor-stats-cancel">Cancel</button>
+          <button class="action-btn" type="button" id="visitor-stats-save">Save</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="js/sidebar-loader.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/pages/visitors-stats.js"></script>
+  </body>
+</html>

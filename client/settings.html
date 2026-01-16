@@ -1,215 +1,213 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Archievers FC - Settings</title>
-    <link rel="stylesheet" href="css/style.css" />
-  </head>
-  <body>
-    <div class="app">
-      <aside class="sidebar" id="sidebar">
-        <div class="brand">Archievers FC</div>
-        <nav class="nav">
-          <a href="index.html" class="nav-link">Dashboard</a>
-          <a href="players.html" class="nav-link">Players</a>
-          <a href="payments.html" class="nav-link">Payments</a>
-          <a href="obligations.html" class="nav-link">Obligations</a>
-          <a href="attendance.html" class="nav-link">Attendance</a>
-          <a href="attendance-summary.html" class="nav-link">Attendance Summary</a>
-          <a href="stats.html" class="nav-link">Stats</a>
-          <a href="reports.html" class="nav-link">Reports</a>`n          <a href="activity.html" class="nav-link">Activity Logs</a>
-          <a href="settings.html" class="nav-link">Settings</a>
-        </nav>
-      </aside>
-      <div class="nav-overlay hidden" id="nav-overlay"></div>
-      <div class="content">
-        <header class="topbar">
-          <button class="menu-btn" id="menu-btn" aria-label="Open menu" aria-expanded="false">
-            ☰
-          </button>
-          <h1>Archievers FC</h1>
-        </header>
-        <main class="main">
-          <div class="page-title">
-            <h2>Settings</h2>
-            <p>Configure club preferences.</p>
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Archievers FC - Settings</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+  <div class="app">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">Archievers FC</div>
+      <div id="sidebar-slot"></div>
+    </aside>
+    <div class="nav-overlay hidden" id="nav-overlay"></div>
+    <div class="content">
+      <header class="topbar">
+        <button class="menu-btn" id="menu-btn" aria-label="Open menu" aria-controls="sidebar" aria-expanded="false">
+          <span class="hamburger" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+          </span>
+        </button>
+        <h1>Archievers FC</h1>
+      </header>
+      <main class="main">
+        <div class="page-title">
+          <h2>Settings</h2>
+          <p>Configure club preferences.</p>
+        </div>
+
+        <section class="panel">
+          <div class="settings-grid">
+            <div class="settings-section">
+              <h3 class="section-title">Club</h3>
+              <label class="form-field">
+                <span>Club Name</span>
+                <input class="input" id="setting-club-name" type="text" />
+              </label>
+              <label class="form-field">
+                <span>Season</span>
+                <input class="input" id="setting-season" type="number" min="2000" />
+              </label>
+              <label class="form-field">
+                <span>Currency Symbol</span>
+                <input class="input" id="setting-currency" type="text" maxlength="3" />
+              </label>
+            </div>
+
+            <div class="settings-section">
+              <h3 class="section-title">Fees</h3>
+              <label class="form-field">
+                <span>New Member Yearly Fee</span>
+                <input class="input" id="setting-fee-new" type="number" min="0" />
+              </label>
+              <label class="form-field">
+                <span>Renewal Yearly Fee</span>
+                <input class="input" id="setting-fee-renewal" type="number" min="0" />
+              </label>
+            </div>
+
+            <div class="settings-section">
+              <h3 class="section-title">Attendance</h3>
+              <label class="form-field">
+                <span>Attendance Start Date</span>
+                <input class="input" id="setting-attendance-start" type="date" />
+              </label>
+              <label class="form-field checkbox-field">
+                <input id="setting-attendance-lock" type="checkbox" />
+                <span>Lock Future Dates</span>
+              </label>
+            </div>
+
+            <div class="settings-section">
+              <h3 class="section-title">Discipline / Fines</h3>
+              <label class="form-field">
+                <span>Yellow Card Fine (\u20a6)</span>
+                <input class="input" id="setting-fine-yellow" type="number" min="0" />
+              </label>
+              <label class="form-field">
+                <span>Red Card Fine (\u20a6)</span>
+                <input class="input" id="setting-fine-red" type="number" min="0" />
+              </label>
+            </div>
           </div>
 
-          <section class="panel">
-            <div class="settings-grid">
-              <div class="settings-section">
-                <h3 class="section-title">Club</h3>
-                <label class="form-field">
-                  <span>Club Name</span>
-                  <input class="input" id="setting-club-name" type="text" />
-                </label>
-                <label class="form-field">
-                  <span>Season</span>
-                  <input class="input" id="setting-season" type="number" min="2000" />
-                </label>
-                <label class="form-field">
-                  <span>Currency Symbol</span>
-                  <input class="input" id="setting-currency" type="text" maxlength="3" />
-                </label>
-              </div>
+          <div class="form-error" id="settings-error" role="alert"></div>
+          <div class="modal-actions">
+            <button class="ghost-btn" type="button" id="settings-reset">Reset to Defaults</button>
+            <button class="action-btn" type="button" id="settings-save">Save Settings</button>
+          </div>
+        </section>
 
-              <div class="settings-section">
-                <h3 class="section-title">Fees</h3>
-                <label class="form-field">
-                  <span>New Member Yearly Fee</span>
-                  <input class="input" id="setting-fee-new" type="number" min="0" />
-                </label>
-                <label class="form-field">
-                  <span>Renewal Yearly Fee</span>
-                  <input class="input" id="setting-fee-renewal" type="number" min="0" />
-                </label>
-              </div>
+        <section class="panel">
+          <h3 class="section-title">Monthly Fee Schedule</h3>
+          <p class="muted">
+            Fees apply from the selected month onward until another rule overrides it.
+          </p>
+          <div class="table-wrap">
+            <table class="table schedule-table">
+              <thead>
+                <tr>
+                  <th>From (YYYY-MM)</th>
+                  <th>Amount (\u20a6)</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="monthly-schedule-body"></tbody>
+            </table>
+          </div>
+          <div class="modal-actions">
+            <button class="ghost-btn" type="button" id="add-schedule-rule">Add rule</button>
+          </div>
+          <p class="muted">Example: 2026-01 = 2000, 2026-02 = 3000</p>
+        </section>
 
-              <div class="settings-section">
-                <h3 class="section-title">Attendance</h3>
-                <label class="form-field">
-                  <span>Attendance Start Date</span>
-                  <input class="input" id="setting-attendance-start" type="date" />
-                </label>
-                <label class="form-field checkbox-field">
-                  <input id="setting-attendance-lock" type="checkbox" />
-                  <span>Lock Future Dates</span>
-                </label>
-              </div>
+        <section class="panel season-tools">
+          <h3 class="section-title">Season Tools</h3>
+          <div class="settings-grid">
+            <label class="form-field">
+              <span>New Season Year</span>
+              <input class="input" id="season-year" type="number" min="2000" />
+            </label>
+            <label class="form-field checkbox-field">
+              <input id="reset-attendance" type="checkbox" />
+              <span>Reset Attendance</span>
+            </label>
+            <label class="form-field checkbox-field">
+              <input id="reset-monthly" type="checkbox" />
+              <span>Reset Monthly Payments</span>
+            </label>
+            <label class="form-field checkbox-field">
+              <input id="reset-yearly" type="checkbox" />
+              <span>Reset Yearly Payments</span>
+            </label>
+            <label class="form-field checkbox-field">
+              <input id="reset-stats" type="checkbox" />
+              <span>Reset Stats (goals/assists/cards)</span>
+            </label>
+            <label class="form-field checkbox-field">
+              <input id="reset-discipline" type="checkbox" />
+              <span>Reset Discipline Payments</span>
+            </label>
+          </div>
+          <div class="modal-actions">
+            <button class="ghost-btn" type="button" id="season-reset">Reset Current Season</button>
+            <button class="action-btn" type="button" id="season-rollover">Rollover to New Season</button>
+          </div>
+        </section>
 
-              <div class="settings-section">
-                <h3 class="section-title">Discipline / Fines</h3>
-                <label class="form-field">
-                  <span>Yellow Card Fine (\u20a6)</span>
-                  <input class="input" id="setting-fine-yellow" type="number" min="0" />
-                </label>
-                <label class="form-field">
-                  <span>Red Card Fine (\u20a6)</span>
-                  <input class="input" id="setting-fine-red" type="number" min="0" />
-                </label>
-              </div>
-            </div>
+        <section class="panel">
+          <h3 class="section-title">Import Data</h3>
+          <div class="form-grid">
+            <label class="form-field">
+              <span>Import Type</span>
+              <select class="input" id="import-type">
+                <option value="players">Players</option>
+                <option value="payments">Payments</option>
+              </select>
+            </label>
+            <label class="form-field">
+              <span>CSV Data</span>
+              <textarea class="input" id="import-csv" rows="6" placeholder="Paste CSV here"></textarea>
+            </label>
+          </div>
+          <p class="muted">Import creates a backup first.</p>
+          <div class="form-error" id="import-error" role="alert"></div>
+          <div class="modal-actions">
+            <button class="action-btn" type="button" id="import-submit">Import</button>
+          </div>
+          <div class="muted" id="import-result"></div>
+        </section>
 
-            <div class="form-error" id="settings-error" role="alert"></div>
-            <div class="modal-actions">
-              <button class="ghost-btn" type="button" id="settings-reset">Reset to Defaults</button>
-              <button class="action-btn" type="button" id="settings-save">Save Settings</button>
-            </div>
-          </section>
+        <section class="panel">
+          <h3 class="section-title">Data Tools</h3>
+          <div class="data-tools">
+            <a class="btn" href="/api/export/players.csv">Export Players CSV</a>
+            <a class="btn" href="/api/export/payments.csv">Export Payments CSV</a>
+            <a class="btn" href="/api/export/attendance.csv">Export Attendance CSV</a>
+            <a class="btn" href="/api/export/stats.csv">Export Stats CSV</a>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
 
-          <section class="panel">
-            <h3 class="section-title">Monthly Fee Schedule</h3>
-            <p class="muted">
-              Fees apply from the selected month onward until another rule overrides it.
-            </p>
-            <div class="table-wrap">
-              <table class="table schedule-table">
-                <thead>
-                  <tr>
-                    <th>From (YYYY-MM)</th>
-                    <th>Amount (\u20a6)</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody id="monthly-schedule-body"></tbody>
-              </table>
-            </div>
-            <div class="modal-actions">
-              <button class="ghost-btn" type="button" id="add-schedule-rule">Add rule</button>
-            </div>
-            <p class="muted">Example: 2026-01 = 2000, 2026-02 = 3000</p>
-          </section>
-
-          <section class="panel season-tools">
-            <h3 class="section-title">Season Tools</h3>
-            <div class="settings-grid">
-              <label class="form-field">
-                <span>New Season Year</span>
-                <input class="input" id="season-year" type="number" min="2000" />
-              </label>
-              <label class="form-field checkbox-field">
-                <input id="reset-attendance" type="checkbox" />
-                <span>Reset Attendance</span>
-              </label>
-              <label class="form-field checkbox-field">
-                <input id="reset-monthly" type="checkbox" />
-                <span>Reset Monthly Payments</span>
-              </label>
-              <label class="form-field checkbox-field">
-                <input id="reset-yearly" type="checkbox" />
-                <span>Reset Yearly Payments</span>
-              </label>
-              <label class="form-field checkbox-field">
-                <input id="reset-stats" type="checkbox" />
-                <span>Reset Stats (goals/assists/cards)</span>
-              </label>
-              <label class="form-field checkbox-field">
-                <input id="reset-discipline" type="checkbox" />
-                <span>Reset Discipline Payments</span>
-              </label>
-            </div>
-            <div class="modal-actions">
-              <button class="ghost-btn" type="button" id="season-reset">Reset Current Season</button>
-              <button class="action-btn" type="button" id="season-rollover">Rollover to New Season</button>
-            </div>
-          </section>
-
-          <section class="panel">
-            <h3 class="section-title">Import Data</h3>
-            <div class="form-grid">
-              <label class="form-field">
-                <span>Import Type</span>
-                <select class="input" id="import-type">
-                  <option value="players">Players</option>
-                  <option value="payments">Payments</option>
-                </select>
-              </label>
-              <label class="form-field">
-                <span>CSV Data</span>
-                <textarea class="input" id="import-csv" rows="6" placeholder="Paste CSV here"></textarea>
-              </label>
-            </div>
-            <p class="muted">Import creates a backup first.</p>
-            <div class="form-error" id="import-error" role="alert"></div>
-            <div class="modal-actions">
-              <button class="action-btn" type="button" id="import-submit">Import</button>
-            </div>
-            <div class="muted" id="import-result"></div>
-          </section>
-
-          <section class="panel">
-            <h3 class="section-title">Data Tools</h3>
-            <div class="data-tools">
-              <a class="btn" href="/api/export/players.csv">Export Players CSV</a>
-              <a class="btn" href="/api/export/payments.csv">Export Payments CSV</a>
-              <a class="btn" href="/api/export/attendance.csv">Export Attendance CSV</a>
-              <a class="btn" href="/api/export/stats.csv">Export Stats CSV</a>
-            </div>
-          </section>
-        </main>
+  <div class="modal hidden" id="season-modal" aria-hidden="true">
+    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="season-modal-title">
+      <div class="modal-header">
+        <h3 id="season-modal-title">Confirm Season Rollover</h3>
+      </div>
+      <p id="season-modal-text" class="muted"></p>
+      <p class="muted">A backup will be created before changes.</p>
+      <label class="form-field">
+        <span>Type ROLLOVER to confirm</span>
+        <input class="input" id="season-confirm-input" type="text" />
+      </label>
+      <div class="modal-actions">
+        <button class="ghost-btn" type="button" id="season-cancel">Cancel</button>
+        <button class="danger-btn" type="button" id="season-confirm" disabled>Confirm</button>
       </div>
     </div>
+  </div>
 
-    <div class="modal hidden" id="season-modal" aria-hidden="true">
-      <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="season-modal-title">
-        <div class="modal-header">
-          <h3 id="season-modal-title">Confirm Season Rollover</h3>
-        </div>
-        <p id="season-modal-text" class="muted"></p>
-        <p class="muted">A backup will be created before changes.</p>
-        <label class="form-field">
-          <span>Type ROLLOVER to confirm</span>
-          <input class="input" id="season-confirm-input" type="text" />
-        </label>
-        <div class="modal-actions">
-          <button class="ghost-btn" type="button" id="season-cancel">Cancel</button>
-          <button class="danger-btn" type="button" id="season-confirm" disabled>Confirm</button>
-        </div>
-      </div>
-    </div>
-
+  <script src="js/sidebar-loader.js"></script>
     <script src="js/app.js"></script>
-    <script src="js/pages/settings.js"></script>
-  </body>
+  <script src="js/pages/settings.js"></script>
+</body>
+
 </html>
