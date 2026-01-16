@@ -58,7 +58,18 @@ function getMonthlyExpected(settings, monthKey) {
 router.get("/", async (req, res, next) => {
   try {
     const db = await readDb();
-    res.json(db.players || []);
+    const players = db.players || [];
+    const missingCreatedAt = players.some((player) => !player.createdAt);
+    if (missingCreatedAt) {
+      players.forEach((player) => {
+        if (!player.createdAt) {
+          player.createdAt = new Date(0).toISOString();
+        }
+      });
+      db.players = players;
+      await writeDb(db);
+    }
+    res.json(players);
   } catch (err) {
     next(err);
   }
@@ -114,6 +125,7 @@ router.post("/", async (req, res, next) => {
       position,
       email,
       membership: { memberSinceYear },
+      createdAt: new Date().toISOString(),
       subscriptions: {
         year: { [yearKey]: "pending" },
         months: { [monthKey]: "pending" }
@@ -145,7 +157,8 @@ router.post("/", async (req, res, next) => {
         };
         if (monthlyPaid >= monthlyExpected) {
           await logActivity(
-            `Monthly payment cleared: ${formatDisplayName(player)} (${monthKeyInput})`
+            `Monthly payment cleared: ${formatDisplayName(player)} (${monthKeyInput})`,
+            "monthly_cleared"
           );
         }
       }
@@ -156,14 +169,15 @@ router.post("/", async (req, res, next) => {
         };
         if (yearlyPaid >= yearlyExpected) {
           await logActivity(
-            `Yearly subscription cleared: ${formatDisplayName(player)} (${yearKeyInput})`
+            `Yearly subscription cleared: ${formatDisplayName(player)} (${yearKeyInput})`,
+            "yearly_cleared"
           );
         }
       }
     }
 
     await writeDb(db);
-    await logActivity(`New member joined: ${formatDisplayName(player)}`);
+    await logActivity(`New member joined: ${formatDisplayName(player)}`, "member_joined");
     res.status(201).json(player);
   } catch (err) {
     next(err);
@@ -241,7 +255,8 @@ router.patch("/:id/payments", async (req, res, next) => {
     const newYearlyCleared = yearlyPaid >= yearlyExpected;
     if (!prevYearlyCleared && newYearlyCleared) {
       await logActivity(
-        `Yearly subscription cleared: ${formatDisplayName(player)} (${yearKey})`
+        `Yearly subscription cleared: ${formatDisplayName(player)} (${yearKey})`,
+        "yearly_cleared"
       );
     }
 
@@ -249,7 +264,8 @@ router.patch("/:id/payments", async (req, res, next) => {
     const newMonthlyCleared = monthlyPaid >= monthlyExpected;
     if (!prevMonthlyCleared && newMonthlyCleared) {
       await logActivity(
-        `Monthly payment cleared: ${formatDisplayName(player)} (${monthKey})`
+        `Monthly payment cleared: ${formatDisplayName(player)} (${monthKey})`,
+        "monthly_cleared"
       );
     }
     res.json(player);
@@ -412,7 +428,7 @@ router.patch("/:id/stats", async (req, res, next) => {
       Math.max(0, red - cappedRedPaid) * redFine;
 
     if (prevOwed > 0 && newOwed === 0) {
-      await logActivity(`Fines settled: ${formatDisplayName(player)}`);
+      await logActivity(`Fines settled: ${formatDisplayName(player)}`, "fines_cleared");
     }
     res.json(player);
   } catch (err) {
@@ -462,7 +478,7 @@ router.patch("/:id/discipline", async (req, res, next) => {
       Math.max(0, yellowTotal - player.discipline.yellowPaid) * yellowFine +
       Math.max(0, redTotal - player.discipline.redPaid) * redFine;
     if (prevOwed > 0 && newOwed === 0) {
-      await logActivity(`Fines settled: ${formatDisplayName(player)}`);
+      await logActivity(`Fines settled: ${formatDisplayName(player)}`, "fines_cleared");
     }
     res.json(player);
   } catch (err) {

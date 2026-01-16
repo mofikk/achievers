@@ -38,16 +38,25 @@ router.get("/", async (req, res, next) => {
     }
 
     const players = (db.players || []).map((player) => {
+      if (!player.createdAt) {
+        player.createdAt = new Date(0).toISOString();
+      }
       const summary = getPlayerPaymentSummary(db, settings, player.id, yearKey, monthKey);
       return {
         id: player.id,
         name: player.name,
         nickname: player.nickname || "",
         position: player.position || "",
+        createdAt: player.createdAt,
         yearly: summary ? summary.yearly : null,
         monthly: summary ? summary.monthly : null
       };
     });
+
+    const missingCreatedAt = (db.players || []).some((player) => !player.createdAt);
+    if (missingCreatedAt) {
+      await fs.writeFile(dbPath, JSON.stringify(db, null, 2), "utf-8");
+    }
 
     const counts = {
       totalMembers: players.length,

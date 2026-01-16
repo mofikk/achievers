@@ -1,6 +1,7 @@
 (function () {
   const body = document.getElementById("stats-body");
   const searchInput = document.getElementById("stats-search");
+  const mobileSort = document.getElementById("stats-mobile-sort");
   const modal = document.getElementById("stats-modal");
   const modalName = document.getElementById("stats-player-name");
   const errorEl = document.getElementById("stats-error");
@@ -109,6 +110,17 @@
     });
   }
 
+  function getMobileSortKey() {
+    return mobileSort?.value || "goals";
+  }
+
+  function getMobileSortValue(player, key) {
+    const stats = getStats(player);
+    if (key === "ga") return stats.goals + stats.assists;
+    if (key === "cards") return stats.yellow + stats.red;
+    return stats[key] ?? 0;
+  }
+
   function renderTable() {
     const search = searchInput.value.trim().toLowerCase();
     const filtered = state.allPlayers.filter((player) => {
@@ -117,7 +129,15 @@
       return !search || name.includes(search) || nickname.includes(search);
     });
 
-    const sorted = sortPlayers(filtered);
+    const useMobileSort = window.innerWidth <= 600 && mobileSort;
+    const sorted = useMobileSort
+      ? [...filtered].sort((a, b) => {
+          const key = getMobileSortKey();
+          const primary = getMobileSortValue(b, key) - getMobileSortValue(a, key);
+          if (primary !== 0) return primary;
+          return String(a.name || "").localeCompare(String(b.name || ""));
+        })
+      : sortPlayers(filtered);
     body.innerHTML = "";
     sorted.forEach((player) => {
       const stats = getStats(player);
@@ -221,6 +241,10 @@
   });
 
   searchInput.addEventListener("input", renderTable);
+  if (mobileSort) {
+    mobileSort.addEventListener("change", renderTable);
+  }
+  window.addEventListener("resize", renderTable);
 
   body.addEventListener("click", (event) => {
     const target = event.target;

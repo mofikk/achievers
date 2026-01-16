@@ -18,7 +18,7 @@
           <a href="attendance.html" class="nav-link">Attendance</a>
           <a href="attendance-summary.html" class="nav-link">Attendance Summary</a>
           <a href="stats.html" class="nav-link">Stats</a>
-          <a href="reports.html" class="nav-link">Reports</a>
+          <a href="reports.html" class="nav-link">Reports</a>`n          <a href="activity.html" class="nav-link">Activity Logs</a>
           <a href="settings.html" class="nav-link">Settings</a>
         </nav>
       </aside>
@@ -43,6 +43,17 @@
                 <p class="muted">Season totals per player.</p>
               </div>
               <div class="page-title-actions">
+                <label class="form-field mobile-only">
+                  <span>Sort by</span>
+                  <select class="input" id="stats-mobile-sort">
+                    <option value="goals">Goals (desc)</option>
+                    <option value="assists">Assists (desc)</option>
+                    <option value="ga">Goals + Assists (desc)</option>
+                    <option value="yellow">Yellow cards (desc)</option>
+                    <option value="red">Red cards (desc)</option>
+                    <option value="cards">Total cards (desc)</option>
+                  </select>
+                </label>
                 <input
                   class="input"
                   id="stats-search"

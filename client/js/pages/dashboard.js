@@ -264,7 +264,10 @@
 
   function loadDashboard() {
     const settingsRequest = window.apiFetch("/settings").catch(() => defaultSettings);
-    const activityRequest = window.apiFetch("/activity").catch(() => []);
+    const activityRequest = window
+      .apiFetch("/activity?limit=10&page=1")
+      .then((data) => data.items || [])
+      .catch(() => []);
 
     Promise.all([settingsRequest, activityRequest])
       .then(([settings, activity]) => {
@@ -290,3 +293,4 @@
 
   loadDashboard();
 })();
+

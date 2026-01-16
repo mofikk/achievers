@@ -116,7 +116,13 @@
   function renderPlayers(players) {
     body.innerHTML = "";
 
-    players.forEach((player) => {
+    const sorted = [...players].sort((a, b) => {
+      const aTime = new Date(a.createdAt || 0).getTime();
+      const bTime = new Date(b.createdAt || 0).getTime();
+      return bTime - aTime;
+    });
+
+    sorted.forEach((player) => {
       const row = document.createElement("tr");
       const yearlyStatus = player.yearly?.status || "PENDING";
       const monthlyStatus = player.monthly?.status || "PENDING";
@@ -141,7 +147,7 @@
       body.appendChild(row);
     });
 
-    countEl.textContent = `Showing ${players.length} of ${state.overviewPlayers.length} players`;
+    countEl.textContent = `Showing ${sorted.length} of ${state.overviewPlayers.length} players`;
   }
 
   function loadPlayers() {

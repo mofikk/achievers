@@ -277,6 +277,12 @@ body.nav-open {
   color: var(--muted);
 }
 
+.activity-actions {
+  margin-top: 12px;
+  display: flex;
+  justify-content: flex-end;
+}
+
 .tab-group {
   display: flex;
   flex-wrap: wrap;
@@ -772,6 +778,10 @@ textarea.input {
   white-space: nowrap;
 }
 
+.mobile-only {
+  display: none;
+}
+
 @media (max-width: 900px) {
   .app {
     grid-template-columns: 1fr;
@@ -836,6 +846,11 @@ textarea.input {
   }
 
   .page-title-actions .muted {
+    width: 100%;
+  }
+
+  .mobile-only {
+    display: block;
     width: 100%;
   }
 
