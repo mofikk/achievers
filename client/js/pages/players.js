@@ -84,6 +84,7 @@
   const state = {
     players: [],
     allPlayers: [],
+    overviewPlayers: [],
     yearKey: null,
     monthKey: null
   };
@@ -94,7 +95,17 @@
   let editingId = null;
 
   function formatStatus(value, fallback) {
-    return value ? value.charAt(0).toUpperCase() + value.slice(1) : fallback;
+    return value ? value.charAt(0).toUpperCase() + value.slice(1).toLowerCase() : fallback;
+  }
+
+  function formatStatusClass(status) {
+    return status ? status.toLowerCase() : "pending";
+  }
+
+  function getCurrentMonthKey() {
+    const now = new Date();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    return `${now.getFullYear()}-${month}`;
   }
 
   function formatPosition(code) {
@@ -102,42 +113,23 @@
     return positionLabels[code] || code;
   }
 
-  function getLatestKey(players, field) {
-    const keys = [];
-    players.forEach((player) => {
-      const bucket = player?.subscriptions?.[field] || {};
-      Object.keys(bucket).forEach((key) => keys.push(key));
-    });
-    keys.sort();
-    return keys[keys.length - 1] || null;
-  }
-
-  function computeKeys(players) {
-    state.yearKey = getLatestKey(players, "year");
-    state.monthKey = getLatestKey(players, "months");
-  }
-
-  function getStatus(player) {
-    const yearly = state.yearKey ? player?.subscriptions?.year?.[state.yearKey] : null;
-    const monthly = state.monthKey ? player?.subscriptions?.months?.[state.monthKey] : null;
-    return {
-      yearly: formatStatus(yearly, "Pending"),
-      monthly: formatStatus(monthly, "Pending")
-    };
-  }
-
   function renderPlayers(players) {
     body.innerHTML = "";
 
     players.forEach((player) => {
-      const status = getStatus(player);
       const row = document.createElement("tr");
+      const yearlyStatus = player.yearly?.status || "PENDING";
+      const monthlyStatus = player.monthly?.status || "PENDING";
       row.innerHTML = `
         <td data-label="Name">${player.name || ""}</td>
         <td data-label="Nickname">${player.nickname || "-"}</td>
         <td data-label="Position">${formatPosition(player.position)}</td>
-        <td data-label="Yearly">${status.yearly}</td>
-        <td data-label="Monthly">${status.monthly}</td>
+        <td data-label="Yearly">
+          <span class="pill ${formatStatusClass(yearlyStatus)}">${formatStatus(yearlyStatus, "Pending")}</span>
+        </td>
+        <td data-label="Monthly">
+          <span class="pill ${formatStatusClass(monthlyStatus)}">${formatStatus(monthlyStatus, "Pending")}</span>
+        </td>
         <td data-label="Actions">
           <div class="actions">
             <button class="action-btn" data-id="${player.id}">View</button>
@@ -149,7 +141,7 @@
       body.appendChild(row);
     });
 
-    countEl.textContent = `Showing ${players.length} of ${state.allPlayers.length} players`;
+    countEl.textContent = `Showing ${players.length} of ${state.overviewPlayers.length} players`;
   }
 
   function loadPlayers() {
@@ -157,13 +149,18 @@
       .apiFetch("/settings")
       .then((settingsData) => {
         settings = settingsData || defaultSettings;
-        return window.apiFetch("/players");
+        state.yearKey = String(settings.season || currentYear);
+        state.monthKey = getCurrentMonthKey();
+        return Promise.all([
+          window.apiFetch(`/overview?yearKey=${state.yearKey}&monthKey=${state.monthKey}`),
+          window.apiFetch("/players")
+        ]);
       })
-      .then((players) => {
+      .then(([overview, players]) => {
+        state.overviewPlayers = overview.players || [];
         state.players = players;
         state.allPlayers = players;
-        computeKeys(players);
-        renderPlayers(players);
+        renderPlayers(state.overviewPlayers);
         const params = new URLSearchParams(window.location.search);
         if (params.get("deleted") === "1") {
           window.toast("Player deleted", "success");
@@ -266,15 +263,15 @@
     const target = event.target;
     if (!target.classList.contains("action-btn")) return;
     const playerId = target.getAttribute("data-id");
-    const player = state.players.find((p) => p.id === playerId);
-    if (!player) return;
+    const player = state.allPlayers.find((p) => p.id === playerId);
+    const overviewPlayer = state.overviewPlayers.find((p) => p.id === playerId);
+    if (!player || !overviewPlayer) return;
 
-    const status = getStatus(player);
     viewName.textContent = player.name || "";
     viewNickname.textContent = player.nickname || "-";
     viewPosition.textContent = formatPosition(player.position);
-    viewYearly.textContent = status.yearly;
-    viewMonthly.textContent = status.monthly;
+    viewYearly.textContent = formatStatus(overviewPlayer.yearly?.status, "Pending");
+    viewMonthly.textContent = formatStatus(overviewPlayer.monthly?.status, "Pending");
     deleteBtn.setAttribute("data-id", player.id);
     viewError.textContent = "";
     openModal(viewModal);
@@ -383,10 +380,10 @@
   searchInput.addEventListener("input", () => {
     const query = searchInput.value.trim().toLowerCase();
     if (!query) {
-      renderPlayers(state.allPlayers);
+      renderPlayers(state.overviewPlayers);
       return;
     }
-    const filtered = state.allPlayers.filter((player) => {
+    const filtered = state.overviewPlayers.filter((player) => {
       const name = String(player.name || "").toLowerCase();
       const nickname = String(player.nickname || "").toLowerCase();
       return name.includes(query) || nickname.includes(query);

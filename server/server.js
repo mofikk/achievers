@@ -11,6 +11,7 @@ const { router: activityRouter } = require("./routes/activity");
 const adminRouter = require("./routes/admin");
 const importRouter = require("./routes/import");
 const reportsRouter = require("./routes/reports");
+const overviewRouter = require("./routes/overview");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -33,6 +34,7 @@ app.use("/api/activity", activityRouter);
 app.use("/api/admin", adminRouter);
 app.use("/api/import", importRouter);
 app.use("/api/reports", reportsRouter);
+app.use("/api/overview", overviewRouter);
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);

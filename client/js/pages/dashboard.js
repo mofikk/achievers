@@ -28,7 +28,7 @@
   }
 
   const defaultSettings = {
-    fees: { monthly: 3000, newMemberYearly: 5000, renewalYearly: 2500 },
+    season: new Date().getFullYear(),
     attendance: { startDate: "2026-01-10" }
   };
 
@@ -43,51 +43,14 @@
     return player.nickname ? `${player.name} (${player.nickname})` : player.name;
   }
 
-  function getMemberSinceYear(player) {
-    const stored = Number(player?.membership?.memberSinceYear);
-    if (Number.isFinite(stored) && stored > 0) return stored;
-    const years = Object.keys(player?.subscriptions?.year || {})
-      .map((year) => Number(year))
-      .filter((year) => Number.isFinite(year));
-    if (years.length) {
-      years.sort((a, b) => a - b);
-      return years[0];
-    }
-    return new Date().getFullYear();
-  }
-
-  function getPaymentSummary(players) {
+  function getCurrentMonthKey() {
     const now = new Date();
-    const yearKey = String(now.getFullYear());
-    const monthKey = `${yearKey}-${String(now.getMonth() + 1).padStart(2, "0")}`;
-    let yearlyPaid = 0;
-    let yearlyPending = 0;
-    let monthlyPaid = 0;
-    let monthlyPending = 0;
-
-    players.forEach((player) => {
-      const yearlyPaidValue = Number(player?.payments?.yearly?.[yearKey]?.paid) || 0;
-      const monthlyPaidValue = Number(player?.payments?.monthly?.[monthKey]?.paid) || 0;
-      const memberSinceYear = getMemberSinceYear(player);
-      const yearlyExpected =
-        Number(yearKey) === memberSinceYear
-          ? state.settings.fees.newMemberYearly
-          : state.settings.fees.renewalYearly;
-      const monthlyExpected = state.settings.fees.monthly;
-
-      if (yearlyPaidValue >= yearlyExpected) yearlyPaid += 1;
-      else yearlyPending += 1;
-
-      if (monthlyPaidValue >= monthlyExpected) monthlyPaid += 1;
-      else monthlyPending += 1;
-    });
-
-    return { yearlyPaid, yearlyPending, monthlyPaid, monthlyPending };
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    return `${now.getFullYear()}-${month}`;
   }
 
-  function renderCards() {
-    const counts = getPaymentSummary(state.players);
-    totalMembersEl.textContent = state.players.length;
+  function renderCards(counts) {
+    totalMembersEl.textContent = counts.totalMembers;
     yearlyPaidEl.textContent = counts.yearlyPaid;
     yearlyPendingEl.textContent = counts.yearlyPending;
     monthlyPaidEl.textContent = counts.monthlyPaid;
@@ -300,15 +263,23 @@
   }
 
   function loadDashboard() {
-    const playersRequest = window.apiFetch("/players");
     const settingsRequest = window.apiFetch("/settings").catch(() => defaultSettings);
     const activityRequest = window.apiFetch("/activity").catch(() => []);
 
-    Promise.all([playersRequest, settingsRequest, activityRequest])
-      .then(([players, settings, activity]) => {
-        state.players = players;
+    Promise.all([settingsRequest, activityRequest])
+      .then(([settings, activity]) => {
         state.settings = settings || defaultSettings;
-        renderCards();
+        const yearKey = String(state.settings.season || new Date().getFullYear());
+        const monthKey = getCurrentMonthKey();
+        return Promise.all([
+          window.apiFetch(`/overview?yearKey=${yearKey}&monthKey=${monthKey}`),
+          window.apiFetch("/players"),
+          Promise.resolve(activity)
+        ]);
+      })
+      .then(([overview, players, activity]) => {
+        state.players = players;
+        renderCards(overview.counts);
         renderActivity(activity);
         buildLeaderboards();
         setupTabs();
