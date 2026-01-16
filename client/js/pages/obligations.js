@@ -122,7 +122,8 @@
     body.innerHTML = "";
     const monthKey = monthSelect.value;
     const yearKey = yearSelect.value;
-    players.forEach((player) => {
+
+    const rows = players.map((player) => {
       const memberSinceYear = getMemberSinceYear(player);
       const yearlyExpected =
         Number(yearKey) === memberSinceYear
@@ -142,15 +143,41 @@
         yearlyPaid + monthlyPaid + fines.paidCount
       );
 
+      return {
+        player,
+        yearlyOwed,
+        monthlyOwed,
+        fines,
+        totalOwed,
+        status
+      };
+    });
+
+    const statusRank = {
+      Pending: 3,
+      Incomplete: 2,
+      Cleared: 1
+    };
+
+    rows.sort((a, b) => {
+      const rankA = statusRank[a.status.text] || 0;
+      const rankB = statusRank[b.status.text] || 0;
+      if (rankA !== rankB) return rankB - rankA;
+      if (a.totalOwed !== b.totalOwed) return b.totalOwed - a.totalOwed;
+      return String(a.player.name || "").localeCompare(String(b.player.name || ""));
+    });
+
+    rows.forEach((rowData) => {
+      const player = rowData.player;
       const row = document.createElement("tr");
       row.innerHTML = `
         <td data-label="Name">${player.name || ""}</td>
         <td data-label="Nickname">${player.nickname || "-"}</td>
-        <td data-label="Monthly Owed">${formatCurrency(monthlyOwed)}</td>
-        <td data-label="Yearly Owed">${formatCurrency(yearlyOwed)}</td>
-        <td data-label="Fines Owed">${formatCurrency(fines.fineOwed)}</td>
-        <td data-label="Total Owed">${formatCurrency(totalOwed)}</td>
-        <td data-label="Status"><span class="pill ${status.className}">${status.text}</span></td>
+        <td data-label="Monthly Owed">${formatCurrency(rowData.monthlyOwed)}</td>
+        <td data-label="Yearly Owed">${formatCurrency(rowData.yearlyOwed)}</td>
+        <td data-label="Fines Owed">${formatCurrency(rowData.fines.fineOwed)}</td>
+        <td data-label="Total Owed">${formatCurrency(rowData.totalOwed)}</td>
+        <td data-label="Status"><span class="pill ${rowData.status.className}">${rowData.status.text}</span></td>
         <td data-label="Actions">
           <div class="actions">
             <a class="action-btn" href="profile.html?id=${player.id}">View Profile</a>
@@ -160,7 +187,7 @@
       body.appendChild(row);
     });
 
-    countEl.textContent = `Showing ${players.length} of ${state.players.length}`;
+    countEl.textContent = `Showing ${rows.length} of ${state.players.length}`;
   }
 
   function applyFilters() {
