@@ -1,87 +1,90 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Archievers FC - Activity Logs</title>
-    <link rel="stylesheet" href="css/style.css" />
-  </head>
-  <body>
-    <div class="app">
-      <aside class="sidebar" id="sidebar">
-        <div class="brand">Archievers FC</div>
-        <div id="sidebar-slot"></div>
-      </aside>
-      <div class="nav-overlay hidden" id="nav-overlay"></div>
-      <div class="content">
-        <header class="topbar">
-          <button class="menu-btn" id="menu-btn" aria-label="Open menu" aria-controls="sidebar" aria-expanded="false">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Achievers FC - Activity Logs</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+  <div class="app">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">Achievers FC</div>
+      <div id="sidebar-slot"></div>
+    </aside>
+    <div class="nav-overlay hidden" id="nav-overlay"></div>
+    <div class="content">
+      <header class="topbar">
+        <button class="menu-btn" id="menu-btn" aria-label="Open menu" aria-controls="sidebar" aria-expanded="false">
           <span class="hamburger" aria-hidden="true">
             <span></span>
             <span></span>
             <span></span>
           </span>
         </button>
-          <h1>Archievers FC</h1>
-        </header>
-        <main class="main">
-          <div class="page-title">
-            <h2>Activity Logs</h2>
-            <p>Recent actions and payment updates.</p>
+        <h1>Achievers FC</h1>
+      </header>
+      <main class="main">
+        <div class="page-title">
+          <h2>Activity Logs</h2>
+          <p>Recent actions and payment updates.</p>
+        </div>
+
+        <section class="panel">
+          <div class="controls-row">
+            <label class="form-field">
+              <span>Date From</span>
+              <input class="input" id="activity-from" type="date" />
+            </label>
+            <label class="form-field">
+              <span>Date To</span>
+              <input class="input" id="activity-to" type="date" />
+            </label>
+            <label class="form-field">
+              <span>Type</span>
+              <select class="input" id="activity-type">
+                <option value="">All types</option>
+                <option value="member_joined">Member joined</option>
+                <option value="monthly_cleared">Monthly cleared</option>
+                <option value="monthly_updated">Monthly updated</option>
+                <option value="yearly_cleared">Yearly cleared</option>
+                <option value="yearly_updated">Yearly updated</option>
+                <option value="fines_cleared">Fines cleared</option>
+                <option value="visitor_promoted">Visitor promoted</option>
+              </select>
+            </label>
+            <label class="form-field">
+              <span>Search</span>
+              <input class="input" id="activity-search" type="search" placeholder="Search text..." />
+            </label>
           </div>
-
-          <section class="panel">
-            <div class="controls-row">
-              <label class="form-field">
-                <span>Date From</span>
-                <input class="input" id="activity-from" type="date" />
-              </label>
-              <label class="form-field">
-                <span>Date To</span>
-                <input class="input" id="activity-to" type="date" />
-              </label>
-              <label class="form-field">
-                <span>Type</span>
-                <select class="input" id="activity-type">
-                  <option value="">All types</option>
-                  <option value="member_joined">Member joined</option>
-                  <option value="monthly_cleared">Monthly cleared</option>
-                  <option value="monthly_updated">Monthly updated</option>
-                  <option value="yearly_cleared">Yearly cleared</option>
-                  <option value="yearly_updated">Yearly updated</option>
-                  <option value="fines_cleared">Fines cleared</option>
-                  <option value="visitor_promoted">Visitor promoted</option>
-                </select>
-              </label>
-              <label class="form-field">
-                <span>Search</span>
-                <input class="input" id="activity-search" type="search" placeholder="Search text..." />
-              </label>
-            </div>
-            <div class="summary-bar" id="activity-range">Showing 0 of 0</div>
-            <div class="table-wrap">
-              <table class="table responsive">
-                <thead>
-                  <tr>
-                    <th>Date</th>
-                    <th>Type</th>
-                    <th>Message</th>
-                  </tr>
-                </thead>
-                <tbody id="activity-body"></tbody>
-              </table>
-            </div>
-            <div class="modal-actions">
-              <button class="ghost-btn" type="button" id="activity-prev">Prev</button>
-              <button class="action-btn" type="button" id="activity-next">Next</button>
-            </div>
-          </section>
-        </main>
-      </div>
+          <div class="summary-bar" id="activity-range">Showing 0 of 0</div>
+          <div class="table-wrap">
+            <table class="table responsive">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Type</th>
+                  <th>Message</th>
+                </tr>
+              </thead>
+              <tbody id="activity-body"></tbody>
+            </table>
+          </div>
+          <div class="modal-actions">
+            <button class="ghost-btn" type="button" id="activity-prev">Prev</button>
+            <button class="action-btn" type="button" id="activity-next">Next</button>
+          </div>
+        </section>
+      </main>
     </div>
+  </div>
 
-    <script src="js/sidebar-loader.js"></script>
-    <script src="js/app.js"></script>
-    <script src="js/pages/activity.js"></script>
-  </body>
+  <script src="js/sidebar-loader.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/pages/activity.js"></script>
+</body>
+
 </html>

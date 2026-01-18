@@ -247,8 +247,6 @@
     if (!player) return;
     nameEl.textContent = player.name || "Player";
     metaEl.textContent = `${player.position || ""} - Member since ${player?.membership?.memberSinceYear || state.settings.season}`;
-      player?.membership?.memberSinceYear || state.settings.season
-    }`;
     editLink.href = `players.html?edit=${player.id}`;
     paymentsLink.href = "payments.html";
 

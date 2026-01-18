@@ -1,75 +1,73 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Archievers FC - Visitors Obligations</title>
-    <link rel="stylesheet" href="css/style.css" />
-  </head>
-  <body>
-    <div class="app">
-      <aside class="sidebar" id="sidebar">
-        <div class="brand">Archievers FC</div>
-        <div id="sidebar-slot"></div>
-      </aside>
-      <div class="nav-overlay hidden" id="nav-overlay"></div>
-      <div class="content">
-        <header class="topbar">
-          <button class="menu-btn" id="menu-btn" aria-label="Open menu" aria-controls="sidebar" aria-expanded="false">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Achievers FC - Visitors Obligations</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+  <div class="app">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">Achievers FC</div>
+      <div id="sidebar-slot"></div>
+    </aside>
+    <div class="nav-overlay hidden" id="nav-overlay"></div>
+    <div class="content">
+      <header class="topbar">
+        <button class="menu-btn" id="menu-btn" aria-label="Open menu" aria-controls="sidebar" aria-expanded="false">
           <span class="hamburger" aria-hidden="true">
             <span></span>
             <span></span>
             <span></span>
           </span>
         </button>
-          <h1>Archievers FC</h1>
-        </header>
-        <main class="main">
-          <div class="page-title">
-            <div class="page-title-row">
-              <div>
-                <h2>Visitors Obligations</h2>
-                <p>Play fees and card fines.</p>
-              </div>
-              <div class="page-title-actions">
-                <label class="form-field">
-                  <span>Session Date</span>
-                  <select class="input" id="visitor-session"></select>
-                </label>
-                <input
-                  class="input"
-                  id="visitors-search"
-                  type="search"
-                  placeholder="Search name or nickname..."
-                />
-                <span id="visitors-count" class="muted"></span>
-              </div>
+        <h1>Achievers FC</h1>
+      </header>
+      <main class="main">
+        <div class="page-title">
+          <div class="page-title-row">
+            <div>
+              <h2>Visitors Obligations</h2>
+              <p>Play fees and card fines.</p>
+            </div>
+            <div class="page-title-actions">
+              <label class="form-field">
+                <span>Session Date</span>
+                <select class="input" id="visitor-session"></select>
+              </label>
+              <input class="input" id="visitors-search" type="search" placeholder="Search name or nickname..." />
+              <span id="visitors-count" class="muted"></span>
             </div>
           </div>
+        </div>
 
-          <section class="panel">
-            <div class="table-wrap">
-              <table class="table responsive">
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Nickname</th>
-                    <th>Play Fee Owed</th>
-                    <th>Fines Owed</th>
-                    <th>Total Owed</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody id="visitors-body"></tbody>
-              </table>
-            </div>
-          </section>
-        </main>
-      </div>
+        <section class="panel">
+          <div class="table-wrap">
+            <table class="table responsive">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Nickname</th>
+                  <th>Play Fee Owed</th>
+                  <th>Fines Owed</th>
+                  <th>Total Owed</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="visitors-body"></tbody>
+            </table>
+          </div>
+        </section>
+      </main>
     </div>
+  </div>
 
-    <script src="js/sidebar-loader.js"></script>
-    <script src="js/app.js"></script>
-    <script src="js/pages/visitors-obligations.js"></script>
-  </body>
+  <script src="js/sidebar-loader.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/pages/visitors-obligations.js"></script>
+</body>
+
 </html>

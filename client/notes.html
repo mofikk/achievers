@@ -1,77 +1,80 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Archievers FC - Notes</title>
-    <link rel="stylesheet" href="css/style.css" />
-  </head>
-  <body>
-    <div class="app">
-      <aside class="sidebar" id="sidebar">
-        <div class="brand">Archievers FC</div>
-        <div id="sidebar-slot"></div>
-      </aside>
-      <div class="nav-overlay hidden" id="nav-overlay"></div>
-      <div class="content">
-        <header class="topbar">
-          <button class="menu-btn" id="menu-btn" aria-label="Open menu" aria-controls="sidebar" aria-expanded="false">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Achievers FC - Notes</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+  <div class="app">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">Achievers FC</div>
+      <div id="sidebar-slot"></div>
+    </aside>
+    <div class="nav-overlay hidden" id="nav-overlay"></div>
+    <div class="content">
+      <header class="topbar">
+        <button class="menu-btn" id="menu-btn" aria-label="Open menu" aria-controls="sidebar" aria-expanded="false">
           <span class="hamburger" aria-hidden="true">
             <span></span>
             <span></span>
             <span></span>
           </span>
         </button>
-          <h1>Archievers FC</h1>
-        </header>
-        <main class="main">
-          <div class="page-title">
-            <h2>Notes</h2>
-            <p>Reminders and quick logs.</p>
+        <h1>Achievers FC</h1>
+      </header>
+      <main class="main">
+        <div class="page-title">
+          <h2>Notes</h2>
+          <p>Reminders and quick logs.</p>
+        </div>
+
+        <section class="panel">
+          <div class="controls-row">
+            <label class="form-field">
+              <span>Date From</span>
+              <input class="input" id="notes-from" type="date" />
+            </label>
+            <label class="form-field">
+              <span>Date To</span>
+              <input class="input" id="notes-to" type="date" />
+            </label>
+            <label class="form-field">
+              <span>Search</span>
+              <input class="input" id="notes-search-page" type="search" placeholder="Search notes..." />
+            </label>
           </div>
+          <div class="form-grid">
+            <label class="form-field">
+              <span>New note</span>
+              <textarea class="input" id="notes-text-page" rows="3" placeholder="Write a note..."></textarea>
+            </label>
+          </div>
+          <div class="form-error" id="notes-error-page" role="alert"></div>
+          <div class="modal-actions form-actions">
+            <button class="ghost-btn" type="button" id="notes-clear-page">Clear</button>
+            <button class="action-btn" type="button" id="notes-save-page">Save</button>
+          </div>
+        </section>
 
-          <section class="panel">
-            <div class="controls-row">
-              <label class="form-field">
-                <span>Date From</span>
-                <input class="input" id="notes-from" type="date" />
-              </label>
-              <label class="form-field">
-                <span>Date To</span>
-                <input class="input" id="notes-to" type="date" />
-              </label>
-              <label class="form-field">
-                <span>Search</span>
-                <input class="input" id="notes-search-page" type="search" placeholder="Search notes..." />
-              </label>
-            </div>
-            <div class="form-grid">
-              <label class="form-field">
-                <span>New note</span>
-                <textarea class="input" id="notes-text-page" rows="3" placeholder="Write a note..."></textarea>
-              </label>
-            </div>
-            <div class="form-error" id="notes-error-page" role="alert"></div>
-            <div class="modal-actions form-actions">
-              <button class="ghost-btn" type="button" id="notes-clear-page">Clear</button>
-              <button class="action-btn" type="button" id="notes-save-page">Save</button>
-            </div>
-          </section>
-
-          <section class="panel">
-            <div class="summary-bar" id="notes-range">Showing 0 of 0</div>
-            <div class="notes-list" id="notes-list-page"></div>
-            <div class="modal-actions">
-              <button class="ghost-btn" type="button" id="notes-prev">Prev</button>
-              <button class="action-btn" type="button" id="notes-next">Next</button>
-            </div>
-          </section>
-        </main>
-      </div>
+        <section class="panel">
+          <div class="summary-bar" id="notes-range">Showing 0 of 0</div>
+          <div class="notes-list" id="notes-list-page"></div>
+          <div class="modal-actions">
+            <button class="ghost-btn" type="button" id="notes-prev">Prev</button>
+            <button class="action-btn" type="button" id="notes-next">Next</button>
+          </div>
+        </section>
+      </main>
     </div>
+  </div>
 
-    <script src="js/sidebar-loader.js"></script>
-    <script src="js/app.js"></script>
-    <script src="js/pages/notes.js"></script>
-  </body>
+  <script src="js/sidebar-loader.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/pages/notes.js"></script>
+</body>
+
 </html>

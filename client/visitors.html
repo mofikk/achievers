@@ -1,168 +1,166 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Archievers FC - Visitors</title>
-    <link rel="stylesheet" href="css/style.css" />
-  </head>
-  <body>
-    <div class="app">
-      <aside class="sidebar" id="sidebar">
-        <div class="brand">Archievers FC</div>
-        <div id="sidebar-slot"></div>
-      </aside>
-      <div class="nav-overlay hidden" id="nav-overlay"></div>
-      <div class="content">
-        <header class="topbar">
-          <button class="menu-btn" id="menu-btn" aria-label="Open menu" aria-controls="sidebar" aria-expanded="false">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Achievers FC - Visitors</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+  <div class="app">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">Achievers FC</div>
+      <div id="sidebar-slot"></div>
+    </aside>
+    <div class="nav-overlay hidden" id="nav-overlay"></div>
+    <div class="content">
+      <header class="topbar">
+        <button class="menu-btn" id="menu-btn" aria-label="Open menu" aria-controls="sidebar" aria-expanded="false">
           <span class="hamburger" aria-hidden="true">
             <span></span>
             <span></span>
             <span></span>
           </span>
         </button>
-          <h1>Archievers FC</h1>
-        </header>
-        <main class="main">
-          <div class="page-title">
-            <div class="page-title-row">
-              <div>
-                <h2>Visitors</h2>
-                <p>Track non-member visitors.</p>
-              </div>
-              <div class="page-title-actions">
-                <label class="form-field">
-                  <span>Session Date</span>
-                  <select class="input" id="visitor-session"></select>
-                </label>
-                <input
-                  class="input"
-                  id="visitors-search"
-                  type="search"
-                  placeholder="Search name or nickname..."
-                />
-                <span id="visitors-count" class="muted"></span>
-                <button class="action-btn" type="button" id="add-visitor-btn">Add Visitor</button>
-              </div>
+        <h1>Achievers FC</h1>
+      </header>
+      <main class="main">
+        <div class="page-title">
+          <div class="page-title-row">
+            <div>
+              <h2>Visitors</h2>
+              <p>Track non-member visitors.</p>
             </div>
-          </div>
-
-          <section class="panel">
-            <div class="table-wrap">
-              <table class="table responsive">
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Nickname</th>
-                    <th>Play Fee Status</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody id="visitors-body"></tbody>
-              </table>
-            </div>
-          </section>
-        </main>
-      </div>
-    </div>
-
-    <div class="modal hidden" id="visitor-modal" aria-hidden="true">
-      <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="visitor-modal-title">
-        <div class="modal-header">
-          <h3 id="visitor-modal-title">Add Visitor</h3>
-        </div>
-        <form id="visitor-form">
-          <div class="modal-body">
-            <div class="form-grid">
+            <div class="page-title-actions">
               <label class="form-field">
-                <span>Name</span>
-                <input class="input" name="name" type="text" required />
+                <span>Session Date</span>
+                <select class="input" id="visitor-session"></select>
               </label>
-              <label class="form-field">
-                <span>Nickname</span>
-                <input class="input" name="nickname" type="text" />
-              </label>
-              <label class="form-field">
-                <span>Notes</span>
-                <textarea class="input" name="notes" rows="3"></textarea>
-              </label>
+              <input class="input" id="visitors-search" type="search" placeholder="Search name or nickname..." />
+              <span id="visitors-count" class="muted"></span>
+              <button class="action-btn" type="button" id="add-visitor-btn">Add Visitor</button>
             </div>
-            <div class="form-error" id="visitor-error" role="alert"></div>
           </div>
-          <div class="modal-actions">
-            <button class="ghost-btn" type="button" id="visitor-cancel">Cancel</button>
-            <button class="action-btn" type="submit" id="visitor-save">Save</button>
-          </div>
-        </form>
-      </div>
-    </div>
+        </div>
 
-    <div class="modal hidden" id="visitor-view-modal" aria-hidden="true">
-      <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="visitor-view-title">
-        <div class="modal-header">
-          <h3 id="visitor-view-title">Visitor Details</h3>
-        </div>
-        <div class="modal-body">
-          <div class="detail-grid">
-            <div class="detail-item">
-              <span>Name</span>
-              <strong id="visitor-view-name"></strong>
-            </div>
-            <div class="detail-item">
-              <span>Nickname</span>
-              <strong id="visitor-view-nickname"></strong>
-            </div>
-            <div class="detail-item">
-              <span>Notes</span>
-              <strong id="visitor-view-notes"></strong>
-            </div>
+        <section class="panel">
+          <div class="table-wrap">
+            <table class="table responsive">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Nickname</th>
+                  <th>Play Fee Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="visitors-body"></tbody>
+            </table>
           </div>
-          <div class="form-error" id="visitor-view-error" role="alert"></div>
-        </div>
-        <div class="modal-actions">
-          <button class="ghost-btn" type="button" id="visitor-view-close">Close</button>
-          <button class="ghost-btn" type="button" id="visitor-promote">Promote</button>
-          <button class="danger-btn" type="button" id="visitor-delete">Delete</button>
-        </div>
-      </div>
+        </section>
+      </main>
     </div>
+  </div>
 
-    <div class="modal hidden" id="visitor-promote-modal" aria-hidden="true">
-      <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="visitor-promote-title">
-        <div class="modal-header">
-          <h3 id="visitor-promote-title">Promote to Member</h3>
-        </div>
+  <div class="modal hidden" id="visitor-modal" aria-hidden="true">
+    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="visitor-modal-title">
+      <div class="modal-header">
+        <h3 id="visitor-modal-title">Add Visitor</h3>
+      </div>
+      <form id="visitor-form">
         <div class="modal-body">
           <div class="form-grid">
             <label class="form-field">
-              <span>Position</span>
-              <select class="input" id="visitor-promote-position">
-                <option value="FW">Forward (FW)</option>
-                <option value="CM">Midfielder (CM)</option>
-                <option value="CDM">Midfielder (CDM)</option>
-                <option value="CAM">Midfielder (CAM)</option>
-                <option value="LM">Midfielder (LM)</option>
-                <option value="RM">Midfielder (RM)</option>
-                <option value="CB">Defender (CB)</option>
-                <option value="RB">Defender (RB)</option>
-                <option value="LB">Defender (LB)</option>
-                <option value="LW">Winger (LW)</option>
-                <option value="RW">Winger (RW)</option>
-              </select>
+              <span>Name</span>
+              <input class="input" name="name" type="text" required />
+            </label>
+            <label class="form-field">
+              <span>Nickname</span>
+              <input class="input" name="nickname" type="text" />
+            </label>
+            <label class="form-field">
+              <span>Notes</span>
+              <textarea class="input" name="notes" rows="3"></textarea>
             </label>
           </div>
-          <p class="muted">This will create a member record for the current season.</p>
+          <div class="form-error" id="visitor-error" role="alert"></div>
         </div>
         <div class="modal-actions">
-          <button class="ghost-btn" type="button" id="visitor-promote-cancel">Cancel</button>
-          <button class="action-btn" type="button" id="visitor-promote-confirm">Promote</button>
+          <button class="ghost-btn" type="button" id="visitor-cancel">Cancel</button>
+          <button class="action-btn" type="submit" id="visitor-save">Save</button>
         </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal hidden" id="visitor-view-modal" aria-hidden="true">
+    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="visitor-view-title">
+      <div class="modal-header">
+        <h3 id="visitor-view-title">Visitor Details</h3>
+      </div>
+      <div class="modal-body">
+        <div class="detail-grid">
+          <div class="detail-item">
+            <span>Name</span>
+            <strong id="visitor-view-name"></strong>
+          </div>
+          <div class="detail-item">
+            <span>Nickname</span>
+            <strong id="visitor-view-nickname"></strong>
+          </div>
+          <div class="detail-item">
+            <span>Notes</span>
+            <strong id="visitor-view-notes"></strong>
+          </div>
+        </div>
+        <div class="form-error" id="visitor-view-error" role="alert"></div>
+      </div>
+      <div class="modal-actions">
+        <button class="ghost-btn" type="button" id="visitor-view-close">Close</button>
+        <button class="ghost-btn" type="button" id="visitor-promote">Promote</button>
+        <button class="danger-btn" type="button" id="visitor-delete">Delete</button>
       </div>
     </div>
+  </div>
 
-    <script src="js/sidebar-loader.js"></script>
-    <script src="js/app.js"></script>
-    <script src="js/pages/visitors.js"></script>
-  </body>
+  <div class="modal hidden" id="visitor-promote-modal" aria-hidden="true">
+    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="visitor-promote-title">
+      <div class="modal-header">
+        <h3 id="visitor-promote-title">Promote to Member</h3>
+      </div>
+      <div class="modal-body">
+        <div class="form-grid">
+          <label class="form-field">
+            <span>Position</span>
+            <select class="input" id="visitor-promote-position">
+              <option value="FW">Forward (FW)</option>
+              <option value="CM">Midfielder (CM)</option>
+              <option value="CDM">Midfielder (CDM)</option>
+              <option value="CAM">Midfielder (CAM)</option>
+              <option value="LM">Midfielder (LM)</option>
+              <option value="RM">Midfielder (RM)</option>
+              <option value="CB">Defender (CB)</option>
+              <option value="RB">Defender (RB)</option>
+              <option value="LB">Defender (LB)</option>
+              <option value="LW">Winger (LW)</option>
+              <option value="RW">Winger (RW)</option>
+            </select>
+          </label>
+        </div>
+        <p class="muted">This will create a member record for the current season.</p>
+      </div>
+      <div class="modal-actions">
+        <button class="ghost-btn" type="button" id="visitor-promote-cancel">Cancel</button>
+        <button class="action-btn" type="button" id="visitor-promote-confirm">Promote</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/sidebar-loader.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/pages/visitors.js"></script>
+</body>
+
 </html>
