@@ -260,5 +260,137 @@
     "message": "Fines settled: Femi (FM)",
     "timestamp": 1768570807842,
     "type": "fines_cleared"
+  },
+  {
+    "id": "cKA_9OtFmK",
+    "message": "Yearly subscription cleared: Taiwo (Taiwo) (2026)",
+    "timestamp": 1768978940639,
+    "type": "yearly_cleared"
+  },
+  {
+    "id": "a-oLXb1_Zv",
+    "message": "Yearly payment updated: Taiwo (Taiwo) (2026) ₦2500/₦2500",
+    "timestamp": 1768978940642,
+    "type": "yearly_updated"
+  },
+  {
+    "id": "vd0j5iv0Gd",
+    "message": "Monthly payment cleared: Taiwo (Taiwo) (2026-01)",
+    "timestamp": 1768978940645,
+    "type": "monthly_cleared"
+  },
+  {
+    "id": "aksAZXC03J",
+    "message": "Monthly payment updated: Taiwo (Taiwo) (2026-01) ₦2000/₦2000",
+    "timestamp": 1768978940648,
+    "type": "monthly_updated"
+  },
+  {
+    "id": "yqV9Z1DQLO",
+    "message": "Monthly payment updated: Alex (Highest-Paid) (2026-01) ₦1000/₦2000",
+    "timestamp": 1768978970614,
+    "type": "monthly_updated"
+  },
+  {
+    "id": "bgeyQ3VYYT",
+    "message": "Yearly payment updated: Tobi (Tobi) (2026) ₦500/₦2500",
+    "timestamp": 1768979002681,
+    "type": "yearly_updated"
+  },
+  {
+    "id": "pbhmi-JxGI",
+    "message": "Monthly payment cleared: Tobi (Tobi) (2026-01)",
+    "timestamp": 1768979002684,
+    "type": "monthly_cleared"
+  },
+  {
+    "id": "UmO2v0pOy9",
+    "message": "Monthly payment updated: Tobi (Tobi) (2026-01) ₦2000/₦2000",
+    "timestamp": 1768979002687,
+    "type": "monthly_updated"
+  },
+  {
+    "id": "DiyMp3h6NV",
+    "message": "Visitor promoted to member: uche",
+    "timestamp": 1768979123113,
+    "type": "visitor_promoted"
+  },
+  {
+    "id": "YMh0hBQ5lx",
+    "message": "Yearly subscription cleared: Uche (2026)",
+    "timestamp": 1768979205581,
+    "type": "yearly_cleared"
+  },
+  {
+    "id": "i8nBxmFUQh",
+    "message": "Yearly payment updated: Uche (2026) ₦5000/₦5000",
+    "timestamp": 1768979205584,
+    "type": "yearly_updated"
+  },
+  {
+    "id": "xi3anXbWmY",
+    "message": "Monthly payment cleared: Akpos (Akp) (2026-01)",
+    "timestamp": 1768979268393,
+    "type": "monthly_cleared"
+  },
+  {
+    "id": "66ptKD5Akc",
+    "message": "Yearly subscription cleared: Akpos (Akp) (2026)",
+    "timestamp": 1768979268399,
+    "type": "yearly_cleared"
+  },
+  {
+    "id": "RXjIREqRhZ",
+    "message": "New member joined: Akpos (Akp)",
+    "timestamp": 1768979268404,
+    "type": "member_joined"
+  },
+  {
+    "id": "-suWLsjtCr",
+    "message": "New member joined: Joker (Joker)",
+    "timestamp": 1768979341561,
+    "type": "member_joined"
+  },
+  {
+    "id": "nGa7I5Rjxe",
+    "message": "New member joined: Theo (Theo)",
+    "timestamp": 1768979368292,
+    "type": "member_joined"
+  },
+  {
+    "id": "BgIXHWLFue",
+    "message": "New member joined: Eng. Abu",
+    "timestamp": 1768979404294,
+    "type": "member_joined"
+  },
+  {
+    "id": "Mzet0OakAr",
+    "message": "New member joined: Oga D Law (Oga D Law)",
+    "timestamp": 1768979457351,
+    "type": "member_joined"
+  },
+  {
+    "id": "LLzdRB_8bl",
+    "message": "New member joined: Adeleka (Leke)",
+    "timestamp": 1768979496066,
+    "type": "member_joined"
+  },
+  {
+    "id": "dLdG3sYpsC",
+    "message": "New member joined: Jonathan (Jona)",
+    "timestamp": 1768979530501,
+    "type": "member_joined"
+  },
+  {
+    "id": "PIXETNDG_D",
+    "message": "New member joined: Engr Saka",
+    "timestamp": 1768979562739,
+    "type": "member_joined"
+  },
+  {
+    "id": "0QjhsZyi0E",
+    "message": "New member joined: Henry (Lee)",
+    "timestamp": 1768979591904,
+    "type": "member_joined"
   }
 ]
