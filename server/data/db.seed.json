@@ -16,14 +16,12 @@
       "stats": {
         "goals": 1,
         "assists": 0,
-        "yellow": 2,
+        "yellow": 0,
         "red": 0
       },
       "attendance": {
         "2026-01-10": true,
-        "2026-01-17": true,
-        "2026-01-24": true,
-        "2026-01-31": true
+        "2026-01-17": true
       },
       "payments": {
         "yearly": {
@@ -67,21 +65,19 @@
         }
       },
       "stats": {
-        "goals": 7,
+        "goals": 5,
         "assists": 0,
-        "yellow": 3,
+        "yellow": 1,
         "red": 0
       },
       "attendance": {
         "2026-01-10": true,
-        "2026-01-17": true,
-        "2026-01-24": true,
-        "2026-01-31": true
+        "2026-01-17": true
       },
       "payments": {
         "yearly": {
           "2026": {
-            "expected": 2500,
+            "expected": 5000,
             "paid": 2500
           }
         },
@@ -89,15 +85,11 @@
           "2026-01": {
             "expected": 2000,
             "paid": 2000
-          },
-          "2026-02": {
-            "expected": 3000,
-            "paid": 3000
           }
         }
       },
       "discipline": {
-        "yellowPaid": 3,
+        "yellowPaid": 0,
         "redPaid": 0
       },
       "createdAt": "1970-01-01T00:00:00.000Z"
@@ -120,16 +112,14 @@
         }
       },
       "stats": {
-        "goals": 4,
+        "goals": 2,
         "assists": 0,
         "yellow": 0,
         "red": 0
       },
       "attendance": {
         "2026-01-10": true,
-        "2026-01-17": true,
-        "2026-01-24": true,
-        "2026-01-31": true
+        "2026-01-17": true
       },
       "payments": {
         "yearly": {
@@ -170,16 +160,14 @@
         }
       },
       "stats": {
-        "goals": 1,
-        "assists": 0,
+        "goals": 0,
+        "assists": 1,
         "yellow": 1,
         "red": 0
       },
       "attendance": {
         "2026-01-10": true,
-        "2026-01-17": true,
-        "2026-01-24": true,
-        "2026-01-31": true
+        "2026-01-17": true
       },
       "payments": {
         "yearly": {
@@ -192,10 +180,6 @@
           "2026-01": {
             "expected": 2000,
             "paid": 2000
-          },
-          "2026-02": {
-            "expected": 3000,
-            "paid": 3000
           }
         }
       },
@@ -230,9 +214,7 @@
       },
       "attendance": {
         "2026-01-10": true,
-        "2026-01-17": true,
-        "2026-01-24": true,
-        "2026-01-31": false
+        "2026-01-17": true
       },
       "payments": {
         "yearly": {
@@ -270,14 +252,12 @@
       "stats": {
         "goals": 0,
         "assists": 0,
-        "yellow": 1,
+        "yellow": 0,
         "red": 0
       },
       "attendance": {
         "2026-01-10": true,
-        "2026-01-17": true,
-        "2026-01-24": true,
-        "2026-01-31": true
+        "2026-01-17": true
       },
       "payments": {
         "yearly": {
@@ -290,16 +270,8 @@
           "2026-01": {
             "expected": 2000,
             "paid": 2000
-          },
-          "2026-02": {
-            "expected": 3000,
-            "paid": 3000
           }
         }
-      },
-      "discipline": {
-        "yellowPaid": 0,
-        "redPaid": 0
       }
     },
     {
@@ -323,14 +295,12 @@
       "stats": {
         "goals": 0,
         "assists": 0,
-        "yellow": 1,
+        "yellow": 0,
         "red": 0
       },
       "attendance": {
         "2026-01-10": true,
-        "2026-01-17": false,
-        "2026-01-24": true,
-        "2026-01-31": true
+        "2026-01-17": false
       },
       "payments": {
         "yearly": {
@@ -343,16 +313,8 @@
           "2026-01": {
             "expected": 2000,
             "paid": 2000
-          },
-          "2026-02": {
-            "expected": 3000,
-            "paid": 3000
           }
         }
-      },
-      "discipline": {
-        "yellowPaid": 1,
-        "redPaid": 0
       }
     },
     {
@@ -376,14 +338,12 @@
       "stats": {
         "goals": 1,
         "assists": 0,
-        "yellow": 1,
+        "yellow": 0,
         "red": 0
       },
       "attendance": {
         "2026-01-10": true,
-        "2026-01-17": true,
-        "2026-01-24": true,
-        "2026-01-31": true
+        "2026-01-17": true
       },
       "payments": {
         "yearly": {
@@ -396,10 +356,6 @@
           "2026-01": {
             "expected": 2000,
             "paid": 2000
-          },
-          "2026-02": {
-            "expected": 3000,
-            "paid": 3000
           }
         }
       },
@@ -428,15 +384,13 @@
       },
       "stats": {
         "goals": 0,
-        "assists": 0,
-        "yellow": 2,
+        "assists": 1,
+        "yellow": 1,
         "red": 0
       },
       "attendance": {
         "2026-01-10": true,
-        "2026-01-17": true,
-        "2026-01-24": true,
-        "2026-01-31": true
+        "2026-01-17": true
       },
       "payments": {
         "yearly": {
@@ -449,15 +403,11 @@
           "2026-01": {
             "expected": 2000,
             "paid": 2000
-          },
-          "2026-02": {
-            "expected": 3000,
-            "paid": 3000
           }
         }
       },
       "discipline": {
-        "yellowPaid": 2,
+        "yellowPaid": 0,
         "redPaid": 0
       }
     },
@@ -480,16 +430,14 @@
         }
       },
       "stats": {
-        "goals": 1,
+        "goals": 0,
         "assists": 0,
         "yellow": 1,
         "red": 0
       },
       "attendance": {
         "2026-01-10": true,
-        "2026-01-17": true,
-        "2026-01-24": true,
-        "2026-01-31": true
+        "2026-01-17": true
       },
       "payments": {
         "yearly": {
@@ -536,9 +484,7 @@
       },
       "attendance": {
         "2026-01-10": true,
-        "2026-01-17": true,
-        "2026-01-24": true,
-        "2026-01-31": true
+        "2026-01-17": true
       },
       "payments": {
         "yearly": {
@@ -578,16 +524,14 @@
         }
       },
       "stats": {
-        "goals": 8,
+        "goals": 5,
         "assists": 0,
-        "yellow": 1,
+        "yellow": 0,
         "red": 0
       },
       "attendance": {
         "2026-01-10": true,
-        "2026-01-17": true,
-        "2026-01-24": true,
-        "2026-01-31": true
+        "2026-01-17": true
       },
       "payments": {
         "yearly": {
@@ -627,16 +571,14 @@
         }
       },
       "stats": {
-        "goals": 5,
+        "goals": 2,
         "assists": 0,
         "yellow": 0,
         "red": 0
       },
       "attendance": {
         "2026-01-10": true,
-        "2026-01-17": true,
-        "2026-01-24": true,
-        "2026-01-31": true
+        "2026-01-17": true
       },
       "payments": {
         "yearly": {
@@ -676,16 +618,14 @@
         }
       },
       "stats": {
-        "goals": 1,
+        "goals": 0,
         "assists": 0,
-        "yellow": 2,
+        "yellow": 0,
         "red": 0
       },
       "attendance": {
         "2026-01-10": true,
-        "2026-01-17": true,
-        "2026-01-24": true,
-        "2026-01-31": true
+        "2026-01-17": true
       },
       "payments": {
         "yearly": {
@@ -698,16 +638,8 @@
           "2026-01": {
             "expected": 2000,
             "paid": 0
-          },
-          "2026-02": {
-            "expected": 3000,
-            "paid": 3000
           }
         }
-      },
-      "discipline": {
-        "yellowPaid": 0,
-        "redPaid": 0
       }
     },
     {
@@ -729,16 +661,14 @@
         }
       },
       "stats": {
-        "goals": 1,
+        "goals": 0,
         "assists": 0,
         "yellow": 0,
         "red": 0
       },
       "attendance": {
         "2026-01-10": true,
-        "2026-01-17": true,
-        "2026-01-24": true,
-        "2026-01-31": true
+        "2026-01-17": true
       },
       "payments": {
         "yearly": {
@@ -753,10 +683,6 @@
             "paid": 1000
           }
         }
-      },
-      "discipline": {
-        "yellowPaid": 0,
-        "redPaid": 0
       }
     },
     {
@@ -785,9 +711,7 @@
       },
       "attendance": {
         "2026-01-10": true,
-        "2026-01-17": true,
-        "2026-01-24": false,
-        "2026-01-31": false
+        "2026-01-17": true
       },
       "payments": {
         "yearly": {
@@ -823,22 +747,20 @@
         }
       },
       "stats": {
-        "goals": 1,
+        "goals": 0,
         "assists": 0,
-        "yellow": 2,
+        "yellow": 1,
         "red": 0
       },
       "attendance": {
         "2026-01-10": true,
-        "2026-01-17": true,
-        "2026-01-24": true,
-        "2026-01-31": true
+        "2026-01-17": true
       },
       "payments": {
         "yearly": {
           "2026": {
             "expected": 2500,
-            "paid": 2500
+            "paid": 500
           }
         },
         "monthly": {
@@ -874,14 +796,12 @@
       "stats": {
         "goals": 0,
         "assists": 0,
-        "yellow": 1,
+        "yellow": 0,
         "red": 0
       },
       "attendance": {
         "2026-01-10": true,
-        "2026-01-17": true,
-        "2026-01-24": true,
-        "2026-01-31": true
+        "2026-01-17": true
       },
       "payments": {
         "yearly": {
@@ -896,10 +816,6 @@
             "paid": 0
           }
         }
-      },
-      "discipline": {
-        "yellowPaid": 0,
-        "redPaid": 0
       }
     },
     {
@@ -921,16 +837,14 @@
         }
       },
       "stats": {
-        "goals": 2,
+        "goals": 0,
         "assists": 0,
-        "yellow": 2,
+        "yellow": 1,
         "red": 0
       },
       "attendance": {
         "2026-01-10": true,
-        "2026-01-17": true,
-        "2026-01-24": true,
-        "2026-01-31": true
+        "2026-01-17": true
       },
       "payments": {
         "yearly": {
@@ -942,16 +856,12 @@
         "monthly": {
           "2026-01": {
             "expected": 2000,
-            "paid": 2000
-          },
-          "2026-02": {
-            "expected": 3000,
-            "paid": 3000
+            "paid": 0
           }
         }
       },
       "discipline": {
-        "yellowPaid": 1,
+        "yellowPaid": 0,
         "redPaid": 0
       }
     },
@@ -981,9 +891,7 @@
       },
       "attendance": {
         "2026-01-10": true,
-        "2026-01-17": false,
-        "2026-01-24": false,
-        "2026-01-31": false
+        "2026-01-17": false
       },
       "payments": {
         "yearly": {
@@ -1023,15 +931,13 @@
         }
       },
       "stats": {
-        "goals": 6,
+        "goals": 1,
         "assists": 0,
-        "yellow": 3,
+        "yellow": 2,
         "red": 0
       },
       "attendance": {
-        "2026-01-17": true,
-        "2026-01-24": true,
-        "2026-01-31": true
+        "2026-01-17": true
       },
       "payments": {
         "yearly": {
@@ -1043,11 +949,7 @@
         "monthly": {
           "2026-01": {
             "expected": 2000,
-            "paid": 2000
-          },
-          "2026-02": {
-            "expected": 3000,
-            "paid": 1000
+            "paid": 0
           }
         }
       },
@@ -1075,15 +977,13 @@
         }
       },
       "stats": {
-        "goals": 3,
+        "goals": 1,
         "assists": 0,
         "yellow": 0,
         "red": 0
       },
       "attendance": {
-        "2026-01-17": true,
-        "2026-01-24": true,
-        "2026-01-31": true
+        "2026-01-17": true
       },
       "payments": {
         "yearly": {
@@ -1129,9 +1029,7 @@
         "red": 0
       },
       "attendance": {
-        "2026-01-17": true,
-        "2026-01-24": false,
-        "2026-01-31": false
+        "2026-01-17": true
       },
       "payments": {
         "yearly": {
@@ -1173,9 +1071,7 @@
         "red": 0
       },
       "attendance": {
-        "2026-01-17": true,
-        "2026-01-24": true,
-        "2026-01-31": false
+        "2026-01-17": true
       },
       "payments": {
         "yearly": {
@@ -1211,37 +1107,27 @@
         }
       },
       "stats": {
-        "goals": 2,
+        "goals": 0,
         "assists": 0,
         "yellow": 0,
         "red": 0
       },
       "attendance": {
-        "2026-01-17": true,
-        "2026-01-24": true,
-        "2026-01-31": true
+        "2026-01-17": true
       },
       "payments": {
         "yearly": {
           "2026": {
             "expected": 2500,
-            "paid": 2500
+            "paid": 0
           }
         },
         "monthly": {
           "2026-01": {
             "expected": 2000,
-            "paid": 2000
-          },
-          "2026-02": {
-            "expected": 3000,
-            "paid": 3000
+            "paid": 0
           }
         }
-      },
-      "discipline": {
-        "yellowPaid": 0,
-        "redPaid": 0
       }
     },
     {
@@ -1269,9 +1155,7 @@
         "red": 0
       },
       "attendance": {
-        "2026-01-17": true,
-        "2026-01-24": false,
-        "2026-01-31": false
+        "2026-01-17": true
       },
       "payments": {
         "yearly": {
@@ -1313,9 +1197,7 @@
         "red": 0
       },
       "attendance": {
-        "2026-01-17": true,
-        "2026-01-24": true,
-        "2026-01-31": false
+        "2026-01-17": true
       },
       "payments": {
         "yearly": {
@@ -1351,15 +1233,13 @@
         }
       },
       "stats": {
-        "goals": 4,
+        "goals": 3,
         "assists": 0,
         "yellow": 0,
         "red": 0
       },
       "attendance": {
-        "2026-01-17": true,
-        "2026-01-24": false,
-        "2026-01-31": true
+        "2026-01-17": true
       },
       "payments": {
         "yearly": {
@@ -1405,9 +1285,7 @@
         "red": 0
       },
       "attendance": {
-        "2026-01-17": true,
-        "2026-01-24": true,
-        "2026-01-31": true
+        "2026-01-17": true
       },
       "payments": {
         "yearly": {
@@ -1443,164 +1321,25 @@
         }
       },
       "stats": {
-        "goals": 3,
-        "assists": 0,
-        "yellow": 0,
-        "red": 0
-      },
-      "attendance": {
-        "2026-01-17": true,
-        "2026-01-24": true,
-        "2026-01-31": true
-      },
-      "payments": {
-        "yearly": {
-          "2026": {
-            "expected": 5000,
-            "paid": 5000
-          }
-        },
-        "monthly": {
-          "2026-01": {
-            "expected": 2000,
-            "paid": 2000
-          },
-          "2026-02": {
-            "expected": 3000,
-            "paid": 3000
-          }
-        }
-      },
-      "discipline": {
-        "yellowPaid": 0,
-        "redPaid": 0
-      }
-    },
-    {
-      "id": "CNM1JSTD",
-      "name": "Ohis",
-      "nickname": "Ohis",
-      "position": "CDM",
-      "email": "",
-      "membership": {
-        "memberSinceYear": 2026
-      },
-      "createdAt": "2026-02-07T16:00:31.928Z",
-      "subscriptions": {
-        "year": {
-          "2026": "pending"
-        },
-        "months": {
-          "2026-02": "pending"
-        }
-      },
-      "stats": {
-        "goals": 0,
-        "assists": 0,
-        "yellow": 0,
-        "red": 0
-      },
-      "attendance": {
-        "2026-01-24": true,
-        "2026-01-31": true
-      },
-      "payments": {
-        "yearly": {
-          "2026": {
-            "expected": 5000,
-            "paid": 5000
-          }
-        },
-        "monthly": {
-          "2026-01": {
-            "expected": 2000,
-            "paid": 2000
-          }
-        }
-      }
-    },
-    {
-      "id": "8p8Hxzog",
-      "name": "Engr Kamil",
-      "nickname": "",
-      "position": "FW",
-      "email": "",
-      "membership": {
-        "memberSinceYear": 2024
-      },
-      "createdAt": "2026-02-07T16:02:28.850Z",
-      "subscriptions": {
-        "year": {
-          "2026": "pending"
-        },
-        "months": {
-          "2026-02": "pending"
-        }
-      },
-      "stats": {
-        "goals": 0,
-        "assists": 0,
-        "yellow": 0,
-        "red": 0
-      },
-      "attendance": {
-        "2026-01-24": false,
-        "2026-01-31": true
-      },
-      "payments": {
-        "yearly": {
-          "2026": {
-            "expected": 2500,
-            "paid": 0
-          }
-        },
-        "monthly": {
-          "2026-01": {
-            "expected": 2000,
-            "paid": 0
-          }
-        }
-      }
-    },
-    {
-      "id": "cuuwPCLX",
-      "name": "McAlista",
-      "nickname": "McAlister",
-      "position": "CM",
-      "email": "",
-      "membership": {
-        "memberSinceYear": 2024
-      },
-      "createdAt": "2026-02-07T16:23:11.922Z",
-      "subscriptions": {
-        "year": {
-          "2026": "pending"
-        },
-        "months": {
-          "2026-02": "pending"
-        }
-      },
-      "stats": {
         "goals": 1,
         "assists": 0,
         "yellow": 0,
         "red": 0
       },
       "attendance": {
-        "2026-01-24": true,
-        "2026-01-31": true
+        "2026-01-17": true
       },
       "payments": {
         "yearly": {
           "2026": {
-            "expected": 2500,
-            "paid": 2500
+            "expected": 5000,
+            "paid": 0
           }
         },
         "monthly": {
           "2026-01": {
             "expected": 2000,
-            "paid": 2000
+            "paid": 0
           }
         }
       },

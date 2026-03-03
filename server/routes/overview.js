@@ -1,17 +1,16 @@
-const fs = require("fs/promises");
 const path = require("path");
 const express = require("express");
 const {
   getPlayerPaymentSummary
 } = require("../lib/paymentStatus");
+const { readJson, writeJsonAtomic, withFileLock } = require("../lib/fsStore");
 
 const router = express.Router();
 const dbPath = path.join(__dirname, "..", "data", "db.json");
 const settingsPath = path.join(__dirname, "..", "data", "settings.json");
 
-async function readJson(filePath) {
-  const raw = await fs.readFile(filePath, "utf-8");
-  return JSON.parse(raw);
+async function readJsonFile(filePath) {
+  return readJson(filePath);
 }
 
 function getCurrentMonthKey() {
@@ -22,8 +21,8 @@ function getCurrentMonthKey() {
 
 router.get("/", async (req, res, next) => {
   try {
-    const db = await readJson(dbPath);
-    const settings = await readJson(settingsPath);
+    const db = await readJsonFile(dbPath);
+    const settings = await readJsonFile(settingsPath);
     const yearKey = String(req.query.yearKey || settings.season || new Date().getFullYear());
     const monthKey = String(req.query.monthKey || getCurrentMonthKey());
 
@@ -55,7 +54,9 @@ router.get("/", async (req, res, next) => {
 
     const missingCreatedAt = (db.players || []).some((player) => !player.createdAt);
     if (missingCreatedAt) {
-      await fs.writeFile(dbPath, JSON.stringify(db, null, 2), "utf-8");
+      await withFileLock(dbPath, async () => {
+        await writeJsonAtomic(dbPath, db);
+      });
     }
 
     const counts = {

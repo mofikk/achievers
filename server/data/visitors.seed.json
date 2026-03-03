@@ -1,0 +1,69 @@
+[
+  {
+    "id": "5nl8v2_E",
+    "name": "Nonso",
+    "nickname": "Nonso",
+    "notes": "",
+    "createdAt": "2026-01-16T20:52:59.447Z",
+    "attendance": {},
+    "payments": {
+      "sessions": {
+        "2026-01-09": {
+          "expected": 1000,
+          "paid": 1000
+        }
+      }
+    },
+    "stats": {
+      "yellow": 0,
+      "red": 0
+    },
+    "discipline": {
+      "yellowPaid": 0,
+      "redPaid": 0
+    }
+  },
+  {
+    "id": "016EJujv",
+    "name": "Basco",
+    "nickname": "Basco",
+    "notes": "",
+    "createdAt": "2026-01-21T07:04:03.517Z",
+    "attendance": {},
+    "payments": {
+      "sessions": {
+        "2026-01-16": {
+          "expected": 1000,
+          "paid": 1000
+        }
+      }
+    },
+    "stats": {
+      "yellow": 0,
+      "red": 0
+    },
+    "discipline": {
+      "yellowPaid": 0,
+      "redPaid": 0
+    }
+  },
+  {
+    "id": "JDqctpZK",
+    "name": "Dave",
+    "nickname": "",
+    "notes": "",
+    "createdAt": "2026-01-21T07:13:50.000Z",
+    "attendance": {},
+    "payments": {
+      "sessions": {}
+    },
+    "stats": {
+      "yellow": 0,
+      "red": 0
+    },
+    "discipline": {
+      "yellowPaid": 0,
+      "redPaid": 0
+    }
+  }
+]

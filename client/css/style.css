@@ -821,11 +821,13 @@ textarea.input {
 
 .toast-container {
   position: fixed;
-  right: 20px;
   bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
   display: grid;
   gap: 10px;
   z-index: 40;
+  justify-items: center;
 }
 
 .toast {
@@ -838,6 +840,8 @@ textarea.input {
   opacity: 1;
   transform: translateY(0);
   transition: opacity 0.2s ease, transform 0.2s ease;
+  max-width: min(90vw, 360px);
+  text-align: center;
 }
 
 .toast-success {

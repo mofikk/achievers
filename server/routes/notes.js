@@ -1,19 +1,17 @@
-const fs = require("fs/promises");
 const path = require("path");
 const express = require("express");
 const crypto = require("crypto");
+const { readJson, writeJsonAtomic, withFileLock } = require("../lib/fsStore");
 
 const router = express.Router();
 const notesPath = path.join(__dirname, "..", "data", "notes.json");
 
 async function readNotes() {
-  const raw = await fs.readFile(notesPath, "utf-8");
-  return JSON.parse(raw);
+  return readJson(notesPath, { fallback: [] });
 }
 
 async function writeNotes(notes) {
-  const json = JSON.stringify(notes, null, 2);
-  await fs.writeFile(notesPath, json, "utf-8");
+  await writeJsonAtomic(notesPath, notes);
 }
 
 router.get("/", async (req, res, next) => {
@@ -39,9 +37,14 @@ router.get("/", async (req, res, next) => {
       return true;
     });
 
-    const sorted = dateFiltered.sort(
-      (a, b) => new Date(b.updatedAt || b.createdAt).getTime() - new Date(a.updatedAt || a.createdAt).getTime()
-    );
+    const sorted = dateFiltered.sort((a, b) => {
+      const pinnedDelta = Number(Boolean(b.pinned)) - Number(Boolean(a.pinned));
+      if (pinnedDelta !== 0) return pinnedDelta;
+      return (
+        new Date(b.updatedAt || b.createdAt).getTime() -
+        new Date(a.updatedAt || a.createdAt).getTime()
+      );
+    });
     const total = sorted.length;
     const totalPages = Math.max(1, Math.ceil(total / limit));
     const start = (page - 1) * limit;
@@ -71,9 +74,11 @@ router.post("/", async (req, res, next) => {
       tag: req.body.tag ? String(req.body.tag).trim() : ""
     };
 
-    const notes = await readNotes();
-    notes.push(note);
-    await writeNotes(notes);
+    await withFileLock(notesPath, async () => {
+      const notes = await readNotes();
+      notes.push(note);
+      await writeNotes(notes);
+    });
     res.status(201).json(note);
   } catch (err) {
     next(err);
@@ -82,46 +87,60 @@ router.post("/", async (req, res, next) => {
 
 router.patch("/:id", async (req, res, next) => {
   try {
-    const notes = await readNotes();
-    const note = notes.find((item) => item.id === req.params.id);
-    if (!note) {
+    let updatedNote = null;
+    await withFileLock(notesPath, async () => {
+      const notes = await readNotes();
+      const note = notes.find((item) => item.id === req.params.id);
+      if (!note) {
+        return;
+      }
+
+      if (req.body.text !== undefined) {
+        const text = String(req.body.text || "").trim();
+        if (!text) {
+          throw new Error("Note text is required.");
+        }
+        note.text = text;
+      }
+      if (req.body.pinned !== undefined) {
+        note.pinned = Boolean(req.body.pinned);
+      }
+      if (req.body.tag !== undefined) {
+        note.tag = String(req.body.tag || "").trim();
+      }
+      note.updatedAt = new Date().toISOString();
+      await writeNotes(notes);
+      updatedNote = note;
+    });
+    if (!updatedNote) {
       res.status(404).json({ ok: false });
       return;
     }
-
-    if (req.body.text !== undefined) {
-      const text = String(req.body.text || "").trim();
-      if (!text) {
-        res.status(400).send("Note text is required.");
-        return;
-      }
-      note.text = text;
-    }
-    if (req.body.pinned !== undefined) {
-      note.pinned = Boolean(req.body.pinned);
-    }
-    if (req.body.tag !== undefined) {
-      note.tag = String(req.body.tag || "").trim();
-    }
-    note.updatedAt = new Date().toISOString();
-
-    await writeNotes(notes);
-    res.json(note);
+    res.json(updatedNote);
   } catch (err) {
+    if (err.message === "Note text is required.") {
+      res.status(400).send("Note text is required.");
+      return;
+    }
     next(err);
   }
 });
 
 router.delete("/:id", async (req, res, next) => {
   try {
-    const notes = await readNotes();
-    const index = notes.findIndex((item) => item.id === req.params.id);
-    if (index === -1) {
+    let deleted = false;
+    await withFileLock(notesPath, async () => {
+      const notes = await readNotes();
+      const index = notes.findIndex((item) => item.id === req.params.id);
+      if (index === -1) return;
+      notes.splice(index, 1);
+      await writeNotes(notes);
+      deleted = true;
+    });
+    if (!deleted) {
       res.status(404).json({ ok: false });
       return;
     }
-    notes.splice(index, 1);
-    await writeNotes(notes);
     res.json({ ok: true });
   } catch (err) {
     next(err);

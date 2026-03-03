@@ -29,7 +29,7 @@
   };
 
   function formatType(type) {
-    if (!type) return "—";
+    if (!type) return "-";
     if (type === "member_joined") return "Member joined";
     if (type === "monthly_cleared") return "Monthly cleared";
     if (type === "monthly_updated") return "Monthly updated";
@@ -42,7 +42,7 @@
 
   function formatDate(timestamp) {
     const date = new Date(Number(timestamp));
-    if (Number.isNaN(date.getTime())) return "—";
+    if (Number.isNaN(date.getTime())) return "-";
     return date.toLocaleString();
   }
 
@@ -64,7 +64,7 @@
     }
     const start = (state.page - 1) * state.limit + 1;
     const end = start + items.length - 1;
-    rangeEl.textContent = `Showing ${start}–${end} of ${state.total}`;
+    rangeEl.textContent = `Showing ${start}-${end} of ${state.total}`;
   }
 
   function renderTable(items) {
@@ -72,9 +72,7 @@
     if (!items.length) {
       const row = document.createElement("tr");
       row.innerHTML = `
-        <td data-label="Date">—</td>
-        <td data-label="Type">—</td>
-        <td data-label="Message">No activity found.</td>
+        <td colspan="3" class="empty-state">No activity found.</td>
       `;
       body.appendChild(row);
       return;

@@ -1,0 +1,27 @@
+{
+  "clubName": "Archievers FC",
+  "season": 2026,
+  "currencySymbol": "â‚¦",
+  "fees": {
+    "monthlySchedule": [
+      {
+        "from": "2026-01",
+        "amount": 2000
+      },
+      {
+        "from": "2026-02",
+        "amount": 3000
+      }
+    ],
+    "newMemberYearly": 5000,
+    "renewalYearly": 2500
+  },
+  "attendance": {
+    "startDate": "2026-01-10",
+    "lockFuture": true
+  },
+  "discipline": {
+    "yellowFine": 500,
+    "redFine": 1000
+  }
+}

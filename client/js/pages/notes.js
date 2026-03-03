@@ -64,7 +64,7 @@
     }
     const start = (state.page - 1) * state.limit + 1;
     const end = start + items.length - 1;
-    rangeEl.textContent = `Showing ${start}–${end} of ${state.total}`;
+    rangeEl.textContent = `Showing ${start}-${end} of ${state.total}`;
   }
 
   function renderNotes(items) {
@@ -108,13 +108,21 @@
         updateRange(items);
         setPagination();
         const countEl = document.getElementById("notes-count");
-        if (countEl) countEl.textContent = String(state.total);
+        if (countEl) {
+          countEl.textContent = String(state.total);
+          countEl.classList.toggle("hidden", state.total <= 0);
+        }
       })
       .catch(() => {
         renderNotes([]);
         rangeEl.textContent = "Showing 0 of 0";
         prevBtn.disabled = true;
         nextBtn.disabled = true;
+        const countEl = document.getElementById("notes-count");
+        if (countEl) {
+          countEl.textContent = "0";
+          countEl.classList.add("hidden");
+        }
       });
   }
 
@@ -138,7 +146,8 @@
     }
     errorEl.textContent = "";
     saveBtn.disabled = true;
-    const request = state.editingId
+    const isEditing = Boolean(state.editingId);
+    const request = isEditing
       ? window.apiFetch(`/notes/${state.editingId}`, {
           method: "PATCH",
           body: JSON.stringify({ text })
@@ -151,6 +160,7 @@
       .then(() => {
         resetEditor();
         loadNotes();
+        window.toast(isEditing ? "Note updated" : "Note created", "success");
       })
       .catch((err) => {
         errorEl.textContent = err.message || "Unable to save note.";
@@ -177,12 +187,28 @@
     if (target.hasAttribute("data-delete")) {
       const id = target.getAttribute("data-delete");
       if (!id) return;
-      window
-        .apiFetch(`/notes/${id}`, { method: "DELETE" })
-        .then(loadNotes)
-        .catch((err) => {
-          errorEl.textContent = err.message || "Unable to delete note.";
-        });
+      const confirmAction = window.confirmAction;
+      const confirmPromise = confirmAction
+        ? confirmAction({
+            title: "Delete note",
+            message: "This note will be permanently removed.",
+            confirmText: "Delete",
+            cancelText: "Cancel",
+            danger: true
+          })
+        : Promise.resolve(window.confirm("Delete this note?"));
+      confirmPromise.then((confirmed) => {
+        if (!confirmed) return;
+        window
+          .apiFetch(`/notes/${id}`, { method: "DELETE" })
+          .then(() => {
+            loadNotes();
+            window.toast("Note deleted", "success");
+          })
+          .catch((err) => {
+            errorEl.textContent = err.message || "Unable to delete note.";
+          });
+      });
     }
   });
 

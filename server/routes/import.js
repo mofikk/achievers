@@ -1,9 +1,9 @@
-const fs = require("fs/promises");
 const path = require("path");
 const express = require("express");
 const { nanoid } = require("nanoid");
 const { backupAll } = require("../lib/backup");
 const { parseCSV } = require("../lib/csv");
+const { readJson, writeJsonAtomic, withFileLock } = require("../lib/fsStore");
 
 const router = express.Router();
 const dbPath = path.join(__dirname, "..", "data", "db.json");
@@ -26,14 +26,14 @@ const allowedPositions = new Set([
   "MF"
 ]);
 
-async function readJson(filePath) {
-  const raw = await fs.readFile(filePath, "utf-8");
-  return JSON.parse(raw);
+async function readJsonFile(filePath) {
+  return readJson(filePath);
 }
 
-async function writeJson(filePath, data) {
-  const json = JSON.stringify(data, null, 2);
-  await fs.writeFile(filePath, json, "utf-8");
+async function writeJsonFile(filePath, data) {
+  await withFileLock(filePath, async () => {
+    await writeJsonAtomic(filePath, data);
+  });
 }
 
 function getCsvBody(req) {
@@ -66,8 +66,8 @@ router.post("/players", async (req, res, next) => {
   try {
     const csvText = getCsvBody(req);
     const rows = parseCSV(csvText);
-    const db = await readJson(dbPath);
-    const settings = await readJson(settingsPath);
+    const db = await readJsonFile(dbPath);
+    const settings = await readJsonFile(settingsPath);
     const season = Number(settings.season) || new Date().getFullYear();
 
     let created = 0;
@@ -126,7 +126,7 @@ router.post("/players", async (req, res, next) => {
     });
 
     await backupAll();
-    await writeJson(dbPath, db);
+    await writeJsonFile(dbPath, db);
     res.json({ ok: true, created, skipped });
   } catch (err) {
     next(err);
@@ -137,8 +137,8 @@ router.post("/payments", async (req, res, next) => {
   try {
     const csvText = getCsvBody(req);
     const rows = parseCSV(csvText);
-    const db = await readJson(dbPath);
-    const settings = await readJson(settingsPath);
+    const db = await readJsonFile(dbPath);
+    const settings = await readJsonFile(settingsPath);
     const fees = settings.fees || {};
 
     const notFound = [];
@@ -190,7 +190,7 @@ router.post("/payments", async (req, res, next) => {
     });
 
     await backupAll();
-    await writeJson(dbPath, db);
+    await writeJsonFile(dbPath, db);
     res.json({ ok: true, updated, notFound });
   } catch (err) {
     next(err);

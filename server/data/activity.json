@@ -392,5 +392,287 @@
     "message": "New member joined: Henry (Lee)",
     "timestamp": 1768979591904,
     "type": "member_joined"
+  },
+  {
+    "id": "GA9eyf-Pzt",
+    "message": "Monthly payment cleared: Ohis (Ohis) (2026-01)",
+    "timestamp": 1770480031929,
+    "type": "monthly_cleared"
+  },
+  {
+    "id": "qVUKtwnUMR",
+    "message": "Yearly subscription cleared: Ohis (Ohis) (2026)",
+    "timestamp": 1770480031933,
+    "type": "yearly_cleared"
+  },
+  {
+    "id": "7vSld15JhU",
+    "message": "New member joined: Ohis (Ohis)",
+    "timestamp": 1770480031939,
+    "type": "member_joined"
+  },
+  {
+    "id": "T69mVGTyn8",
+    "message": "New member joined: Engr Kamil",
+    "timestamp": 1770480148854,
+    "type": "member_joined"
+  },
+  {
+    "id": "viTdz-TEfM",
+    "message": "Fines settled: Gbenga Adebiyi (Gbenga)",
+    "timestamp": 1770480357714,
+    "type": "fines_cleared"
+  },
+  {
+    "id": "MQIy8UGJ8A",
+    "message": "Fines settled: Femi (FM)",
+    "timestamp": 1770480472168,
+    "type": "fines_cleared"
+  },
+  {
+    "id": "oDn9WYmcdS",
+    "message": "Monthly payment cleared: McAlista (McAlister) (2026-01)",
+    "timestamp": 1770481391922,
+    "type": "monthly_cleared"
+  },
+  {
+    "id": "ORedo-0bQY",
+    "message": "Yearly subscription cleared: McAlista (McAlister) (2026)",
+    "timestamp": 1770481391925,
+    "type": "yearly_cleared"
+  },
+  {
+    "id": "Kq7hxIcBJ_",
+    "message": "New member joined: McAlista (McAlister)",
+    "timestamp": 1770481391931,
+    "type": "member_joined"
+  },
+  {
+    "id": "vd3GBaiL9U",
+    "message": "Fines settled: Jimmy Isaac (Jimmy)",
+    "timestamp": 1770481489360,
+    "type": "fines_cleared"
+  },
+  {
+    "id": "4VNmj3H1e9",
+    "message": "Monthly payment cleared: Gbenga Adebiyi (Gbenga) (2026-02)",
+    "timestamp": 1770481784510,
+    "type": "monthly_cleared"
+  },
+  {
+    "id": "MwJCI3Pccr",
+    "message": "Monthly payment updated: Gbenga Adebiyi (Gbenga) (2026-02) ₦3000/₦3000",
+    "timestamp": 1770481784514,
+    "type": "monthly_updated"
+  },
+  {
+    "id": "r9WvhXzltm",
+    "message": "Yearly subscription cleared: Tobi (Tobi) (2026)",
+    "timestamp": 1772189489757,
+    "type": "yearly_cleared"
+  },
+  {
+    "id": "CqmV0eAUv9",
+    "message": "Yearly payment updated: Tobi (Tobi) (2026) ₦2500/₦2500",
+    "timestamp": 1772189489762,
+    "type": "yearly_updated"
+  },
+  {
+    "id": "ASAfpsxcQ0",
+    "message": "Yearly subscription cleared: Henry (Lee) (2026)",
+    "timestamp": 1772189610662,
+    "type": "yearly_cleared"
+  },
+  {
+    "id": "VFElkMQC3v",
+    "message": "Yearly payment updated: Henry (Lee) (2026) ₦5000/₦5000",
+    "timestamp": 1772189610665,
+    "type": "yearly_updated"
+  },
+  {
+    "id": "JfDnzwGat6",
+    "message": "Monthly payment cleared: Henry (Lee) (2026-01)",
+    "timestamp": 1772189610668,
+    "type": "monthly_cleared"
+  },
+  {
+    "id": "Fet3Vbd7zk",
+    "message": "Monthly payment updated: Henry (Lee) (2026-01) ₦2000/₦2000",
+    "timestamp": 1772189610672,
+    "type": "monthly_updated"
+  },
+  {
+    "id": "vf9tC16pjA",
+    "message": "Monthly payment cleared: Uche (2026-01)",
+    "timestamp": 1772189650996,
+    "type": "monthly_cleared"
+  },
+  {
+    "id": "AOxAxKUHEC",
+    "message": "Monthly payment updated: Uche (2026-01) ₦2000/₦2000",
+    "timestamp": 1772189651001,
+    "type": "monthly_updated"
+  },
+  {
+    "id": "4kiCMxNqUK",
+    "message": "Yearly subscription cleared: Eng. Abu (2026)",
+    "timestamp": 1772189723080,
+    "type": "yearly_cleared"
+  },
+  {
+    "id": "nDu7uvnjKA",
+    "message": "Yearly payment updated: Eng. Abu (2026) ₦2500/₦2500",
+    "timestamp": 1772189723086,
+    "type": "yearly_updated"
+  },
+  {
+    "id": "9M1B6XOYLk",
+    "message": "Monthly payment cleared: Eng. Abu (2026-01)",
+    "timestamp": 1772189723091,
+    "type": "monthly_cleared"
+  },
+  {
+    "id": "Z7UB3CAVfj",
+    "message": "Monthly payment updated: Eng. Abu (2026-01) ₦2000/₦2000",
+    "timestamp": 1772189723096,
+    "type": "monthly_updated"
+  },
+  {
+    "id": "Ldl3PTcOoE",
+    "message": "Monthly payment cleared: Jibril (Jibril) (2026-01)",
+    "timestamp": 1772190377669,
+    "type": "monthly_cleared"
+  },
+  {
+    "id": "FRri5J4nC4",
+    "message": "Monthly payment updated: Jibril (Jibril) (2026-01) ₦2000/₦2000",
+    "timestamp": 1772190377672,
+    "type": "monthly_updated"
+  },
+  {
+    "id": "9U065qc095",
+    "message": "Yearly subscription cleared: Femi (FM) (2026)",
+    "timestamp": 1772190469210,
+    "type": "yearly_cleared"
+  },
+  {
+    "id": "6we9E_V57a",
+    "message": "Yearly payment updated: Femi (FM) (2026) ₦2500/₦2500",
+    "timestamp": 1772190469214,
+    "type": "yearly_updated"
+  },
+  {
+    "id": "Yebu4799t8",
+    "message": "Monthly payment cleared: Femi (FM) (2026-02)",
+    "timestamp": 1772190469219,
+    "type": "monthly_cleared"
+  },
+  {
+    "id": "kgyFVZwnq4",
+    "message": "Monthly payment updated: Femi (FM) (2026-02) ₦3000/₦3000",
+    "timestamp": 1772190469223,
+    "type": "monthly_updated"
+  },
+  {
+    "id": "SgFcl8kEYk",
+    "message": "Monthly payment cleared: Kingsley Okpala (Energy) (2026-02)",
+    "timestamp": 1772190490482,
+    "type": "monthly_cleared"
+  },
+  {
+    "id": "ujMY9FqV95",
+    "message": "Monthly payment updated: Kingsley Okpala (Energy) (2026-02) ₦3000/₦3000",
+    "timestamp": 1772190490485,
+    "type": "monthly_updated"
+  },
+  {
+    "id": "v5utzzwwrI",
+    "message": "Monthly payment cleared: Jimmy Isaac (Jimmy) (2026-02)",
+    "timestamp": 1772190501402,
+    "type": "monthly_cleared"
+  },
+  {
+    "id": "-1VvXHHgZj",
+    "message": "Monthly payment updated: Jimmy Isaac (Jimmy) (2026-02) ₦3000/₦3000",
+    "timestamp": 1772190501405,
+    "type": "monthly_updated"
+  },
+  {
+    "id": "bKGJH6mVR6",
+    "message": "Monthly payment cleared: Gabby (Gabby) (2026-02)",
+    "timestamp": 1772190509990,
+    "type": "monthly_cleared"
+  },
+  {
+    "id": "wsoERpQsqt",
+    "message": "Monthly payment updated: Gabby (Gabby) (2026-02) ₦3000/₦3000",
+    "timestamp": 1772190509993,
+    "type": "monthly_updated"
+  },
+  {
+    "id": "Z2FUQDQ70J",
+    "message": "Monthly payment cleared: Ovansa (Ovansa) (2026-02)",
+    "timestamp": 1772190537076,
+    "type": "monthly_cleared"
+  },
+  {
+    "id": "bair9TZkQe",
+    "message": "Monthly payment updated: Ovansa (Ovansa) (2026-02) ₦3000/₦3000",
+    "timestamp": 1772190537079,
+    "type": "monthly_updated"
+  },
+  {
+    "id": "NSwLlznofp",
+    "message": "Monthly payment cleared: Jibril (Jibril) (2026-02)",
+    "timestamp": 1772190550717,
+    "type": "monthly_cleared"
+  },
+  {
+    "id": "37oHwAeslF",
+    "message": "Monthly payment updated: Jibril (Jibril) (2026-02) ₦3000/₦3000",
+    "timestamp": 1772190550720,
+    "type": "monthly_updated"
+  },
+  {
+    "id": "Ag_i9fg4vJ",
+    "message": "Monthly payment updated: Uche (2026-02) ₦1000/₦3000",
+    "timestamp": 1772190565672,
+    "type": "monthly_updated"
+  },
+  {
+    "id": "VSjKIr7q2p",
+    "message": "Monthly payment cleared: Henry (Lee) (2026-02)",
+    "timestamp": 1772190593850,
+    "type": "monthly_cleared"
+  },
+  {
+    "id": "_W3VeqRWeI",
+    "message": "Monthly payment updated: Henry (Lee) (2026-02) ₦3000/₦3000",
+    "timestamp": 1772190593854,
+    "type": "monthly_updated"
+  },
+  {
+    "id": "k-6rch1MIM",
+    "message": "Monthly payment cleared: Eng. Abu (2026-02)",
+    "timestamp": 1772190609935,
+    "type": "monthly_cleared"
+  },
+  {
+    "id": "sXDqUwO4FA",
+    "message": "Monthly payment updated: Eng. Abu (2026-02) ₦3000/₦3000",
+    "timestamp": 1772190609939,
+    "type": "monthly_updated"
+  },
+  {
+    "id": "_THQR97KWx",
+    "message": "Monthly payment cleared: Charles Okoli (Charlie) (2026-02)",
+    "timestamp": 1772190622772,
+    "type": "monthly_cleared"
+  },
+  {
+    "id": "LU5yvoBET2",
+    "message": "Monthly payment updated: Charles Okoli (Charlie) (2026-02) ₦3000/₦3000",
+    "timestamp": 1772190622774,
+    "type": "monthly_updated"
   }
 ]

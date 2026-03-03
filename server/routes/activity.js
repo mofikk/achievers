@@ -1,19 +1,17 @@
-const fs = require("fs/promises");
 const path = require("path");
 const express = require("express");
 const { nanoid } = require("nanoid");
+const { readJson, writeJsonAtomic, withFileLock } = require("../lib/fsStore");
 
 const router = express.Router();
 const activityPath = path.join(__dirname, "..", "data", "activity.json");
 
 async function readActivity() {
-  const raw = await fs.readFile(activityPath, "utf-8");
-  return JSON.parse(raw);
+  return readJson(activityPath, { fallback: [] });
 }
 
 async function writeActivity(data) {
-  const json = JSON.stringify(data, null, 2);
-  await fs.writeFile(activityPath, json, "utf-8");
+  await writeJsonAtomic(activityPath, data);
 }
 
 async function logActivity(message, type) {
@@ -25,9 +23,11 @@ async function logActivity(message, type) {
   if (type) {
     entry.type = type;
   }
-  const activity = await readActivity();
-  activity.push(entry);
-  await writeActivity(activity);
+  await withFileLock(activityPath, async () => {
+    const activity = await readActivity();
+    activity.push(entry);
+    await writeActivity(activity);
+  });
 }
 
 router.get("/", async (req, res, next) => {

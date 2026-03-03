@@ -28,6 +28,11 @@ app.get("/api/health", (req, res) => {
   res.json({ ok: true });
 });
 
+app.use("/api", (req, res, next) => {
+  res.set("Cache-Control", "no-store");
+  next();
+});
+
 app.use("/api/players", playersRouter);
 app.use("/api/attendance", attendanceRouter);
 app.use("/api/settings", settingsRouter);

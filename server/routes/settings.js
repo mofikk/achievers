@@ -1,18 +1,16 @@
-const fs = require("fs/promises");
 const path = require("path");
 const express = require("express");
+const { readJson, writeJsonAtomic, withFileLock } = require("../lib/fsStore");
 
 const router = express.Router();
 const settingsPath = path.join(__dirname, "..", "data", "settings.json");
 
 async function writeSettings(data) {
-  const json = JSON.stringify(data, null, 2);
-  await fs.writeFile(settingsPath, json, "utf-8");
+  await writeJsonAtomic(settingsPath, data);
 }
 
 async function readSettings() {
-  const raw = await fs.readFile(settingsPath, "utf-8");
-  const parsed = JSON.parse(raw);
+  const parsed = await readJson(settingsPath, { fallback: {} });
   const fees = parsed.fees || {};
   const schedule =
     Array.isArray(fees.monthlySchedule) && fees.monthlySchedule.length
@@ -30,7 +28,9 @@ async function readSettings() {
       }
     };
     delete migrated.fees.monthly;
-    await writeSettings(migrated);
+    await withFileLock(settingsPath, async () => {
+      await writeSettings(migrated);
+    });
     return migrated;
   }
 
@@ -158,7 +158,9 @@ router.patch("/", async (req, res, next) => {
       discipline: { yellowFine, redFine }
     };
 
-    await writeSettings(updated);
+    await withFileLock(settingsPath, async () => {
+      await writeSettings(updated);
+    });
     res.json(updated);
   } catch (err) {
     next(err);

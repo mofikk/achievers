@@ -54,6 +54,10 @@ Archievers FC is a football community management system that tracks players, att
 ## Data tools
 - CSV exports for players, payments, attendance, and stats
 
+## Data storage
+- Live JSON data files (e.g., `server/data/db.json`) should not be committed in production.
+- Use the `server/data/*.seed.json` templates to initialize fresh data stores.
+
 ## Dashboard
 - Payment status counts for yearly/monthly
 - Recent activity timeline

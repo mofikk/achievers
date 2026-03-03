@@ -1,8 +1,8 @@
-const fs = require("fs/promises");
 const path = require("path");
 const express = require("express");
 const { nanoid } = require("nanoid");
 const { logActivity } = require("./activity");
+const { readJson, writeJsonAtomic, withFileLock } = require("../lib/fsStore");
 
 const router = express.Router();
 const dbPath = path.join(__dirname, "..", "data", "db.json");
@@ -24,13 +24,13 @@ const allowedPositions = new Set([
 ]);
 
 async function readDb() {
-  const raw = await fs.readFile(dbPath, "utf-8");
-  return JSON.parse(raw);
+  return readJson(dbPath, { fallback: { players: [] } });
 }
 
 async function writeDb(data) {
-  const json = JSON.stringify(data, null, 2);
-  await fs.writeFile(dbPath, json, "utf-8");
+  await withFileLock(dbPath, async () => {
+    await writeJsonAtomic(dbPath, data);
+  });
 }
 
 function formatDisplayName(player) {
@@ -40,8 +40,7 @@ function formatDisplayName(player) {
 
 async function readSettings() {
   const settingsPath = path.join(__dirname, "..", "data", "settings.json");
-  const raw = await fs.readFile(settingsPath, "utf-8");
-  return JSON.parse(raw);
+  return readJson(settingsPath, { fallback: {} });
 }
 
 function getMonthlyExpected(settings, monthKey) {

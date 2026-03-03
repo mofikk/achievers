@@ -1,5 +1,6 @@
 node_modules/
-# ===== Archievers FC – Runtime & Data =====
+
+# ===== Achievers FC - Runtime & Data =====
 
 # Node
 node_modules/
@@ -7,6 +8,10 @@ node_modules/
 # Local env files
 .env
 .env.local
+
+# ===== Data files =====
+server/data/*.json
+!server/data/*.seed.json
 
 # ===== Generated backups (Season rollover / imports) =====
 server/data/backups/

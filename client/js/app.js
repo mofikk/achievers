@@ -149,6 +149,83 @@
     }, 2600);
   };
 
+  window.confirmAction = function confirmAction(options = {}) {
+    const {
+      title = "Confirm action",
+      message = "Are you sure you want to continue?",
+      confirmText = "Confirm",
+      cancelText = "Cancel",
+      danger = false
+    } = options;
+
+    if (!document || !document.body) {
+      return Promise.resolve(window.confirm(message));
+    }
+
+    let modal = document.getElementById("confirm-modal");
+    if (!modal) {
+      modal = document.createElement("div");
+      modal.className = "modal hidden";
+      modal.id = "confirm-modal";
+      modal.setAttribute("aria-hidden", "true");
+      modal.innerHTML = `
+        <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+          <div class="modal-header">
+            <h3 id="confirm-title">Confirm action</h3>
+          </div>
+          <div class="modal-body">
+            <p class="muted" id="confirm-message"></p>
+          </div>
+          <div class="modal-actions">
+            <button class="ghost-btn" type="button" id="confirm-cancel">Cancel</button>
+            <button class="danger-btn" type="button" id="confirm-accept">Confirm</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    }
+
+    const titleEl = modal.querySelector("#confirm-title");
+    const messageEl = modal.querySelector("#confirm-message");
+    const cancelBtn = modal.querySelector("#confirm-cancel");
+    const confirmBtn = modal.querySelector("#confirm-accept");
+
+    if (titleEl) titleEl.textContent = title;
+    if (messageEl) messageEl.textContent = message;
+    if (cancelBtn) cancelBtn.textContent = cancelText;
+    if (confirmBtn) {
+      confirmBtn.textContent = confirmText;
+      confirmBtn.className = danger ? "danger-btn" : "action-btn";
+    }
+
+    modal.classList.remove("hidden");
+    modal.setAttribute("aria-hidden", "false");
+
+    return new Promise((resolve) => {
+      const close = (confirmed) => {
+        modal.classList.add("hidden");
+        modal.setAttribute("aria-hidden", "true");
+        modal.removeEventListener("click", onOverlayClick);
+        document.removeEventListener("keydown", onKeyDown);
+        resolve(confirmed);
+      };
+
+      const onConfirm = () => close(true);
+      const onCancel = () => close(false);
+      const onOverlayClick = (event) => {
+        if (event.target === modal) onCancel();
+      };
+      const onKeyDown = (event) => {
+        if (event.key === "Escape") onCancel();
+      };
+
+      if (confirmBtn) confirmBtn.addEventListener("click", onConfirm, { once: true });
+      if (cancelBtn) cancelBtn.addEventListener("click", onCancel, { once: true });
+      modal.addEventListener("click", onOverlayClick);
+      document.addEventListener("keydown", onKeyDown);
+    });
+  };
+
   function formatRelativeTime(timestamp) {
     const diffMs = Date.now() - new Date(timestamp).getTime();
     const seconds = Math.floor(diffMs / 1000);
@@ -214,6 +291,7 @@
     function renderNotes(items, total) {
       listEl.innerHTML = "";
       countEl.textContent = String(total);
+      countEl.classList.toggle("hidden", total <= 0);
       if (!items.length) {
         const empty = document.createElement("div");
         empty.className = "muted";
@@ -282,7 +360,8 @@
       }
       errorEl.textContent = "";
       saveBtn.disabled = true;
-      const request = editingId
+      const isEditing = Boolean(editingId);
+      const request = isEditing
         ? window.apiFetch(`/notes/${editingId}`, {
             method: "PATCH",
             body: JSON.stringify({ text })
@@ -295,6 +374,7 @@
         .then(() => {
           resetEditor();
           loadNotes();
+          window.toast(isEditing ? "Note updated" : "Note created", "success");
         })
         .catch((err) => {
           errorEl.textContent = err.message || "Unable to save note.";
@@ -321,12 +401,28 @@
       if (target.hasAttribute("data-delete")) {
         const id = target.getAttribute("data-delete");
         if (!id) return;
-        window
-          .apiFetch(`/notes/${id}`, { method: "DELETE" })
-          .then(loadNotes)
-          .catch((err) => {
-            errorEl.textContent = err.message || "Unable to delete note.";
-          });
+        const confirmAction = window.confirmAction;
+        const confirmPromise = confirmAction
+          ? confirmAction({
+              title: "Delete note",
+              message: "This note will be permanently removed.",
+              confirmText: "Delete",
+              cancelText: "Cancel",
+              danger: true
+            })
+          : Promise.resolve(window.confirm("Delete this note?"));
+        confirmPromise.then((confirmed) => {
+          if (!confirmed) return;
+          window
+            .apiFetch(`/notes/${id}`, { method: "DELETE" })
+            .then(() => {
+              loadNotes();
+              window.toast("Note deleted", "success");
+            })
+            .catch((err) => {
+              errorEl.textContent = err.message || "Unable to delete note.";
+            });
+        });
       }
     });
 
