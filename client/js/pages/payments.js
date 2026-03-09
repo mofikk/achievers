@@ -142,7 +142,7 @@
   }
 
   function formatStatusLabel(status) {
-    return status.charAt(0).toUpperCase() + status.slice(1);
+    return status.toUpperCase();
   }
 
   function getYearlyPayment(player, yearKey) {

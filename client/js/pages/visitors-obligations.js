@@ -75,9 +75,9 @@
   }
 
   function computeStatus(totalOwed, paidTotals) {
-    if (totalOwed === 0) return { text: "Cleared", className: "paid" };
-    if (paidTotals === 0) return { text: "Pending", className: "pending" };
-    return { text: "Incomplete", className: "incomplete" };
+    if (totalOwed === 0) return { text: "CLEARED", className: "paid" };
+    if (paidTotals === 0) return { text: "PENDING", className: "pending" };
+    return { text: "INCOMPLETE", className: "incomplete" };
   }
 
   function renderTable(visitors) {

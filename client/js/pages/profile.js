@@ -118,7 +118,7 @@
     const monthlyStatus = window.paymentStatus.statusFromPaid(monthlyExpected, monthlyPaid);
 
     const formatStatus = (status) =>
-      status === "PAID" ? "Paid" : status === "INCOMPLETE" ? "Incomplete" : "Pending";
+      status === "PAID" ? "PAID" : status === "INCOMPLETE" ? "INCOMPLETE" : "PENDING";
 
     yearInput.value = seasonYear;
     yearlyEl.textContent = `${formatStatus(yearlyStatus.status)} - ${formatCurrency(
@@ -231,11 +231,11 @@
       owedRed * state.settings.discipline.redFine;
     const cardsTotal = yellow + red;
     const cardsPaidTotal = yellowPaid + redPaid;
-    let status = "Pending";
-    if (cardsTotal === 0) status = "No cards";
-    else if (fineOwed === 0) status = "Cleared";
-    else if (cardsPaidTotal === 0) status = "Pending";
-    else status = "Incomplete";
+    let status = "PENDING";
+    if (cardsTotal === 0) status = "NO_CARDS";
+    else if (fineOwed === 0) status = "CLEARED";
+    else if (cardsPaidTotal === 0) status = "PENDING";
+    else status = "INCOMPLETE";
 
     cardsOwedEl.textContent = `Y:${owedYellow} R:${owedRed}`;
     fineOwedEl.textContent = formatCurrency(fineOwed);

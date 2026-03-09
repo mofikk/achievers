@@ -33,6 +33,11 @@
         </div>
 
         <section class="panel">
+          <div class="preset-row" id="activity-presets">
+            <button class="ghost-btn" type="button" data-preset="today">Today</button>
+            <button class="ghost-btn" type="button" data-preset="last7">Last 7 days</button>
+            <button class="ghost-btn" type="button" data-preset="month">This month</button>
+          </div>
           <div class="controls-row">
             <label class="form-field">
               <span>Date From</span>
@@ -53,6 +58,10 @@
                 <option value="yearly_updated">Yearly updated</option>
                 <option value="fines_cleared">Fines cleared</option>
                 <option value="visitor_promoted">Visitor promoted</option>
+                <option value="payment_updated">Payment updated</option>
+                <option value="fine_updated">Fine updated</option>
+                <option value="rollover">Rollover</option>
+                <option value="import">Import</option>
               </select>
             </label>
             <label class="form-field">
@@ -60,7 +69,7 @@
               <input class="input" id="activity-search" type="search" placeholder="Search text..." />
             </label>
           </div>
-          <div class="summary-bar" id="activity-range">Showing 0 of 0</div>
+          <div class="summary-bar" id="activity-range">Showing 0-0 of 0</div>
           <div class="table-wrap">
             <table class="table responsive">
               <thead>

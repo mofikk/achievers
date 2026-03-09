@@ -32,6 +32,16 @@
   const importBtn = document.getElementById("import-submit");
   const importError = document.getElementById("import-error");
   const importResult = document.getElementById("import-result");
+  const healthRefreshBtn = document.getElementById("health-refresh");
+  const healthFileList = document.getElementById("health-file-list");
+  const healthTotalEvents = document.getElementById("health-total-events");
+  const healthLastEventAt = document.getElementById("health-last-event-at");
+  const healthBackupCount = document.getElementById("health-backup-count");
+  const healthDbLatestAt = document.getElementById("health-db-latest-at");
+  const healthSettingsLatestAt = document.getElementById("health-settings-latest-at");
+  const downloadDbBackupBtn = document.getElementById("download-db-backup");
+  const downloadSettingsBackupBtn = document.getElementById("download-settings-backup");
+  const healthError = document.getElementById("health-error");
 
   if (
     !clubNameInput ||
@@ -66,7 +76,17 @@
     !importCsv ||
     !importBtn ||
     !importError ||
-    !importResult
+    !importResult ||
+    !healthRefreshBtn ||
+    !healthFileList ||
+    !healthTotalEvents ||
+    !healthLastEventAt ||
+    !healthBackupCount ||
+    !healthDbLatestAt ||
+    !healthSettingsLatestAt ||
+    !downloadDbBackupBtn ||
+    !downloadSettingsBackupBtn ||
+    !healthError
   ) {
     return;
   }
@@ -74,6 +94,90 @@
   let defaults = null;
   let monthlySchedule = [];
   let pendingAction = null;
+
+  function formatFileSize(bytes) {
+    const value = Number(bytes);
+    if (!Number.isFinite(value) || value < 0) return "-";
+    return `${(value / 1024).toFixed(2)} KB`;
+  }
+
+  function formatTime(iso) {
+    if (!iso) return "-";
+    const date = new Date(iso);
+    if (Number.isNaN(date.getTime())) return "-";
+    return date.toLocaleString();
+  }
+
+  function renderHealthRows(files) {
+    const labels = {
+      db: "DB",
+      settings: "Settings",
+      notes: "Notes",
+      visitors: "Visitors",
+      activity: "Activity"
+    };
+
+    healthFileList.innerHTML = "";
+    ["db", "settings", "notes", "visitors", "activity"].forEach((key) => {
+      const file = files?.[key] || {};
+      const row = document.createElement("div");
+      row.className = "health-row";
+      const statusText = file.ok ? "OK" : "ERROR";
+      const errorDetails = file.ok
+        ? ""
+        : `
+          <details class="health-details">
+            <summary>Details</summary>
+            <div class="muted">${file.error || "Unknown error"}</div>
+          </details>
+        `;
+      row.innerHTML = `
+        <div class="health-name">${labels[key] || key}</div>
+        <div><span class="pill ${file.ok ? "ok" : "error"}">${statusText}</span></div>
+        <div class="muted">Size: ${formatFileSize(file.sizeBytes)}</div>
+        <div class="muted">Updated: ${formatTime(file.updatedAt)}</div>
+        ${errorDetails}
+      `;
+      healthFileList.appendChild(row);
+    });
+  }
+
+  function setBackupButtonState(button, hasBackup, type) {
+    button.disabled = !hasBackup;
+    button.title = hasBackup ? "" : "No backups yet";
+    button.onclick = hasBackup
+      ? () => {
+          window.location.href = `/api/admin/backups/latest?type=${type}`;
+        }
+      : null;
+  }
+
+  function loadDataHealth() {
+    healthError.textContent = "";
+    healthRefreshBtn.disabled = true;
+    return window
+      .apiFetch("/admin/data-health")
+      .then((data) => {
+        renderHealthRows(data.files);
+        healthTotalEvents.textContent = String(data.activity?.totalEvents || 0);
+        healthLastEventAt.textContent = formatTime(data.activity?.lastEventAt);
+        healthBackupCount.textContent = String(data.backups?.count || 0);
+        healthDbLatestAt.textContent = formatTime(data.backups?.latestByType?.db);
+        healthSettingsLatestAt.textContent = formatTime(data.backups?.latestByType?.settings);
+        setBackupButtonState(downloadDbBackupBtn, Boolean(data.backups?.latestFiles?.db), "db");
+        setBackupButtonState(
+          downloadSettingsBackupBtn,
+          Boolean(data.backups?.latestFiles?.settings),
+          "settings"
+        );
+      })
+      .catch((err) => {
+        healthError.textContent = err.message || "Unable to load data health.";
+      })
+      .finally(() => {
+        healthRefreshBtn.disabled = false;
+      });
+  }
 
   function getDefaultMonth() {
     const now = new Date();
@@ -366,4 +470,9 @@
   });
 
   loadSettings();
+  loadDataHealth();
+
+  healthRefreshBtn.addEventListener("click", () => {
+    loadDataHealth();
+  });
 })();

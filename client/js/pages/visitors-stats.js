@@ -59,10 +59,10 @@
 
   function computeStatus(fineOwed, paidTotal, yellow, red) {
     const totalCards = yellow + red;
-    if (totalCards === 0) return { text: "No cards", className: "neutral" };
-    if (fineOwed === 0) return { text: "Cleared", className: "paid" };
-    if (paidTotal === 0) return { text: "Pending", className: "pending" };
-    return { text: "Incomplete", className: "incomplete" };
+    if (totalCards === 0) return { text: "NO_CARDS", className: "neutral" };
+    if (fineOwed === 0) return { text: "CLEARED", className: "paid" };
+    if (paidTotal === 0) return { text: "PENDING", className: "pending" };
+    return { text: "INCOMPLETE", className: "incomplete" };
   }
 
   function renderTable(visitors) {

@@ -106,7 +106,7 @@
   function getSessionStatus(visitor, sessionDate) {
     const paid = Number(visitor?.payments?.sessions?.[sessionDate]?.paid) || 0;
     const status = window.paymentStatus.statusFromPaid(1000, paid).status;
-    return status === "PAID" ? "Paid" : status === "INCOMPLETE" ? "Incomplete" : "Pending";
+    return status === "PAID" ? "PAID" : status === "INCOMPLETE" ? "INCOMPLETE" : "PENDING";
   }
 
   function renderTable(list) {
@@ -115,7 +115,7 @@
     list.forEach((visitor) => {
       const statusText = getSessionStatus(visitor, sessionDate);
       const statusClass =
-        statusText === "Paid" ? "paid" : statusText === "Incomplete" ? "incomplete" : "pending";
+        statusText === "PAID" ? "paid" : statusText === "INCOMPLETE" ? "incomplete" : "pending";
       const row = document.createElement("tr");
       row.innerHTML = `
         <td data-label="Name">${visitor.name || ""}</td>

@@ -7,6 +7,7 @@
   const rangeEl = document.getElementById("activity-range");
   const prevBtn = document.getElementById("activity-prev");
   const nextBtn = document.getElementById("activity-next");
+  const presetsEl = document.getElementById("activity-presets");
 
   if (
     !fromInput ||
@@ -16,7 +17,8 @@
     !body ||
     !rangeEl ||
     !prevBtn ||
-    !nextBtn
+    !nextBtn ||
+    !presetsEl
   ) {
     return;
   }
@@ -37,7 +39,22 @@
     if (type === "yearly_updated") return "Yearly updated";
     if (type === "fines_cleared") return "Fines cleared";
     if (type === "visitor_promoted") return "Visitor promoted";
+    if (type === "payment_updated") return "Payment updated";
+    if (type === "fine_updated") return "Fine updated";
+    if (type === "rollover") return "Rollover";
+    if (type === "import") return "Import";
     return type;
+  }
+
+  function toPillClass(type) {
+    return `activity-type-${String(type || "unknown").replace(/[^a-z0-9_-]/gi, "-").toLowerCase()}`;
+  }
+
+  function formatLocalDateInput(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
   }
 
   function formatDate(timestamp) {
@@ -59,7 +76,7 @@
 
   function updateRange(items) {
     if (state.total === 0) {
-      rangeEl.textContent = "Showing 0 of 0";
+      rangeEl.textContent = "Showing 0-0 of 0";
       return;
     }
     const start = (state.page - 1) * state.limit + 1;
@@ -72,7 +89,7 @@
     if (!items.length) {
       const row = document.createElement("tr");
       row.innerHTML = `
-        <td colspan="3" class="empty-state">No activity found.</td>
+        <td colspan="3" class="empty-state">No activity found for the selected filters.</td>
       `;
       body.appendChild(row);
       return;
@@ -82,7 +99,9 @@
       const row = document.createElement("tr");
       row.innerHTML = `
         <td data-label="Date">${formatDate(entry.timestamp)}</td>
-        <td data-label="Type">${formatType(entry.type)}</td>
+        <td data-label="Type">
+          <span class="pill ${toPillClass(entry.type)}">${formatType(entry.type)}</span>
+        </td>
         <td data-label="Message">${entry.message || ""}</td>
       `;
       body.appendChild(row);
@@ -108,7 +127,7 @@
       })
       .catch(() => {
         renderTable([]);
-        rangeEl.textContent = "Showing 0 of 0";
+        rangeEl.textContent = "Showing 0-0 of 0";
         prevBtn.disabled = true;
         nextBtn.disabled = true;
       });
@@ -134,6 +153,28 @@
     if (state.page >= state.totalPages) return;
     state.page += 1;
     loadActivity();
+  });
+
+  presetsEl.addEventListener("click", (event) => {
+    const button = event.target.closest("button[data-preset]");
+    if (!button) return;
+
+    const preset = button.getAttribute("data-preset");
+    const now = new Date();
+    const endDate = formatLocalDateInput(now);
+    let startDate = endDate;
+
+    if (preset === "last7") {
+      const start = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 6);
+      startDate = formatLocalDateInput(start);
+    } else if (preset === "month") {
+      const start = new Date(now.getFullYear(), now.getMonth(), 1);
+      startDate = formatLocalDateInput(start);
+    }
+
+    fromInput.value = startDate;
+    toInput.value = endDate;
+    resetAndLoad();
   });
 
   loadActivity();

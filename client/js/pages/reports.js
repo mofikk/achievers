@@ -125,9 +125,9 @@
 
   function computeStatus(expected, paid) {
     const status = window.paymentStatus.statusFromPaid(expected, paid).status;
-    if (status === "PAID") return { text: "Cleared", className: "paid" };
-    if (status === "INCOMPLETE") return { text: "Incomplete", className: "incomplete" };
-    return { text: "Pending", className: "pending" };
+    if (status === "PAID") return { text: "PAID", className: "paid" };
+    if (status === "INCOMPLETE") return { text: "INCOMPLETE", className: "incomplete" };
+    return { text: "PENDING", className: "pending" };
   }
 
   function renderMonthly() {
@@ -216,19 +216,19 @@
       const paidCards = yellowPaid + redPaid;
       const status =
         totalCards === 0
-          ? "No cards"
+          ? "NO_CARDS"
           : amountOwed === 0
-            ? "Cleared"
+            ? "CLEARED"
             : paidCards === 0
-              ? "Pending"
-              : "Incomplete";
+              ? "PENDING"
+              : "INCOMPLETE";
 
       const statusClass =
-        status === "Cleared"
+        status === "CLEARED"
           ? "paid"
-          : status === "Pending"
+          : status === "PENDING"
             ? "pending"
-            : status === "Incomplete"
+            : status === "INCOMPLETE"
               ? "incomplete"
               : "neutral";
 
@@ -268,10 +268,10 @@
       const remaining = summary.remaining;
       const status =
         summary.status === "PAID"
-          ? { text: "Cleared", className: "paid" }
+          ? { text: "PAID", className: "paid" }
           : summary.status === "INCOMPLETE"
-            ? { text: "Incomplete", className: "incomplete" }
-            : { text: "Pending", className: "pending" };
+            ? { text: "INCOMPLETE", className: "incomplete" }
+            : { text: "PENDING", className: "pending" };
       collected += Math.min(paid, 1000);
       const row = document.createElement("tr");
       row.innerHTML = `

@@ -35,7 +35,8 @@
   const state = {
     players: [],
     settings: defaultSettings,
-    leaderboards: {}
+    leaderboards: {},
+    attendanceDates: []
   };
 
   function formatDisplayName(player) {
@@ -176,87 +177,63 @@
     renderLeaderboard("goals");
   }
 
-  function buildSaturdayList(startDate, endDate) {
-    const dates = [];
-    const cursor = new Date(`${startDate}T00:00:00`);
-    const end = new Date(`${endDate}T00:00:00`);
-    if (Number.isNaN(cursor.getTime()) || Number.isNaN(end.getTime())) return dates;
-
-    while (cursor.getDay() !== 6) {
-      cursor.setDate(cursor.getDate() + 1);
+  function getAttendanceDates(players) {
+    if (window.attendanceMetrics?.getAttendanceDateKeys) {
+      return window.attendanceMetrics.getAttendanceDateKeys(players, 12);
     }
-
-    while (cursor <= end) {
-      const dateStr = cursor.toISOString().slice(0, 10);
-      dates.push(dateStr);
-      cursor.setDate(cursor.getDate() + 7);
-    }
-    return dates;
-  }
-
-  function getLatestAttendanceDate(players) {
-    let latest = null;
-    players.forEach((player) => {
-      Object.keys(player?.attendance || {}).forEach((date) => {
-        if (!latest || date > latest) {
-          latest = date;
-        }
+    const keys = new Set();
+    (players || []).forEach((player) => {
+      Object.keys(player?.attendance || {}).forEach((dateKey) => {
+        if (/^\d{4}-\d{2}-\d{2}$/.test(dateKey)) keys.add(dateKey);
       });
     });
-    return latest;
+    return Array.from(keys).sort().slice(-12);
   }
 
   function renderStreaks() {
     streaksList.innerHTML = "";
-    const hasAttendance = state.players.some(
-      (player) => Object.keys(player?.attendance || {}).length > 0
-    );
-
-    if (!hasAttendance) {
+    if (!state.attendanceDates.length) {
       streaksEmpty.classList.remove("hidden");
       bestStreakEl.textContent = "No attendance yet";
       return;
     }
     streaksEmpty.classList.add("hidden");
 
-    const today = new Date();
-    const todayStr = today.toISOString().slice(0, 10);
-    const latestAttendance = getLatestAttendanceDate(state.players) || todayStr;
-    const endDate = latestAttendance > todayStr ? latestAttendance : todayStr;
-    const startDate = state.settings.attendance.startDate;
-    const saturdays = buildSaturdayList(startDate, endDate);
-    if (!saturdays.length) {
-      streaksEmpty.classList.remove("hidden");
-      bestStreakEl.textContent = "No attendance yet";
-      return;
-    }
-
-    const latestSaturday = [...saturdays]
-      .reverse()
-      .find((date) => date <= todayStr);
-    if (!latestSaturday) {
-      streaksEmpty.classList.remove("hidden");
-      bestStreakEl.textContent = "No attendance yet";
-      return;
-    }
-
     const streaks = state.players.map((player) => {
-      let count = 0;
-      for (let i = saturdays.length - 1; i >= 0; i -= 1) {
-        const date = saturdays[i];
-        if (date > latestSaturday) continue;
-        if (player?.attendance?.[date] === true) count += 1;
-        else break;
-      }
+      const attendanceSummary = window.attendanceMetrics?.getPlayerAttendanceSummary
+        ? window.attendanceMetrics.getPlayerAttendanceSummary(player, state.attendanceDates)
+        : null;
+      const count = attendanceSummary
+        ? attendanceSummary.currentStreak
+        : window.attendanceMetrics?.computeAttendanceStreak
+          ? window.attendanceMetrics.computeAttendanceStreak(player, state.attendanceDates)
+          : (() => {
+              let fallbackCount = 0;
+              for (let i = state.attendanceDates.length - 1; i >= 0; i -= 1) {
+                const date = state.attendanceDates[i];
+                if (player?.attendance?.[date] === true) fallbackCount += 1;
+                else break;
+              }
+              return fallbackCount;
+            })();
       return {
         id: player.id,
         name: player.name || "",
         nickname: player.nickname || "",
-        value: count
+        value: count,
+        attendancePercent: attendanceSummary ? attendanceSummary.attendancePercent : 0
       };
     });
 
-    const sorted = streaks.sort((a, b) => b.value - a.value).slice(0, 5);
+    const sorted = streaks
+      .sort((a, b) => {
+        if (b.value !== a.value) return b.value - a.value;
+        if (b.attendancePercent !== a.attendancePercent) {
+          return b.attendancePercent - a.attendancePercent;
+        }
+        return String(a.name || "").localeCompare(String(b.name || ""));
+      })
+      .slice(0, 5);
     const best = sorted[0]?.value || 0;
     bestStreakEl.textContent = `${best} weeks`;
     renderRankList(sorted, streaksList);
@@ -282,6 +259,7 @@
       })
       .then(([overview, players, activity]) => {
         state.players = players;
+        state.attendanceDates = getAttendanceDates(players);
         renderCards(overview.counts);
         renderActivity(activity);
         buildLeaderboards();

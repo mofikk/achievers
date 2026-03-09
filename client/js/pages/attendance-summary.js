@@ -24,39 +24,50 @@
   const state = {
     players: [],
     settings: defaultSettings,
-    saturdays: []
+    attendanceDates: []
   };
 
   function formatDisplayName(player) {
     return player.nickname ? `${player.name} (${player.nickname})` : player.name;
   }
 
-  function buildSaturdayList(startDate, endDate) {
-    const dates = [];
-    const cursor = new Date(`${startDate}T00:00:00`);
-    const end = new Date(`${endDate}T00:00:00`);
-    if (Number.isNaN(cursor.getTime()) || Number.isNaN(end.getTime())) return dates;
-
-    while (cursor.getDay() !== 6) {
-      cursor.setDate(cursor.getDate() + 1);
+  function getAttendanceDates(players) {
+    if (window.attendanceMetrics?.getAttendanceDateKeys) {
+      return window.attendanceMetrics.getAttendanceDateKeys(players, 12);
     }
-
-    while (cursor <= end) {
-      const dateStr = cursor.toISOString().slice(0, 10);
-      dates.push(dateStr);
-      cursor.setDate(cursor.getDate() + 7);
-    }
-    return dates;
+    const keys = new Set();
+    (players || []).forEach((player) => {
+      Object.keys(player?.attendance || {}).forEach((dateKey) => {
+        if (/^\d{4}-\d{2}-\d{2}$/.test(dateKey)) keys.add(dateKey);
+      });
+    });
+    return Array.from(keys).sort().slice(-12);
   }
 
-  function computeStreak(player, saturdays) {
+  function computeStreak(player, attendanceDates) {
+    if (window.attendanceMetrics?.computeAttendanceStreak) {
+      return window.attendanceMetrics.computeAttendanceStreak(player, attendanceDates);
+    }
     let count = 0;
-    for (let i = saturdays.length - 1; i >= 0; i -= 1) {
-      const date = saturdays[i];
+    for (let i = attendanceDates.length - 1; i >= 0; i -= 1) {
+      const date = attendanceDates[i];
       if (player?.attendance?.[date] === true) count += 1;
       else break;
     }
     return count;
+  }
+
+  function getAttendanceSummary(player, attendanceDates) {
+    if (window.attendanceMetrics?.getPlayerAttendanceSummary) {
+      return window.attendanceMetrics.getPlayerAttendanceSummary(player, attendanceDates);
+    }
+    const present = attendanceDates.reduce((count, date) => {
+      return count + (player?.attendance?.[date] === true ? 1 : 0);
+    }, 0);
+    const total = attendanceDates.length;
+    const attendancePercent = total > 0 ? Math.round((present / total) * 100) : 0;
+    const currentStreak = computeStreak(player, attendanceDates);
+    return { present, total, attendancePercent, currentStreak };
   }
 
   function buildRankList(list, container, formatter) {
@@ -87,7 +98,7 @@
   function render() {
     const range = Number(rangeSelect.value);
     const search = searchInput.value.trim().toLowerCase();
-    const recentSaturdays = state.saturdays.slice(-range);
+    const recentAttendanceDates = state.attendanceDates.slice(-range);
     const filtered = state.players.filter((player) => {
       const name = String(player.name || "").toLowerCase();
       const nickname = String(player.nickname || "").toLowerCase();
@@ -96,34 +107,43 @@
 
     body.innerHTML = "";
     const rows = filtered.map((player) => {
-      const present = recentSaturdays.reduce((count, date) => {
-        return count + (player?.attendance?.[date] === true ? 1 : 0);
-      }, 0);
-      const total = recentSaturdays.length;
-      const percent = total ? Math.round((present / total) * 100) : 0;
-      const streak = computeStreak(player, state.saturdays);
+      const summary = getAttendanceSummary(player, recentAttendanceDates);
+      const streak = computeStreak(player, state.attendanceDates);
 
       const row = document.createElement("tr");
       row.innerHTML = `
         <td data-label="Name">${player.name || ""}</td>
         <td data-label="Nickname">${player.nickname || "-"}</td>
-        <td data-label="Present">${present}</td>
-        <td data-label="Total">${total}</td>
-        <td data-label="Attendance %">${percent}%</td>
+        <td data-label="Present">${summary.present}</td>
+        <td data-label="Total">${summary.total}</td>
+        <td data-label="Attendance %">${summary.attendancePercent}%</td>
         <td data-label="Current Streak">${streak}</td>
       `;
       body.appendChild(row);
 
-      return { ...player, value: percent, streakValue: streak };
+      return {
+        ...player,
+        value: summary.attendancePercent,
+        presentCount: summary.present,
+        streakValue: streak
+      };
     });
 
     countEl.textContent = `Showing ${filtered.length} of ${state.players.length}`;
 
     const topPercent = [...rows]
-      .sort((a, b) => b.value - a.value)
+      .sort((a, b) => {
+        if (b.value !== a.value) return b.value - a.value;
+        if (b.presentCount !== a.presentCount) return b.presentCount - a.presentCount;
+        return String(a.name || "").localeCompare(String(b.name || ""));
+      })
       .slice(0, 5);
     const topStreaks = [...rows]
-      .sort((a, b) => b.streakValue - a.streakValue)
+      .sort((a, b) => {
+        if (b.streakValue !== a.streakValue) return b.streakValue - a.streakValue;
+        if (b.value !== a.value) return b.value - a.value;
+        return String(a.name || "").localeCompare(String(b.name || ""));
+      })
       .slice(0, 5);
     buildRankList(topPercent, topPercentEl, (value) => `${value}%`);
     buildRankList(topStreaks, topStreaksEl, (value) => `${value}`);
@@ -137,11 +157,7 @@
       .then(([settings, players]) => {
         state.settings = settings || defaultSettings;
         state.players = players;
-        const todayStr = new Date().toISOString().slice(0, 10);
-        state.saturdays = buildSaturdayList(
-          state.settings.attendance.startDate,
-          todayStr
-        );
+        state.attendanceDates = getAttendanceDates(players);
         render();
       })
       .catch(console.error);

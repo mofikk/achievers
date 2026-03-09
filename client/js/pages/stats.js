@@ -80,19 +80,19 @@
     const cardsTotal = stats.yellow + stats.red;
     const cardsPaidTotal = discipline.yellowPaid + discipline.redPaid;
     let status = "pending";
-    let statusLabel = "Pending";
+    let statusLabel = "PENDING";
     if (cardsTotal === 0) {
       status = "neutral";
-      statusLabel = "No cards";
+      statusLabel = "NO_CARDS";
     } else if (fineOwed === 0) {
       status = "paid";
-      statusLabel = "Cleared";
+      statusLabel = "CLEARED";
     } else if (cardsPaidTotal === 0) {
       status = "pending";
-      statusLabel = "Pending";
+      statusLabel = "PENDING";
     } else {
       status = "incomplete";
-      statusLabel = "Incomplete";
+      statusLabel = "INCOMPLETE";
     }
     return { owedYellow, owedRed, fineOwed, status, statusLabel };
   }

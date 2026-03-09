@@ -127,6 +127,64 @@
     }
   };
 
+  function isAttendanceDateKey(value) {
+    return /^\d{4}-\d{2}-\d{2}$/.test(String(value || ""));
+  }
+
+  function resolveAttendanceDateKeys(source, max = 12) {
+    const dates = new Set();
+
+    if (Array.isArray(source) && source.every((value) => typeof value === "string")) {
+      source.forEach((dateKey) => {
+        if (isAttendanceDateKey(dateKey)) dates.add(dateKey);
+      });
+    } else {
+      (source || []).forEach((player) => {
+        Object.keys(player?.attendance || {}).forEach((dateKey) => {
+          if (isAttendanceDateKey(dateKey)) {
+            dates.add(dateKey);
+          }
+        });
+      });
+    }
+
+    const sorted = Array.from(dates).sort();
+    if (!Number.isFinite(max) || max <= 0) return sorted;
+    return sorted.slice(-max);
+  }
+
+  function getAttendanceDateKeys(players, max = 12) {
+    return resolveAttendanceDateKeys(players, max);
+  }
+
+  function computeAttendanceStreak(player, dateKeys) {
+    const resolvedDates = resolveAttendanceDateKeys(dateKeys, 0);
+    let count = 0;
+    for (let i = resolvedDates.length - 1; i >= 0; i -= 1) {
+      const date = resolvedDates[i];
+      if (player?.attendance?.[date] === true) count += 1;
+      else break;
+    }
+    return count;
+  }
+
+  function getPlayerAttendanceSummary(player, dateKeys) {
+    const resolvedDates = resolveAttendanceDateKeys(dateKeys, 0);
+    const present = resolvedDates.reduce((count, date) => {
+      return count + (player?.attendance?.[date] === true ? 1 : 0);
+    }, 0);
+    const total = resolvedDates.length;
+    const attendancePercent = total > 0 ? Math.round((present / total) * 100) : 0;
+    const currentStreak = computeAttendanceStreak(player, resolvedDates);
+    return { present, total, attendancePercent, currentStreak };
+  }
+
+  window.attendanceMetrics = {
+    getAttendanceDateKeys,
+    computeAttendanceStreak,
+    getPlayerAttendanceSummary
+  };
+
   window.toast = function toast(message, type = "success") {
     let container = document.querySelector(".toast-container");
     if (!container) {

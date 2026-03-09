@@ -252,6 +252,14 @@ body.nav-open {
   background: #f79009;
 }
 
+.pill.ok {
+  background: #12b76a;
+}
+
+.pill.error {
+  background: #f04438;
+}
+
 .profile-header {
   display: flex;
   flex-wrap: wrap;
@@ -534,6 +542,93 @@ body.nav-open {
   gap: 14px;
   align-items: end;
   margin-bottom: 16px;
+}
+
+.preset-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.preset-row .ghost-btn {
+  white-space: nowrap;
+}
+
+.data-health-card {
+  display: grid;
+  gap: 14px;
+}
+
+.health-actions {
+  position: static;
+  border: 0;
+  padding-top: 0;
+  margin-bottom: 12px;
+}
+
+.health-list {
+  display: grid;
+  gap: 10px;
+}
+
+.health-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.health-name {
+  min-width: 72px;
+  font-weight: 700;
+}
+
+.health-details {
+  width: 100%;
+}
+
+.health-details summary {
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.health-summary {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.health-summary-item {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px;
+  display: grid;
+  gap: 6px;
+}
+
+.activity-type-member_joined,
+.activity-type-monthly_cleared,
+.activity-type-yearly_cleared,
+.activity-type-fines_cleared {
+  background: #12b76a;
+}
+
+.activity-type-monthly_updated,
+.activity-type-yearly_updated,
+.activity-type-payment_updated,
+.activity-type-fine_updated {
+  background: #f79009;
+}
+
+.activity-type-rollover,
+.activity-type-import,
+.activity-type-visitor_promoted {
+  background: #0f6ae0;
 }
 
 .control-actions {

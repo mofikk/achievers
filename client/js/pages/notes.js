@@ -59,7 +59,7 @@
 
   function updateRange(items) {
     if (state.total === 0) {
-      rangeEl.textContent = "Showing 0 of 0";
+      rangeEl.textContent = "Showing 0-0 of 0";
       return;
     }
     const start = (state.page - 1) * state.limit + 1;
@@ -72,7 +72,7 @@
     if (!items.length) {
       const empty = document.createElement("div");
       empty.className = "muted";
-      empty.textContent = "No notes yet.";
+      empty.textContent = "No notes yet. Add one to keep reminders here.";
       listEl.appendChild(empty);
       return;
     }
@@ -115,7 +115,7 @@
       })
       .catch(() => {
         renderNotes([]);
-        rangeEl.textContent = "Showing 0 of 0";
+        rangeEl.textContent = "Showing 0-0 of 0";
         prevBtn.disabled = true;
         nextBtn.disabled = true;
         const countEl = document.getElementById("notes-count");
@@ -160,7 +160,7 @@
       .then(() => {
         resetEditor();
         loadNotes();
-        window.toast(isEditing ? "Note updated" : "Note created", "success");
+        window.toast("Note saved", "success");
       })
       .catch((err) => {
         errorEl.textContent = err.message || "Unable to save note.";

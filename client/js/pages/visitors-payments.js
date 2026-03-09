@@ -79,12 +79,12 @@
       const remaining = summary.remaining;
       const statusText =
         summary.status === "PAID"
-          ? "Paid"
+          ? "PAID"
           : summary.status === "INCOMPLETE"
-            ? "Incomplete"
-            : "Pending";
+            ? "INCOMPLETE"
+            : "PENDING";
       const statusClass =
-        statusText === "Paid" ? "paid" : statusText === "Incomplete" ? "incomplete" : "pending";
+        statusText === "PAID" ? "paid" : statusText === "INCOMPLETE" ? "incomplete" : "pending";
       const row = document.createElement("tr");
       row.innerHTML = `
         <td data-label="Name">${visitor.name || ""}</td>

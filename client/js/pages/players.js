@@ -95,7 +95,7 @@
   let editingId = null;
 
   function formatStatus(value, fallback) {
-    return value ? value.charAt(0).toUpperCase() + value.slice(1).toLowerCase() : fallback;
+    return value ? value.toUpperCase() : fallback;
   }
 
   function formatStatusClass(status) {
@@ -131,10 +131,10 @@
         <td data-label="Nickname">${player.nickname || "-"}</td>
         <td data-label="Position">${formatPosition(player.position)}</td>
         <td data-label="Yearly">
-          <span class="pill ${formatStatusClass(yearlyStatus)}">${formatStatus(yearlyStatus, "Pending")}</span>
+          <span class="pill ${formatStatusClass(yearlyStatus)}">${formatStatus(yearlyStatus, "PENDING")}</span>
         </td>
         <td data-label="Monthly">
-          <span class="pill ${formatStatusClass(monthlyStatus)}">${formatStatus(monthlyStatus, "Pending")}</span>
+          <span class="pill ${formatStatusClass(monthlyStatus)}">${formatStatus(monthlyStatus, "PENDING")}</span>
         </td>
         <td data-label="Actions">
           <div class="actions">
@@ -276,8 +276,8 @@
     viewName.textContent = player.name || "";
     viewNickname.textContent = player.nickname || "-";
     viewPosition.textContent = formatPosition(player.position);
-    viewYearly.textContent = formatStatus(overviewPlayer.yearly?.status, "Pending");
-    viewMonthly.textContent = formatStatus(overviewPlayer.monthly?.status, "Pending");
+    viewYearly.textContent = formatStatus(overviewPlayer.yearly?.status, "PENDING");
+    viewMonthly.textContent = formatStatus(overviewPlayer.monthly?.status, "PENDING");
     deleteBtn.setAttribute("data-id", player.id);
     viewError.textContent = "";
     openModal(viewModal);
