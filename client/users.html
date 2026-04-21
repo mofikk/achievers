@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Achievers FC - Users</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">Achievers FC</div>
+      <div id="sidebar-slot"></div>
+    </aside>
+    <div class="nav-overlay hidden" id="nav-overlay"></div>
+    <div class="content">
+      <header class="topbar">
+        <button class="menu-btn" id="menu-btn" aria-label="Open menu" aria-controls="sidebar" aria-expanded="false">
+          <span class="hamburger" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+          </span>
+        </button>
+        <h1>Achievers FC</h1>
+      </header>
+      <main class="main">
+        <div class="page-title">
+          <h2>Users</h2>
+          <p>Manage your account and team access.</p>
+        </div>
+
+        <section class="panel">
+          <div class="page-title-row">
+            <h3>My Account</h3>
+          </div>
+          <form id="my-account-form" class="form-grid" style="margin-top: 16px;">
+            <label class="form-field">
+              <span>Full name</span>
+              <input id="my-full-name" class="input" type="text" required />
+            </label>
+            <label class="form-field">
+              <span>Email</span>
+              <input id="my-email" class="input" type="email" readonly />
+            </label>
+            <div class="actions">
+              <button id="my-save-btn" class="action-btn" type="submit">Save</button>
+              <button id="change-password-btn" class="ghost-btn" type="button">Change password</button>
+              <button id="logout-btn-page" class="ghost-btn" type="button">Logout</button>
+            </div>
+            <div id="my-account-error" class="form-error" role="alert"></div>
+          </form>
+        </section>
+
+        <section class="panel" id="user-management-section">
+          <div class="page-title-row">
+            <h3>User Management</h3>
+          </div>
+          <div class="table-wrap" style="margin-top: 16px;">
+            <table class="table responsive">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Role</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="users-body"></tbody>
+            </table>
+          </div>
+          <div id="users-empty" class="muted" style="margin-top: 10px;">No users found</div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <div class="modal hidden" id="password-modal" aria-hidden="true">
+    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="password-modal-title">
+      <div class="modal-header">
+        <h3 id="password-modal-title">Change Password</h3>
+      </div>
+      <div class="modal-body">
+        <label class="form-field">
+          <span>New password</span>
+          <input id="password-input" class="input" type="password" autocomplete="new-password" />
+        </label>
+        <div id="password-error" class="form-error" role="alert"></div>
+      </div>
+      <div class="modal-actions">
+        <button id="password-cancel" class="ghost-btn" type="button">Cancel</button>
+        <button id="password-save" class="action-btn" type="button">Update Password</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/sidebar-loader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/js/supabaseClient.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/pages/users.js"></script>
+</body>
+</html>
+

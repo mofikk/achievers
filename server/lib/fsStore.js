@@ -3,6 +3,14 @@ const path = require("path");
 
 const locks = new Map();
 
+function safeParse(value) {
+  try {
+    return JSON.parse(value);
+  } catch {
+    return null;
+  }
+}
+
 async function writeJsonAtomic(filePath, data) {
   const json = JSON.stringify(data, null, 2);
   const dir = path.dirname(filePath);
@@ -55,10 +63,8 @@ async function restoreFromLatestBackup(filePath) {
   candidates.sort((a, b) => b.mtimeMs - a.mtimeMs);
   const latest = candidates[0];
   const raw = await fs.readFile(latest.fullPath, "utf-8");
-  let parsed;
-  try {
-    parsed = JSON.parse(raw);
-  } catch (err) {
+  const parsed = safeParse(raw);
+  if (parsed === null) {
     return null;
   }
 
@@ -70,16 +76,21 @@ async function restoreFromLatestBackup(filePath) {
 
 async function safeLoadJson(filePath) {
   const raw = await fs.readFile(filePath, "utf-8");
+  const parsed = safeParse(raw);
+  if (parsed !== null) {
+    return parsed;
+  }
+
   try {
-    return JSON.parse(raw);
-  } catch (err) {
     const restored = await restoreFromLatestBackup(filePath);
     if (restored !== null) return restored;
     const error = new Error(
       `Unable to parse JSON in ${filePath}. No valid backups available.`
     );
-    error.cause = err;
+    error.cause = new Error("Invalid JSON");
     throw error;
+  } catch (err) {
+    throw err;
   }
 }
 

@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Achievers FC - Activity Logs</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+  <div class="app">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">Achievers FC</div>
+      <div id="sidebar-slot"></div>
+    </aside>
+    <div class="nav-overlay hidden" id="nav-overlay"></div>
+    <div class="content">
+      <header class="topbar">
+        <button class="menu-btn" id="menu-btn" aria-label="Open menu" aria-controls="sidebar" aria-expanded="false">
+          <span class="hamburger" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+          </span>
+        </button>
+        <h1>Achievers FC</h1>
+      </header>
+      <main class="main">
+        <div class="page-title">
+          <h2>Activity Logs</h2>
+          <p>Recent actions and payment updates.</p>
+        </div>
+
+        <section class="panel">
+          <div class="preset-row" id="activity-presets">
+            <button class="ghost-btn" type="button" data-preset="today">Today</button>
+            <button class="ghost-btn" type="button" data-preset="last7">Last 7 days</button>
+            <button class="ghost-btn" type="button" data-preset="month">This month</button>
+          </div>
+          <div class="controls-row">
+            <label class="form-field">
+              <span>Date From</span>
+              <input class="input" id="activity-from" type="date" />
+            </label>
+            <label class="form-field">
+              <span>Date To</span>
+              <input class="input" id="activity-to" type="date" />
+            </label>
+            <label class="form-field">
+              <span>Type</span>
+              <select class="input" id="activity-type">
+                <option value="">All types</option>
+                <option value="member_joined">Player created</option>
+                <option value="member_updated">Player updated</option>
+                <option value="member_deleted">Player deleted</option>
+                <option value="player_updated">Player updated</option>
+                <option value="monthly_payment_cleared">Monthly payment cleared</option>
+                <option value="monthly_payment_updated">Monthly payment updated</option>
+                <option value="yearly_payment_cleared">Yearly payment cleared</option>
+                <option value="yearly_payment_updated">Yearly payment updated</option>
+                <option value="attendance_recorded">Attendance recorded</option>
+                <option value="stats_updated">Stats updated</option>
+                <option value="fine_updated">Fine updated</option>
+                <option value="fine_cleared">Fine cleared</option>
+                <option value="visitor_added">Visitor added</option>
+                <option value="visitor_updated">Visitor updated</option>
+                <option value="visitor_promoted">Visitor promoted</option>
+                <option value="note_added">Note added</option>
+                <option value="note_updated">Note updated</option>
+                <option value="note_deleted">Note deleted</option>
+                <option value="settings_updated">Settings updated</option>
+                <option value="season_rollover">Season rollover</option>
+                <option value="import_completed">Import completed</option>
+              </select>
+            </label>
+            <label class="form-field">
+              <span>Search</span>
+              <input class="input" id="activity-search" type="search" placeholder="Search text..." />
+            </label>
+          </div>
+          <div class="summary-bar" id="activity-range">Showing 0-0 of 0</div>
+          <div class="table-wrap">
+            <table class="table responsive">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Type</th>
+                  <th>Message</th>
+                </tr>
+              </thead>
+              <tbody id="activity-body"></tbody>
+            </table>
+          </div>
+          <div class="modal-actions">
+            <button class="ghost-btn" type="button" id="activity-prev">Prev</button>
+            <button class="action-btn" type="button" id="activity-next">Next</button>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script src="js/sidebar-loader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/js/supabaseClient.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/pages/activity.js"></script>
+</body>
+
+</html>
+
+

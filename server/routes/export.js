@@ -11,9 +11,21 @@ const router = express.Router();
 const dbPath = path.join(__dirname, "..", "data", "db.json");
 const settingsPath = path.join(__dirname, "..", "data", "settings.json");
 
+function safeParse(value) {
+  try {
+    return JSON.parse(value);
+  } catch {
+    return null;
+  }
+}
+
 async function readJson(filePath) {
   const raw = await fs.readFile(filePath, "utf-8");
-  return JSON.parse(raw);
+  const parsed = safeParse(raw);
+  if (parsed === null) {
+    throw new Error(`Invalid JSON in ${filePath}`);
+  }
+  return parsed;
 }
 
 function csvEscape(value) {

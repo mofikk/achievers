@@ -6,7 +6,7 @@
 - Server runs at: `http://localhost:3000`
 
 ## Open the UI
-- Open `client/index.html` in a browser, or
+- Open `public/index.html` in a browser, or
 - Use the server at `http://localhost:3000`
 
 ## Where data lives
