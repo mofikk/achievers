@@ -19,7 +19,9 @@ function fileNameFor(type: BackupType) {
 
 async function readTable(supabase: any, table: string, select = "*") {
   const { data, error } = await supabase.from(table).select(select);
-  if (error) throw new Error(`${table}: ${error.message}`);
+  if (error) {
+    throw new Error(`${table}: ${error.message}`);
+  }
   return data ?? [];
 }
 
@@ -91,9 +93,7 @@ async function buildSettingsSnapshot(supabase: any) {
 
 export async function createBackup(supabase: any, type: BackupType) {
   await ensureBackupDir();
-  const payload = type === "db"
-    ? await buildDbSnapshot(supabase)
-    : await buildSettingsSnapshot(supabase);
+  const payload = type === "db" ? await buildDbSnapshot(supabase) : await buildSettingsSnapshot(supabase);
 
   const fileName = fileNameFor(type);
   const fullPath = path.join(BACKUP_DIR, fileName);

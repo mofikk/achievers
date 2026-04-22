@@ -472,3 +472,4 @@ export function buildReview(rawText: string, playersData: any[], visitorsData: a
     can_commit
   };
 }
+
