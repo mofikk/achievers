@@ -1,4 +1,5 @@
 (function () {
+  const yearSelect = document.getElementById("visitor-year");
   const monthSelect = document.getElementById("visitor-month");
   const dateSelect = document.getElementById("visitor-date");
   const searchInput = document.getElementById("visitor-search");
@@ -10,6 +11,7 @@
   const body = document.getElementById("visitor-body");
 
   if (
+    !yearSelect ||
     !monthSelect ||
     !dateSelect ||
     !searchInput ||
@@ -24,28 +26,43 @@
   }
 
   const defaultSettings = {
-    attendance: { startDate: "2026-01-10", lockFuture: true }
+    attendance: { startDate: "2026-01-10", lockFuture: true, playableDayOfWeek: 6 }
   };
 
   const state = {
     visitors: [],
     settings: defaultSettings,
     sessions: [],
-    filtered: []
+    filtered: [],
+    years: [],
+    selectedYear: null,
+    selectedMonth: null
   };
+
+  function getPlayableDayOfWeek() {
+    const value = Number(state.settings?.attendance?.playableDayOfWeek);
+    return Number.isInteger(value) && value >= 0 && value <= 6 ? value : 6;
+  }
 
   function buildSaturdayList(startDate, endDate) {
     const dates = [];
     const cursor = new Date(`${startDate}T00:00:00`);
     const end = new Date(`${endDate}T00:00:00`);
     if (Number.isNaN(cursor.getTime()) || Number.isNaN(end.getTime())) return dates;
+    const playableDay = getPlayableDayOfWeek();
+    const toDateKey = (date) => {
+      const y = date.getFullYear();
+      const m = String(date.getMonth() + 1).padStart(2, "0");
+      const d = String(date.getDate()).padStart(2, "0");
+      return `${y}-${m}-${d}`;
+    };
 
-    while (cursor.getDay() !== 6) {
+    while (cursor.getDay() !== playableDay) {
       cursor.setDate(cursor.getDate() + 1);
     }
 
     while (cursor <= end) {
-      const dateStr = cursor.toISOString().slice(0, 10);
+      const dateStr = toDateKey(cursor);
       dates.push(dateStr);
       cursor.setDate(cursor.getDate() + 7);
     }
@@ -56,6 +73,29 @@
     const months = new Set();
     sessions.forEach((date) => months.add(date.slice(0, 7)));
     return Array.from(months).sort();
+  }
+
+  function getNowYear() {
+    return String(new Date().getFullYear());
+  }
+
+  function getNowMonth() {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+  }
+
+  function getMonthsForYear(yearKey) {
+    const safeYear = Number(yearKey);
+    if (!Number.isInteger(safeYear) || safeYear < 1970) return [];
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const maxMonth = safeYear < currentYear ? 12 : safeYear === currentYear ? now.getMonth() + 1 : 0;
+    if (maxMonth <= 0) return [];
+    const months = [];
+    for (let month = 1; month <= maxMonth; month += 1) {
+      months.push(`${safeYear}-${String(month).padStart(2, "0")}`);
+    }
+    return months;
   }
 
   function populateSelect(select, options, selected) {
@@ -121,7 +161,17 @@
   function updateSessions() {
     const monthKey = monthSelect.value;
     const sessions = state.sessions.filter((date) => date.startsWith(monthKey));
-    populateSelect(dateSelect, sessions, sessions[0] || "");
+    populateSelect(dateSelect, sessions, sessions[sessions.length - 1] || "");
+  }
+
+  function syncMonthFilterForYear(yearKey, preferredMonth) {
+    const monthsForYear = getMonthsForYear(yearKey);
+    const selectedMonth = monthsForYear.includes(preferredMonth)
+      ? preferredMonth
+      : monthsForYear[monthsForYear.length - 1] || "";
+    populateSelect(monthSelect, monthsForYear, selectedMonth);
+    state.selectedMonth = selectedMonth || null;
+    updateSessions();
   }
 
   function toggleFutureLock() {
@@ -150,10 +200,22 @@
         state.settings = settingsRes?.data || defaultSettings;
         state.visitors = Array.isArray(visitorsRes?.data) ? visitorsRes.data : [];
         const todayStr = new Date().toISOString().slice(0, 10);
-        state.sessions = buildSaturdayList(state.settings.attendance.startDate, todayStr);
-        const months = getMonthsFromSessions(state.sessions);
-        populateSelect(monthSelect, months, months[months.length - 1] || "");
-        updateSessions();
+        const configuredStart = String(state.settings?.attendance?.startDate || "").slice(0, 10);
+        const fallbackStart = `${new Date().getFullYear()}-01-01`;
+        const startDate = /^\d{4}-\d{2}-\d{2}$/.test(configuredStart) ? configuredStart : fallbackStart;
+        state.sessions = buildSaturdayList(startDate, todayStr);
+        const startYear = Number(startDate.slice(0, 4));
+        const currentYear = new Date().getFullYear();
+        const yearStart = Number.isInteger(startYear) ? startYear : currentYear;
+        const years = [];
+        for (let year = yearStart; year <= currentYear; year += 1) {
+          years.push(String(year));
+        }
+        state.years = years.length ? years : [getNowYear()];
+        state.selectedYear = state.years[state.years.length - 1] || getNowYear();
+        state.selectedMonth = getNowMonth();
+        populateSelect(yearSelect, state.years, state.selectedYear);
+        syncMonthFilterForYear(state.selectedYear, state.selectedMonth);
         applyFilters();
         toggleFutureLock();
       })
@@ -198,7 +260,9 @@
   saveBtn.addEventListener("click", () => {
     const selectedDate = dateSelect.value;
     if (!selectedDate) return;
+    const previousLabel = saveBtn.textContent;
     saveBtn.disabled = true;
+    saveBtn.textContent = "Saving...";
     const updates = state.visitors.map((visitor) => ({
       id: visitor.id,
       present: visitor?.attendance?.[selectedDate] === true
@@ -216,11 +280,20 @@
       })
       .finally(() => {
         saveBtn.disabled = false;
+        saveBtn.textContent = previousLabel || "Save";
       });
+  });
+
+  yearSelect.addEventListener("change", () => {
+    state.selectedYear = yearSelect.value || state.selectedYear;
+    syncMonthFilterForYear(state.selectedYear, monthSelect.value || state.selectedMonth);
+    applyFilters();
+    toggleFutureLock();
   });
 
   monthSelect.addEventListener("change", () => {
     updateSessions();
+    state.selectedMonth = monthSelect.value || state.selectedMonth;
     applyFilters();
     toggleFutureLock();
   });

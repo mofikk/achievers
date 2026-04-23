@@ -51,6 +51,16 @@
     return;
   }
 
+  const dayNames = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday"
+  ];
+
   const defaultSettings = {
     season: new Date().getFullYear(),
     currencySymbol: "\u20a6",
@@ -62,7 +72,7 @@
       newMemberYearly: 5000,
       renewalYearly: 2500
     },
-    attendance: { startDate: "2026-01-10" },
+    attendance: { startDate: "2026-01-10", playableDayOfWeek: 6 },
     discipline: { yellowFine: 500, redFine: 1000 }
   };
 
@@ -129,14 +139,23 @@
     )} / ${formatCurrency(monthlyExpected)}`;
   }
 
-  function isSaturday(dateStr) {
+  function getPlayableDayOfWeek() {
+    const value = Number(state.settings?.attendance?.playableDayOfWeek);
+    return Number.isInteger(value) && value >= 0 && value <= 6 ? value : 6;
+  }
+
+  function getPlayableDayLabel() {
+    return dayNames[getPlayableDayOfWeek()] || "Saturday";
+  }
+
+  function isPlayableDay(dateStr) {
     const date = new Date(`${dateStr}T00:00:00`);
-    return !Number.isNaN(date.getTime()) && date.getDay() === 6;
+    return !Number.isNaN(date.getTime()) && date.getDay() === getPlayableDayOfWeek();
   }
 
   function getLatestAttendanceDate(player, minDate, maxDate) {
     const keys = Object.keys(player?.attendance || {}).filter((date) => {
-      if (!isSaturday(date)) return false;
+      if (!isPlayableDay(date)) return false;
       if (minDate && date < minDate) return false;
       if (maxDate && date > maxDate) return false;
       return true;
@@ -145,13 +164,14 @@
     return keys[keys.length - 1] || "";
   }
 
-  function buildSaturdayList(startDate, endDate) {
+  function buildPlayableDayList(startDate, endDate) {
     const dates = [];
     const cursor = new Date(`${startDate}T00:00:00`);
     const end = new Date(`${endDate}T00:00:00`);
     if (Number.isNaN(cursor.getTime()) || Number.isNaN(end.getTime())) return dates;
+    const playableDay = getPlayableDayOfWeek();
 
-    while (cursor.getDay() !== 6) {
+    while (cursor.getDay() !== playableDay) {
       cursor.setDate(cursor.getDate() + 1);
     }
 
@@ -163,10 +183,10 @@
     return dates;
   }
 
-  function computeStreak(player, saturdays) {
+  function computeStreak(player, playableDates) {
     let count = 0;
-    for (let i = saturdays.length - 1; i >= 0; i -= 1) {
-      const date = saturdays[i];
+    for (let i = playableDates.length - 1; i >= 0; i -= 1) {
+      const date = playableDates[i];
       if (player?.attendance?.[date] === true) count += 1;
       else break;
     }
@@ -186,17 +206,17 @@
         ? latestRecorded
         : todayStr;
     const seasonYear = String(state.settings.season || new Date().getFullYear());
-    const saturdays = buildSaturdayList(startDate, endDate).filter((date) => {
+    const playableDates = buildPlayableDayList(startDate, endDate).filter((date) => {
       if (!date.startsWith(`${seasonYear}-`)) return false;
-      return isSaturday(date);
+      return isPlayableDay(date);
     });
-    const lastSix = saturdays.slice(-6);
+    const lastSix = playableDates.slice(-6);
     attendanceList.innerHTML = "";
     if (!lastSix.length) {
       const item = document.createElement("li");
       item.textContent = "No attendance yet.";
       attendanceList.appendChild(item);
-      streakEl.textContent = "Current streak: 0 weeks";
+      streakEl.textContent = `Current ${getPlayableDayLabel()} streak: 0 weeks`;
       return;
     }
     lastSix.forEach((date) => {
@@ -205,8 +225,8 @@
       item.textContent = `${date} - ${present ? "Present" : "Absent"}`;
       attendanceList.appendChild(item);
     });
-    const streak = computeStreak(player, saturdays);
-    streakEl.textContent = `Current streak: ${streak} weeks`;
+    const streak = computeStreak(player, playableDates);
+    streakEl.textContent = `Current ${getPlayableDayLabel()} streak: ${streak} weeks`;
   }
 
   function renderStats() {

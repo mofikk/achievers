@@ -41,7 +41,7 @@
     const config = await getConfig();
     return window.supabase.createClient(config.url, config.anonKey, {
       auth: {
-        autoRefreshToken: true,
+        autoRefreshToken: false,
         persistSession: true
       }
     });

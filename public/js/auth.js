@@ -1,4 +1,88 @@
 (function () {
+  const THEME_STORAGE_KEY = "achievers-theme-preference";
+  const THEME_OPTIONS = ["system", "dark", "light"];
+
+  function getSystemTheme() {
+    if (!window.matchMedia) return "light";
+    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  }
+
+  function getThemePreference() {
+    const saved = String(window.localStorage.getItem(THEME_STORAGE_KEY) || "system");
+    return saved === "dark" || saved === "light" ? saved : "system";
+  }
+
+  function applyTheme(preference) {
+    const resolved = preference === "system" ? getSystemTheme() : preference;
+    document.body.classList.toggle("theme-dark", resolved === "dark");
+    document.body.classList.toggle("theme-light", resolved === "light");
+    document.body.dataset.theme = resolved;
+    document.body.dataset.themePreference = preference;
+  }
+
+  function cycleThemePreference(currentPreference) {
+    const index = THEME_OPTIONS.indexOf(currentPreference);
+    const nextIndex = index === -1 ? 0 : (index + 1) % THEME_OPTIONS.length;
+    return THEME_OPTIONS[nextIndex];
+  }
+
+  function saveThemePreference(preference) {
+    if (preference === "system") {
+      window.localStorage.removeItem(THEME_STORAGE_KEY);
+      return;
+    }
+    window.localStorage.setItem(THEME_STORAGE_KEY, preference);
+  }
+
+  function updateThemeToggle(button) {
+    if (!button) return;
+    const preference = document.body.dataset.themePreference || "system";
+    const applied = document.body.dataset.theme || "light";
+    const icon =
+      preference === "system" ? "fa-circle-half-stroke" : applied === "dark" ? "fa-moon" : "fa-sun";
+    const label = preference === "system" ? "Auto" : applied === "dark" ? "Dark" : "Light";
+    button.innerHTML = `<i class="fa-solid ${icon}" aria-hidden="true"></i><span class="theme-label">${label}</span>`;
+    button.setAttribute("aria-label", `Theme: ${label}. Click to switch theme mode.`);
+    button.title = `Theme: ${label}`;
+  }
+
+  function injectAuthThemeToggle() {
+    if (!document.body || document.getElementById("auth-theme-toggle")) return;
+    const button = document.createElement("button");
+    button.type = "button";
+    button.id = "auth-theme-toggle";
+    button.className = "ghost-btn auth-theme-toggle";
+    updateThemeToggle(button);
+    button.addEventListener("click", () => {
+      const currentPreference = document.body.dataset.themePreference || "system";
+      const nextPreference = cycleThemePreference(currentPreference);
+      saveThemePreference(nextPreference);
+      applyTheme(nextPreference);
+      updateThemeToggle(button);
+    });
+    document.body.appendChild(button);
+  }
+
+  function isAuthPage() {
+    const path = window.location.pathname || "";
+    return ["/login.html", "/signup.html", "/forgot-password.html"].includes(path);
+  }
+
+  applyTheme(getThemePreference());
+
+  if (window.matchMedia) {
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    const syncTheme = () => {
+      if ((document.body.dataset.themePreference || "system") !== "system") return;
+      applyTheme("system");
+    };
+    if (typeof mediaQuery.addEventListener === "function") {
+      mediaQuery.addEventListener("change", syncTheme);
+    } else if (typeof mediaQuery.addListener === "function") {
+      mediaQuery.addListener(syncTheme);
+    }
+  }
+
   function toFriendlyAuthError(error, mode) {
     const fallbackByMode = {
       login: "We couldn't log you in. Check your details, and if you just signed up, verify your email first.",
@@ -26,7 +110,12 @@
       return "Login failed. Check your email and password. If you just signed up, verify your email first.";
     }
 
-    if (rawMessage.includes("user already registered")) {
+    if (
+      code === "user_already_registered" ||
+      rawMessage.includes("user already registered") ||
+      rawMessage.includes("already registered") ||
+      rawMessage.includes("already exists")
+    ) {
       return "This email is already registered. Try logging in instead.";
     }
 
@@ -69,20 +158,59 @@
     return window.getSupabaseClient();
   }
 
+  function isTransientNetworkAuthError(error) {
+    const message = String(error?.message || "").toLowerCase();
+    const code = String(error?.code || "").toLowerCase();
+    return (
+      message.includes("failed to fetch") ||
+      message.includes("networkerror") ||
+      message.includes("network request failed") ||
+      code === "auth_retryable_fetch_error"
+    );
+  }
+
+  async function withAuthRetry(fn, attempts = 3, delayMs = 300) {
+    let lastError = null;
+    for (let attempt = 1; attempt <= attempts; attempt += 1) {
+      try {
+        return await fn();
+      } catch (error) {
+        lastError = error;
+        if (!isTransientNetworkAuthError(error) || attempt === attempts) {
+          throw error;
+        }
+        await new Promise((resolve) => setTimeout(resolve, delayMs * attempt));
+      }
+    }
+    throw lastError || new Error("Authentication request failed.");
+  }
+
   async function login(email, password) {
     const client = await getClient();
-    const { data, error } = await client.auth.signInWithPassword({ email, password });
+    const { data, error } = await withAuthRetry(() =>
+      client.auth.signInWithPassword({ email, password })
+    );
 
     if (error) throw error;
     return data?.user || null;
   }
 
-  async function signup(email, password) {
+  async function signup(email, password, fullName) {
     const client = await getClient();
-    const { data, error } = await client.auth.signUp({ email, password });
+    const safeFullName = String(fullName || "").trim();
+    const payload = safeFullName
+      ? { email, password, options: { data: { full_name: safeFullName } } }
+      : { email, password };
+    const { data, error } = await withAuthRetry(() => client.auth.signUp(payload));
 
     if (error) throw error;
-    return data?.user || null;
+    const identities = Array.isArray(data?.user?.identities) ? data.user.identities : null;
+    if (data?.user && identities && identities.length === 0) {
+      const duplicateError = new Error("This email is already registered. Try logging in instead.");
+      duplicateError.code = "user_already_registered";
+      throw duplicateError;
+    }
+    return data || null;
   }
 
   async function logout() {
@@ -111,9 +239,11 @@
 
   async function requestPasswordReset(email) {
     const client = await getClient();
-    const { error } = await client.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/login.html`
-    });
+    const { error } = await withAuthRetry(() =>
+      client.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/login.html`
+      })
+    );
 
     if (error) throw error;
   }
@@ -207,11 +337,12 @@
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
       const formData = new FormData(form);
+      const fullName = String(formData.get('fullName') || '').trim();
       const email = String(formData.get('email') || '').trim();
       const password = String(formData.get('password') || '').trim();
       const confirmPassword = String(formData.get('confirmPassword') || '').trim();
 
-      if (!email || !password || !confirmPassword) {
+      if (!fullName || !email || !password || !confirmPassword) {
         setError(errorEl, 'All fields are required.');
         return;
       }
@@ -225,7 +356,16 @@
       setButtonLoading(submitBtn, true, 'Create account', 'Creating...');
 
       try {
-        await signup(email, password);
+        const signupResult = await signup(email, password, fullName);
+        if (signupResult?.session) {
+          window.location.href = '/';
+          return;
+        }
+        setError(
+          errorEl,
+          'Account created. Check your email to verify your account before logging in.',
+          'success'
+        );
         window.location.href = '/login.html';
       } catch (error) {
         console.error(error);
@@ -269,6 +409,12 @@
   }
 
   document.addEventListener('DOMContentLoaded', () => {
+    if (isAuthPage()) {
+      injectAuthThemeToggle();
+    } else {
+      const existing = document.getElementById("auth-theme-toggle");
+      if (existing) existing.remove();
+    }
     initLoginPage();
     initSignupPage();
     initForgotPasswordPage();

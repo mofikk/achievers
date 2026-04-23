@@ -14,20 +14,17 @@ export async function getVisitors(request: NextRequest) {
 
     const supabase = createServerClient(getTokenFromRequest(request) || undefined);
 
-    const [
-      visitorsResult,
-      { data: attendanceRows },
-      { data: paymentRows },
-      { data: statsRows }
-    ] = await Promise.all([
-      supabase
-        .from("visitors")
-        .select("id, full_name, nickname, email, notes, created_at")
-        .order("created_at", { ascending: false }),
-      supabase.from("visitor_attendance").select("visitor_id, session_date, present"),
-      supabase.from("visitor_session_payments").select("visitor_id, session_date, paid_amount, expected_amount"),
-      supabase.from("visitor_stats").select("visitor_id, yellow_cards, red_cards, yellow_paid_count, red_paid_count")
-    ]);
+    const { data: appSettings } = await supabase
+      .from("app_settings")
+      .select("id, visitor_session_fee")
+      .eq("id", true)
+      .maybeSingle();
+    const visitorSessionFee = Number(appSettings?.visitor_session_fee) || 1000;
+
+    const visitorsResult = await supabase
+      .from("visitors")
+      .select("id, full_name, nickname, email, notes, created_at")
+      .order("created_at", { ascending: false });
 
     let visitors: any[] | null = visitorsResult.data as any[] | null;
     let visitorsError: any = visitorsResult.error;
@@ -41,6 +38,30 @@ export async function getVisitors(request: NextRequest) {
     }
 
     if (visitorsError) return failure(visitorsError.message, 400);
+    if (!visitors?.length) return success([]);
+
+    const visitorIds = visitors
+      .map((row: any) => String(row.id || "").trim())
+      .filter(Boolean);
+
+    const [
+      { data: attendanceRows },
+      { data: paymentRows },
+      { data: statsRows }
+    ] = await Promise.all([
+      supabase
+        .from("visitor_attendance")
+        .select("visitor_id, session_date, present")
+        .in("visitor_id", visitorIds),
+      supabase
+        .from("visitor_session_payments")
+        .select("visitor_id, session_date, paid_amount, expected_amount")
+        .in("visitor_id", visitorIds),
+      supabase
+        .from("visitor_stats")
+        .select("visitor_id, yellow_cards, red_cards, yellow_paid_count, red_paid_count")
+        .in("visitor_id", visitorIds)
+    ]);
 
     const mapped = (visitors ?? []).map(mapVisitorBase);
     const byId = new Map(mapped.map((v) => [String(v.id), v]));
@@ -59,7 +80,7 @@ export async function getVisitors(request: NextRequest) {
       const dateKey = String(row.session_date || "").slice(0, 10);
       if (!dateKey) return;
       visitor.payments.sessions[dateKey] = {
-        expected: Number(row.expected_amount) || 1000,
+        expected: Number(row.expected_amount) || visitorSessionFee,
         paid: Number(row.paid_amount) || 0
       };
     });
@@ -83,4 +104,3 @@ export async function getVisitors(request: NextRequest) {
     return failure(message, 500);
   }
 }
-

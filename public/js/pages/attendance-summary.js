@@ -17,8 +17,18 @@
     return;
   }
 
+  const dayNames = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday"
+  ];
+
   const defaultSettings = {
-    attendance: { startDate: "2026-01-10" }
+    attendance: { startDate: "2026-01-10", playableDayOfWeek: 6 }
   };
 
   const state = {
@@ -38,7 +48,16 @@
     return player.nickname ? `${player.name} (${player.nickname})` : player.name;
   }
 
-  function buildSaturdayList(startDate, endDate) {
+  function getPlayableDayOfWeek(settings) {
+    const value = Number(settings?.attendance?.playableDayOfWeek);
+    return Number.isInteger(value) && value >= 0 && value <= 6 ? value : 6;
+  }
+
+  function getPlayableDayLabel(settings) {
+    return dayNames[getPlayableDayOfWeek(settings)] || "Saturday";
+  }
+
+  function buildPlayableDayList(startDate, endDate, settings) {
     const startMatch = String(startDate || "").match(/^(\d{4})-(\d{2})-(\d{2})$/);
     const endMatch = String(endDate || "").match(/^(\d{4})-(\d{2})-(\d{2})$/);
     if (!startMatch || !endMatch) return [];
@@ -56,7 +75,8 @@
     );
     if (Number.isNaN(cursor.getTime()) || Number.isNaN(end.getTime())) return dates;
 
-    while (cursor.getDay() !== 6) {
+    const playableDay = getPlayableDayOfWeek(settings);
+    while (cursor.getDay() !== playableDay) {
       cursor.setDate(cursor.getDate() + 1);
     }
 
@@ -75,7 +95,7 @@
       ? configuredStart
       : `${new Date().getFullYear()}-01-01`;
 
-    const timeline = buildSaturdayList(startDate, todayStr);
+    const timeline = buildPlayableDayList(startDate, todayStr, settings);
     if (timeline.length) return timeline;
 
     const keys = new Set();
@@ -196,14 +216,6 @@
   }
 
   function loadData() {
-    if (!rangeSelect.querySelector('option[value="all"]')) {
-      const option = document.createElement("option");
-      option.value = "all";
-      option.textContent = "All";
-      rangeSelect.insertBefore(option, rangeSelect.firstChild);
-    }
-    rangeSelect.value = "all";
-
     Promise.all([
       window.apiFetch("/settings").catch(() => ({ data: defaultSettings })),
       window.apiFetch("/players")
@@ -213,6 +225,16 @@
         state.settings = settingsRes?.data || defaultSettings;
         state.players = players;
         state.attendanceDates = getAttendanceDates(players, state.settings);
+        const label = getPlayableDayLabel(state.settings);
+        const options = Array.from(rangeSelect.options);
+        const allOption = options.find((option) => option.value === "all");
+        if (allOption) allOption.textContent = "All";
+        options.forEach((option) => {
+          const value = Number(option.value);
+          if (!Number.isFinite(value)) return;
+          option.textContent = `Last ${value} ${label}${value === 1 ? "" : "s"}`;
+        });
+        rangeSelect.value = "all";
         render();
       })
       .catch(console.error);

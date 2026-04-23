@@ -27,7 +27,9 @@
     players: [],
     settings: defaultSettings,
     months: [],
-    years: []
+    years: [],
+    sortKey: "status",
+    sortDir: "desc"
   };
 
   function formatCurrency(amount) {
@@ -184,18 +186,21 @@
     });
 
     const statusRank = {
-      PENDING: 3,
-      INCOMPLETE: 2,
-      CLEARED: 1
+      CLEARED: 0,
+      INCOMPLETE: 1,
+      PENDING: 2
     };
 
-    rows.sort((a, b) => {
-      const rankA = statusRank[a.status.text] || 0;
-      const rankB = statusRank[b.status.text] || 0;
-      if (rankA !== rankB) return rankB - rankA;
-      if (a.totalOwed !== b.totalOwed) return b.totalOwed - a.totalOwed;
-      return String(a.player.name || "").localeCompare(String(b.player.name || ""));
-    });
+    if (state.sortKey === "status") {
+      const dir = state.sortDir === "asc" ? 1 : -1;
+      rows.sort((a, b) => {
+        const rankA = statusRank[a.status.text] || 0;
+        const rankB = statusRank[b.status.text] || 0;
+        if (rankA !== rankB) return (rankA > rankB ? 1 : -1) * dir;
+        if (a.totalOwed !== b.totalOwed) return b.totalOwed - a.totalOwed;
+        return String(a.player.name || "").localeCompare(String(b.player.name || ""));
+      });
+    }
 
     rows.forEach((rowData) => {
       const player = rowData.player;
@@ -218,6 +223,18 @@
     });
 
     countEl.textContent = `Showing ${rows.length} of ${state.players.length}`;
+    setSortIndicator();
+  }
+
+  function setSortIndicator() {
+    document.querySelectorAll("th.sortable").forEach((th) => {
+      const key = th.getAttribute("data-key");
+      th.classList.toggle("active", !!state.sortKey && key === state.sortKey);
+      th.setAttribute(
+        "data-direction",
+        !!state.sortKey && key === state.sortKey ? state.sortDir : ""
+      );
+    });
   }
 
   function applyFilters() {
@@ -256,6 +273,20 @@
     applyFilters();
   });
   searchInput.addEventListener("input", applyFilters);
+
+  document.querySelectorAll("th.sortable").forEach((th) => {
+    th.addEventListener("click", () => {
+      const key = th.getAttribute("data-key");
+      if (!key) return;
+      if (state.sortKey === key) {
+        state.sortDir = state.sortDir === "asc" ? "desc" : "asc";
+      } else {
+        state.sortKey = key;
+        state.sortDir = "desc";
+      }
+      applyFilters();
+    });
+  });
 
   loadData();
 })();

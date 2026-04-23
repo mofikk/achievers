@@ -36,8 +36,10 @@
         { from: "2026-02", amount: 3000 }
       ],
       newMemberYearly: 5000,
-      renewalYearly: 2500
+      renewalYearly: 2500,
+      visitorSessionFee: 1000
     },
+    attendance: { startDate: "2026-01-10", playableDayOfWeek: 6 },
     discipline: { yellowFine: 500, redFine: 1000 }
   };
 
@@ -137,13 +139,24 @@
     buildOptions(monthSelect, monthsForYear, selectedMonth);
   }
 
-  function buildSaturdayList(startDate, endDate) {
+  function getPlayableDayOfWeek() {
+    const value = Number(state.settings?.attendance?.playableDayOfWeek);
+    return Number.isInteger(value) && value >= 0 && value <= 6 ? value : 6;
+  }
+
+  function getVisitorSessionFee() {
+    const value = Number(state.settings?.fees?.visitorSessionFee);
+    return Number.isFinite(value) && value >= 0 ? value : 1000;
+  }
+
+  function buildPlayableDayList(startDate, endDate) {
     const dates = [];
     const cursor = new Date(`${startDate}T00:00:00`);
     const end = new Date(`${endDate}T00:00:00`);
     if (Number.isNaN(cursor.getTime()) || Number.isNaN(end.getTime())) return dates;
+    const playableDay = getPlayableDayOfWeek();
 
-    while (cursor.getDay() !== 6) {
+    while (cursor.getDay() !== playableDay) {
       cursor.setDate(cursor.getDate() + 1);
     }
 
@@ -294,13 +307,14 @@
 
   function renderVisitorsReport() {
     const sessionDate = visitorDateSelect.value;
-    const expectedTotal = state.visitors.length * 1000;
+    const sessionFee = getVisitorSessionFee();
+    const expectedTotal = state.visitors.length * sessionFee;
     let collected = 0;
     visitorsBody.innerHTML = "";
 
     state.visitors.forEach((visitor) => {
       const paid = Number(visitor?.payments?.sessions?.[sessionDate]?.paid) || 0;
-      const summary = window.paymentStatus.statusFromPaid(1000, paid);
+      const summary = window.paymentStatus.statusFromPaid(sessionFee, paid);
       const remaining = summary.remaining;
       const status =
         summary.status === "PAID"
@@ -308,7 +322,7 @@
           : summary.status === "INCOMPLETE"
             ? { text: "INCOMPLETE", className: "incomplete" }
             : { text: "PENDING", className: "pending" };
-      collected += Math.min(paid, 1000);
+      collected += Math.min(paid, sessionFee);
       const row = document.createElement("tr");
       row.innerHTML = `
         <td data-label="Name">${visitor.name || ""}</td>
@@ -354,7 +368,7 @@
         buildOptions(yearSelect, state.years, defaultYear);
         syncMonthFilterForYear(defaultYear, latestMonth || getNowMonth());
         const todayStr = new Date().toISOString().slice(0, 10);
-        state.visitorSessions = buildSaturdayList(
+        state.visitorSessions = buildPlayableDayList(
           state.settings.attendance.startDate,
           todayStr
         );

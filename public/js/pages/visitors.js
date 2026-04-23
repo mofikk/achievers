@@ -1,5 +1,4 @@
 (function () {
-  const sessionSelect = document.getElementById("visitor-session");
   const searchInput = document.getElementById("visitors-search");
   const countEl = document.getElementById("visitors-count");
   const body = document.getElementById("visitors-body");
@@ -26,7 +25,6 @@
   const promotePosition = document.getElementById("visitor-promote-position");
 
   if (
-    !sessionSelect ||
     !searchInput ||
     !countEl ||
     !body ||
@@ -53,74 +51,20 @@
     return;
   }
 
-  const defaultSettings = {
-    attendance: { startDate: "2026-01-10" }
-  };
-
   const state = {
     visitors: [],
     filtered: [],
-    settings: defaultSettings,
     editingId: null,
-    selectedId: null,
-    sessions: []
+    selectedId: null
   };
-
-  function buildSaturdayList(startDate, endDate) {
-    const dates = [];
-    const cursor = new Date(`${startDate}T00:00:00`);
-    const end = new Date(`${endDate}T00:00:00`);
-    if (Number.isNaN(cursor.getTime()) || Number.isNaN(end.getTime())) return dates;
-
-    while (cursor.getDay() !== 6) {
-      cursor.setDate(cursor.getDate() + 1);
-    }
-
-    while (cursor <= end) {
-      const dateStr = cursor.toISOString().slice(0, 10);
-      dates.push(dateStr);
-      cursor.setDate(cursor.getDate() + 7);
-    }
-    return dates;
-  }
-
-  function buildSessions() {
-    const todayStr = new Date().toISOString().slice(0, 10);
-    const startDate = state.settings.attendance.startDate;
-    state.sessions = buildSaturdayList(startDate, todayStr);
-    sessionSelect.innerHTML = "";
-    state.sessions.forEach((date) => {
-      const option = document.createElement("option");
-      option.value = date;
-      option.textContent = date;
-      sessionSelect.appendChild(option);
-    });
-    if (!state.sessions.length) {
-      const option = document.createElement("option");
-      option.value = "";
-      option.textContent = "No sessions yet";
-      sessionSelect.appendChild(option);
-    }
-  }
-
-  function getSessionStatus(visitor, sessionDate) {
-    const paid = Number(visitor?.payments?.sessions?.[sessionDate]?.paid) || 0;
-    const status = window.paymentStatus.statusFromPaid(1000, paid).status;
-    return status === "PAID" ? "PAID" : status === "INCOMPLETE" ? "INCOMPLETE" : "PENDING";
-  }
 
   function renderTable(list) {
     body.innerHTML = "";
-    const sessionDate = sessionSelect.value;
     list.forEach((visitor) => {
-      const statusText = getSessionStatus(visitor, sessionDate);
-      const statusClass =
-        statusText === "PAID" ? "paid" : statusText === "INCOMPLETE" ? "incomplete" : "pending";
       const row = document.createElement("tr");
       row.innerHTML = `
         <td data-label="Name">${visitor.name || ""}</td>
         <td data-label="Nickname">${visitor.nickname || "-"}</td>
-        <td data-label="Play Fee Status"><span class="pill ${statusClass}">${statusText}</span></td>
         <td data-label="Actions">
           <div class="actions">
             <button class="action-btn" data-view="${visitor.id}">View</button>
@@ -203,19 +147,14 @@
   }
 
   function setLoadingState() {
-    body.innerHTML = '<tr><td colspan="4">Loading...</td></tr>';
+    body.innerHTML = '<tr><td colspan="3">Loading...</td></tr>';
   }
 
   function loadData() {
     setLoadingState();
-    Promise.all([
-      window.apiFetch("/settings").catch(() => ({ data: defaultSettings })),
-      window.apiFetch("/visitors")
-    ])
-      .then(([settingsResponse, visitorsResponse]) => {
-        state.settings = settingsResponse?.data || defaultSettings;
-        state.visitors = Array.isArray(visitorsResponse?.data) ? visitorsResponse.data : [];
-        buildSessions();
+    window.apiFetch("/visitors")
+      .then((response) => {
+        state.visitors = Array.isArray(response?.data) ? response.data : [];
         applyFilters();
       })
       .catch((error) => {
@@ -280,6 +219,7 @@
 
   body.addEventListener("click", (event) => {
     const target = event.target;
+    if (!(target instanceof HTMLElement)) return;
     if (target.hasAttribute("data-view")) {
       const id = target.getAttribute("data-view");
       const visitor = state.visitors.find((item) => item.id === id);
@@ -332,19 +272,18 @@
   deleteBtn.addEventListener("click", () => {
     const id = state.selectedId;
     if (!id) return;
-    confirmDeleteVisitor().then((confirmed) => {
-      if (!confirmed) return;
-      return window
-        .apiFetch(`/visitors/${id}`, { method: "DELETE" })
-        .then(() => {
+    confirmDeleteVisitor()
+      .then((confirmed) => {
+        if (!confirmed) return;
+        return window.apiFetch(`/visitors/${id}`, { method: "DELETE" }).then(() => {
           closeView();
           loadData();
         });
-    })
-    .catch((err) => {
-      console.error(err);
-      viewError.textContent = err.message || "Unable to delete visitor.";
-    });
+      })
+      .catch((err) => {
+        console.error(err);
+        viewError.textContent = err.message || "Unable to delete visitor.";
+      });
   });
 
   promoteCancel.addEventListener("click", closePromote);
@@ -375,7 +314,6 @@
       });
   });
 
-  sessionSelect.addEventListener("change", applyFilters);
   searchInput.addEventListener("input", applyFilters);
 
   loadData();

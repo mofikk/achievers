@@ -35,8 +35,12 @@
             </div>
             <div class="page-title-actions">
               <label class="form-field">
-                <span>Session Date</span>
-                <select class="input" id="visitor-session"></select>
+                <span>Year</span>
+                <select class="input" id="visitor-obligation-year"></select>
+              </label>
+              <label class="form-field">
+                <span>Month</span>
+                <select class="input" id="visitor-obligation-month"></select>
               </label>
               <input class="input" id="visitors-search" type="search" placeholder="Search name or nickname..." />
               <span id="visitors-count" class="muted"></span>
@@ -54,7 +58,7 @@
                   <th>Play Fee Owed</th>
                   <th>Fines Owed</th>
                   <th>Total Owed</th>
-                  <th>Status</th>
+                  <th class="sortable" data-key="status">Status</th>
                 </tr>
               </thead>
               <tbody id="visitors-body"></tbody>

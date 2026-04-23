@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 
-type BackupType = "db" | "settings";
+type BackupType = "db" | "settings" | "activity_logs";
 
 const BACKUP_DIR = path.join(process.cwd(), "server", "backups");
 
@@ -15,6 +15,22 @@ function nowStamp() {
 
 function fileNameFor(type: BackupType) {
   return `${type}-${nowStamp()}.json`;
+}
+
+async function writeBackupPayload(type: BackupType, payload: Record<string, unknown>) {
+  await ensureBackupDir();
+  const fileName = fileNameFor(type);
+  const fullPath = path.join(BACKUP_DIR, fileName);
+  const raw = JSON.stringify(payload, null, 2);
+  await fs.writeFile(fullPath, raw, "utf8");
+
+  return {
+    fileName,
+    fullPath,
+    sizeBytes: Buffer.byteLength(raw, "utf8"),
+    createdAt: new Date().toISOString(),
+    type
+  };
 }
 
 async function readTable(supabase: any, table: string, select = "*") {
@@ -92,21 +108,38 @@ async function buildSettingsSnapshot(supabase: any) {
 }
 
 export async function createBackup(supabase: any, type: BackupType) {
-  await ensureBackupDir();
-  const payload = type === "db" ? await buildDbSnapshot(supabase) : await buildSettingsSnapshot(supabase);
+  const payload =
+    type === "db"
+      ? await buildDbSnapshot(supabase)
+      : type === "settings"
+        ? await buildSettingsSnapshot(supabase)
+        : {
+            meta: {
+              type: "activity_logs",
+              createdAt: new Date().toISOString()
+            },
+            data: { activity_logs: [] }
+          };
+  return writeBackupPayload(type, payload as Record<string, unknown>);
+}
 
-  const fileName = fileNameFor(type);
-  const fullPath = path.join(BACKUP_DIR, fileName);
-  const raw = JSON.stringify(payload, null, 2);
-  await fs.writeFile(fullPath, raw, "utf8");
-
-  return {
-    fileName,
-    fullPath,
-    sizeBytes: Buffer.byteLength(raw, "utf8"),
-    createdAt: new Date().toISOString(),
-    type
+export async function createActivityLogsBackupFromRows(
+  rows: any[],
+  meta?: { cutoffIso?: string; retentionDays?: number }
+) {
+  const payload = {
+    meta: {
+      type: "activity_logs",
+      createdAt: new Date().toISOString(),
+      cutoffIso: meta?.cutoffIso || null,
+      retentionDays: Number(meta?.retentionDays) || null,
+      rowsCount: Array.isArray(rows) ? rows.length : 0
+    },
+    data: {
+      activity_logs: Array.isArray(rows) ? rows : []
+    }
   };
+  return writeBackupPayload("activity_logs", payload);
 }
 
 export async function listBackups() {
@@ -118,7 +151,7 @@ export async function listBackups() {
       .map(async (entry) => {
         const fullPath = path.join(BACKUP_DIR, entry.name);
         const stats = await fs.stat(fullPath);
-        const match = entry.name.match(/^(db|settings)-/);
+        const match = entry.name.match(/^(db|settings|activity_logs)-/);
         const type = (match?.[1] || "db") as BackupType;
         return {
           name: entry.name,

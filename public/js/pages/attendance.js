@@ -49,8 +49,18 @@
     return;
   }
 
+  const dayNames = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday"
+  ];
+
   const defaultSettings = {
-    attendance: { startDate: "2026-01-10", lockFuture: true }
+    attendance: { startDate: "2026-01-10", lockFuture: true, playableDayOfWeek: 6 }
   };
   const monthLabels = [
     "Jan",
@@ -84,11 +94,21 @@
     return `${year}-${String(monthIndex + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
   }
 
-  function getSaturdays(year, monthIndex) {
+  function getPlayableDayOfWeek() {
+    const value = Number(state.settings?.attendance?.playableDayOfWeek);
+    return Number.isInteger(value) && value >= 0 && value <= 6 ? value : 6;
+  }
+
+  function getPlayableDayLabel() {
+    return dayNames[getPlayableDayOfWeek()] || "Saturday";
+  }
+
+  function getPlayableDatesInMonth(year, monthIndex) {
     const dates = [];
     const date = new Date(year, monthIndex, 1);
+    const playableDay = getPlayableDayOfWeek();
     while (date.getMonth() === monthIndex) {
-      if (date.getDay() === 6) {
+      if (date.getDay() === playableDay) {
         const dateStr = formatDate(year, monthIndex, date.getDate());
         if (dateStr >= state.settings.attendance.startDate) {
           dates.push(dateStr);
@@ -112,13 +132,13 @@
 
   function populateDates() {
     const monthIndex = Number(monthSelect.value);
-    const saturdays = getSaturdays(currentYear, monthIndex);
+    const playableDates = getPlayableDatesInMonth(currentYear, monthIndex);
     dateSelect.innerHTML = "";
 
-    if (saturdays.length === 0) {
+    if (playableDates.length === 0) {
       const option = document.createElement("option");
       option.value = "";
-      option.textContent = "No Saturdays";
+      option.textContent = `No ${getPlayableDayLabel()}s`;
       dateSelect.appendChild(option);
       state.selectedDate = "";
       updateHint();
@@ -126,7 +146,7 @@
       return;
     }
 
-    saturdays.forEach((dateStr) => {
+    playableDates.forEach((dateStr) => {
       const option = document.createElement("option");
       option.value = dateStr;
       option.textContent = dateStr;
@@ -134,8 +154,8 @@
     });
 
     const todayKey = new Date().toISOString().slice(0, 10);
-    const latestPassed = [...saturdays].reverse().find((dateStr) => dateStr <= todayKey);
-    const defaultDate = latestPassed || saturdays[saturdays.length - 1];
+    const latestPassed = [...playableDates].reverse().find((dateStr) => dateStr <= todayKey);
+    const defaultDate = latestPassed || playableDates[playableDates.length - 1];
     if (defaultDate) {
       dateSelect.value = defaultDate;
     }
@@ -181,7 +201,7 @@
 
   function updateHint() {
     if (!state.selectedDate) {
-      hintEl.textContent = "Select a Saturday to mark attendance.";
+      hintEl.textContent = `Select a ${getPlayableDayLabel()} to mark attendance.`;
       saveBtn.disabled = true;
       markPresentBtn.disabled = true;
       markAbsentBtn.disabled = true;
@@ -363,7 +383,7 @@
 
   function updateSessionSummaryTitle() {
     const suffix = state.selectedDate ? ` for ${state.selectedDate}` : "";
-    summaryTitle.textContent = `Saturday Session Summary${suffix}`;
+    summaryTitle.textContent = `${getPlayableDayLabel()} Session Summary${suffix}`;
   }
 
   function resetSessionSummaryDraftForDate() {
@@ -555,7 +575,7 @@
       return;
     }
     if (!state.selectedDate) {
-      setSummaryError("Select a Saturday date first.");
+      setSummaryError(`Select a ${getPlayableDayLabel()} date first.`);
       return;
     }
     if (isFuture) {

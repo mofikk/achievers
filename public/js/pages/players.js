@@ -88,7 +88,9 @@
     allPlayers: [],
     overviewPlayers: [],
     yearKey: null,
-    monthKey: null
+    monthKey: null,
+    sortKey: null,
+    sortDir: "asc"
   };
   const currentYear = new Date().getFullYear();
   const defaultSettings = {
@@ -125,14 +127,61 @@
     return positionLabels[code] || code;
   }
 
+  function statusRank(status) {
+    const rank = {
+      PAID: 0,
+      INCOMPLETE: 1,
+      PENDING: 2
+    };
+    return rank[String(status || "PENDING").toUpperCase()] ?? 99;
+  }
+
+  function sortPlayers(players) {
+    if (!state.sortKey) {
+      return [...players].sort((a, b) => {
+        const aTime = new Date(a.createdAt || 0).getTime();
+        const bTime = new Date(b.createdAt || 0).getTime();
+        return bTime - aTime;
+      });
+    }
+
+    const dir = state.sortDir === "asc" ? 1 : -1;
+    return [...players].sort((a, b) => {
+      if (state.sortKey === "name") {
+        const nameA = String(a.name || "");
+        const nameB = String(b.name || "");
+        return nameA.localeCompare(nameB) * dir;
+      }
+
+      const valueA =
+        state.sortKey === "yearlyStatus"
+          ? statusRank(a.yearly?.status)
+          : statusRank(a.monthly?.status);
+      const valueB =
+        state.sortKey === "yearlyStatus"
+          ? statusRank(b.yearly?.status)
+          : statusRank(b.monthly?.status);
+
+      if (valueA !== valueB) return (valueA > valueB ? 1 : -1) * dir;
+      return String(a.name || "").localeCompare(String(b.name || ""));
+    });
+  }
+
+  function setSortIndicator() {
+    document.querySelectorAll("th.sortable").forEach((th) => {
+      const key = th.getAttribute("data-key");
+      th.classList.toggle("active", !!state.sortKey && key === state.sortKey);
+      th.setAttribute(
+        "data-direction",
+        !!state.sortKey && key === state.sortKey ? state.sortDir : ""
+      );
+    });
+  }
+
   function renderPlayers(players) {
     body.innerHTML = "";
 
-    const sorted = [...players].sort((a, b) => {
-      const aTime = new Date(a.createdAt || 0).getTime();
-      const bTime = new Date(b.createdAt || 0).getTime();
-      return bTime - aTime;
-    });
+    const sorted = sortPlayers(players);
 
     sorted.forEach((player) => {
       const row = document.createElement("tr");
@@ -160,6 +209,7 @@
     });
 
     countEl.textContent = `Showing ${sorted.length} of ${state.overviewPlayers.length} players`;
+    setSortIndicator();
   }
 
   function toMonthlyKey(record) {
@@ -530,6 +580,28 @@
       return name.includes(query) || nickname.includes(query);
     });
     renderPlayers(filtered);
+  });
+
+  document.querySelectorAll("th.sortable").forEach((th) => {
+    th.addEventListener("click", () => {
+      const key = th.getAttribute("data-key");
+      if (!key) return;
+      if (state.sortKey === key) {
+        state.sortDir = state.sortDir === "asc" ? "desc" : "asc";
+      } else {
+        state.sortKey = key;
+        state.sortDir = key === "name" ? "asc" : "desc";
+      }
+      const query = searchInput.value.trim().toLowerCase();
+      const targetList = !query
+        ? state.overviewPlayers
+        : state.overviewPlayers.filter((player) => {
+            const name = String(player.name || "").toLowerCase();
+            const nickname = String(player.nickname || "").toLowerCase();
+            return name.includes(query) || nickname.includes(query);
+          });
+      renderPlayers(targetList);
+    });
   });
 
   deleteBtn.addEventListener("click", () => {

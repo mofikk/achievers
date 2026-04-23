@@ -208,10 +208,17 @@ export async function patchVisitorPayments(request: NextRequest, id: string) {
       .eq("session_date", sessionDate)
       .maybeSingle();
 
+    const { data: appSettings } = await supabase
+      .from("app_settings")
+      .select("id, visitor_session_fee")
+      .eq("id", true)
+      .maybeSingle();
+    const visitorSessionFee = Number(appSettings?.visitor_session_fee) || 1000;
+
     const payload = {
       visitor_id: id,
       session_date: sessionDate,
-      expected_amount: 1000,
+      expected_amount: visitorSessionFee,
       paid_amount: paid
     };
 
@@ -242,7 +249,7 @@ export async function patchVisitorPayments(request: NextRequest, id: string) {
           session_date: sessionDate,
           previous_paid_amount: previous?.paid_amount ?? null,
           paid_amount: nextPaid,
-          expected_amount: Number(updated?.expected_amount ?? 1000)
+          expected_amount: Number(updated?.expected_amount ?? visitorSessionFee)
         }
       });
     }
@@ -251,7 +258,7 @@ export async function patchVisitorPayments(request: NextRequest, id: string) {
       id: updated.id,
       visitor_id: updated.visitor_id,
       sessionDate: String(updated.session_date || "").slice(0, 10),
-      expected: Number(updated.expected_amount) || 1000,
+      expected: Number(updated.expected_amount) || visitorSessionFee,
       paid: Number(updated.paid_amount) || 0
     });
   } catch (error) {
@@ -344,4 +351,3 @@ export async function promoteVisitor(request: NextRequest, id: string) {
     return failure(message, 500);
   }
 }
-

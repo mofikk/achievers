@@ -14,13 +14,25 @@ function coerceRole(value: unknown): AppRole {
 
 export async function resolveAuthContext(request: NextRequest): Promise<AuthContext | null> {
   const token = getTokenFromRequest(request);
-  const supabase = createServerClient(token || undefined);
-  const {
-    data: { user },
-    error: authError
-  } = await supabase.auth.getUser();
+  if (!token) return null;
 
-  if (authError || !user) return null;
+  const supabase = createServerClient(token || undefined);
+  let user: any = null;
+  let authError: any = null;
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    const result = await supabase.auth.getUser(token);
+    user = result.data?.user || null;
+    authError = result.error || null;
+    if (user) break;
+    const message = String(authError?.message || "").toLowerCase();
+    if (!message.includes("fetch failed")) break;
+    await new Promise((resolve) => setTimeout(resolve, 150));
+  }
+
+  if (authError || !user) {
+    console.error("resolveAuthContext auth.getUser failed:", authError?.message || authError);
+    return null;
+  }
 
   const { data: profile, error: profileError } = await supabase
     .from("profiles")
@@ -29,7 +41,7 @@ export async function resolveAuthContext(request: NextRequest): Promise<AuthCont
     .maybeSingle();
 
   if (profileError) {
-    return null;
+    console.error("resolveAuthContext profile lookup failed, falling back to token user:", profileError);
   }
 
   const effectiveProfile = profile
@@ -69,7 +81,10 @@ export async function resolveAuthContext(request: NextRequest): Promise<AuthCont
     user,
     profile: {
       id: String(effectiveProfile.id),
-      full_name: effectiveProfile.full_name ?? null,
+      full_name:
+        (typeof effectiveProfile.full_name === "string" && effectiveProfile.full_name.trim()) ||
+        (typeof user?.user_metadata?.full_name === "string" && user.user_metadata.full_name.trim()) ||
+        null,
       email: effectiveProfile.email ?? user.email ?? null,
       role,
       is_active: effectiveProfile.is_active !== false

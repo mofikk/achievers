@@ -6,6 +6,95 @@
   let partialDataMessages = new Set();
   let partialDataHideTimer = null;
   const preloaderMinVisibleUntil = Date.now() + 300;
+  const THEME_STORAGE_KEY = "achievers-theme-preference";
+  const THEME_OPTIONS = ["system", "dark", "light"];
+
+  function getSystemTheme() {
+    if (!window.matchMedia) return "light";
+    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  }
+
+  function getThemePreference() {
+    const saved = String(window.localStorage.getItem(THEME_STORAGE_KEY) || "system");
+    return THEME_OPTIONS.includes(saved) ? saved : "system";
+  }
+
+  function getAppliedTheme(preference) {
+    return preference === "system" ? getSystemTheme() : preference;
+  }
+
+  function applyTheme(preference) {
+    const safePreference = THEME_OPTIONS.includes(preference) ? preference : "system";
+    const applied = getAppliedTheme(safePreference);
+    document.body.classList.toggle("theme-dark", applied === "dark");
+    document.body.classList.toggle("theme-light", applied === "light");
+    document.body.dataset.theme = applied;
+    document.body.dataset.themePreference = safePreference;
+    return { preference: safePreference, applied };
+  }
+
+  function saveThemePreference(preference) {
+    if (preference === "system") {
+      window.localStorage.removeItem(THEME_STORAGE_KEY);
+      return;
+    }
+    window.localStorage.setItem(THEME_STORAGE_KEY, preference);
+  }
+
+  function cycleThemePreference(currentPreference) {
+    const index = THEME_OPTIONS.indexOf(currentPreference);
+    const nextIndex = index === -1 ? 0 : (index + 1) % THEME_OPTIONS.length;
+    return THEME_OPTIONS[nextIndex];
+  }
+
+  function updateThemeButton(button) {
+    if (!button) return;
+    const preference = document.body.dataset.themePreference || "system";
+    const applied = document.body.dataset.theme || "light";
+    const icon =
+      preference === "system" ? "fa-circle-half-stroke" : applied === "dark" ? "fa-moon" : "fa-sun";
+    const label =
+      preference === "system" ? "Auto" : applied === "dark" ? "Dark" : "Light";
+    button.innerHTML = `<i class="fa-solid ${icon}" aria-hidden="true"></i><span class="theme-label">${label}</span>`;
+    button.setAttribute(
+      "aria-label",
+      `Theme: ${label}. Click to switch theme mode.`
+    );
+    button.title = `Theme: ${label}`;
+  }
+
+  const initialThemePreference = getThemePreference();
+  applyTheme(initialThemePreference);
+
+  if (window.matchMedia) {
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    const syncSystemTheme = () => {
+      if ((document.body.dataset.themePreference || "system") !== "system") return;
+      applyTheme("system");
+      updateThemeButton(document.getElementById("theme-toggle-btn"));
+    };
+    if (typeof mediaQuery.addEventListener === "function") {
+      mediaQuery.addEventListener("change", syncSystemTheme);
+    } else if (typeof mediaQuery.addListener === "function") {
+      mediaQuery.addListener(syncSystemTheme);
+    }
+  }
+
+  window.theme = {
+    set(preference) {
+      const next = THEME_OPTIONS.includes(preference) ? preference : "system";
+      saveThemePreference(next);
+      const result = applyTheme(next);
+      updateThemeButton(document.getElementById("theme-toggle-btn"));
+      return result;
+    },
+    get() {
+      return {
+        preference: document.body.dataset.themePreference || "system",
+        applied: document.body.dataset.theme || getSystemTheme()
+      };
+    }
+  };
 
   function ensurePreloader() {
     let preloader = document.getElementById("page-preloader");
@@ -117,31 +206,24 @@
   async function getSession() {
     const client = await window.getSupabaseClient();
     let session = null;
-    for (let attempt = 0; attempt < 3; attempt += 1) {
+    for (let attempt = 0; attempt < 5; attempt += 1) {
       const { data } = await client.auth.getSession();
       session = data?.session || null;
       if (session) break;
-      await new Promise((resolve) => window.setTimeout(resolve, 150));
+      await new Promise((resolve) => window.setTimeout(resolve, 220));
     }
-    if (!session) return null;
-
-    const expiresAtMs = Number(session.expires_at || 0) * 1000;
-    const isExpired = Number.isFinite(expiresAtMs) && expiresAtMs <= Date.now() + 5000;
-    if (!isExpired) return session;
-
-    const { data: refreshed, error } = await client.auth.refreshSession();
-    if (error) {
-      console.error("Failed to refresh session:", error);
-      return null;
-    }
-    return refreshed?.session || null;
+    return session;
   }
 
   async function getAccessToken() {
     const session = await getSession();
     const token = session?.access_token || "";
-    if (token) lastAccessToken = token;
-    return token || lastAccessToken || "";
+    if (token) {
+      lastAccessToken = token;
+      return token;
+    }
+    lastAccessToken = "";
+    return "";
   }
 
   function getCurrentPage() {
@@ -168,7 +250,9 @@
     }
   }
 
-  function resolveDisplayName(session) {
+  function resolveDisplayName(session, me) {
+    const fromProfile = String(me?.full_name || "").trim();
+    if (fromProfile) return fromProfile;
     const user = session?.user;
     const metadata = user?.user_metadata || {};
     const fromMeta = metadata.full_name || metadata.name || metadata.display_name;
@@ -178,7 +262,7 @@
     return "User";
   }
 
-  function injectTopbarActions(session) {
+  function injectTopbarActions(session, me) {
     const topbar = document.querySelector(".topbar");
     if (!topbar || document.getElementById("topbar-right")) return null;
 
@@ -186,18 +270,32 @@
     wrapper.id = "topbar-right";
     wrapper.className = "topbar-right";
 
+    const themeToggleBtn = document.createElement("button");
+    themeToggleBtn.type = "button";
+    themeToggleBtn.id = "theme-toggle-btn";
+    themeToggleBtn.className = "ghost-btn topbar-theme-btn";
+    updateThemeButton(themeToggleBtn);
+    themeToggleBtn.addEventListener("click", () => {
+      const currentPreference = document.body.dataset.themePreference || "system";
+      const nextPreference = cycleThemePreference(currentPreference);
+      saveThemePreference(nextPreference);
+      applyTheme(nextPreference);
+      updateThemeButton(themeToggleBtn);
+    });
+
     const notesBtn = document.createElement("button");
     notesBtn.type = "button";
     notesBtn.id = "notes-trigger";
     notesBtn.className = "ghost-btn topbar-notes-btn";
     notesBtn.innerHTML = `Notes <span class="notes-count hidden" id="notes-count">0</span>`;
 
+    const displayName = resolveDisplayName(session, me);
     const userMenu = document.createElement("div");
     userMenu.className = "user-menu";
     userMenu.innerHTML = `
       <button type="button" id="user-menu-trigger" class="user-menu-trigger" aria-expanded="false" aria-haspopup="menu">
-        <span class="user-avatar" aria-hidden="true">${resolveDisplayName(session).slice(0, 1).toUpperCase()}</span>
-        <span class="user-name">${resolveDisplayName(session)}</span>
+        <span class="user-avatar" aria-hidden="true">${displayName.slice(0, 1).toUpperCase()}</span>
+        <span class="user-name">${displayName}</span>
         <i class="fa-solid fa-chevron-down user-chevron" aria-hidden="true"></i>
       </button>
       <div id="user-menu-dropdown" class="user-menu-dropdown hidden" role="menu">
@@ -205,6 +303,7 @@
       </div>
     `;
 
+    wrapper.appendChild(themeToggleBtn);
     wrapper.appendChild(notesBtn);
     wrapper.appendChild(userMenu);
     topbar.appendChild(wrapper);
@@ -329,21 +428,6 @@
       let token = await getAccessToken();
       let res = await request(token);
 
-      if (res.status === 401) {
-        const client = await window.getSupabaseClient();
-        const { data: refreshed, error: refreshError } = await client.auth.refreshSession();
-        if (!refreshError && refreshed?.session?.access_token) {
-          token = refreshed.session.access_token;
-          res = await request(token);
-        } else {
-          const { data } = await client.auth.getSession();
-          const retryToken = data?.session?.access_token;
-          if (retryToken) {
-            res = await request(retryToken);
-          }
-        }
-      }
-
       if (!res.ok) {
         let payload = null;
         try {
@@ -369,6 +453,9 @@
         const error = new Error(message);
         error.status = res.status;
         error.payload = payload;
+        if (res.status === 401) {
+          lastAccessToken = "";
+        }
         if (!silent && window.toast) {
           window.toast(message, "error");
         }
@@ -407,12 +494,13 @@
         me = meRes?.data || null;
       } catch (error) {
         console.error("Failed to load current user permissions:", error);
+        me = null;
       }
 
       guardReportsPage(me);
       applyNavPermissions(me);
 
-      const topbarActions = injectTopbarActions(session);
+      const topbarActions = injectTopbarActions(session, me);
       initNotes(topbarActions?.notesBtn || null);
     } catch (error) {
       console.error(error);

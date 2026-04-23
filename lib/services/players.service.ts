@@ -91,11 +91,13 @@ async function rollbackPlayerCreation(supabase: any, playerId: string) {
 
 export async function getPlayers(req: NextRequest) {
   try {
-    const supabase = createServerClient(getTokenFromRequest(req) || undefined);
+    const token = getTokenFromRequest(req) || undefined;
+    if (!token) return failure("Unauthorized", 401);
+    const supabase = createServerClient(token);
     const {
       data: { user },
       error: authError
-    } = await supabase.auth.getUser();
+    } = await supabase.auth.getUser(token);
     if (authError || !user) return failure("Unauthorized", 401);
 
     const [

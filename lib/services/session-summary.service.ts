@@ -229,9 +229,18 @@ export async function commitSessionSummary(request: NextRequest) {
     }
 
     const presentPlayerIds = new Set<string>();
+    const presentVisitorIds = new Set<string>();
     (review.attendance ?? []).forEach((row) => {
       if (row.resolved_type === "player" && row.resolved_id && playerIds.has(String(row.resolved_id))) {
         presentPlayerIds.add(String(row.resolved_id));
+        return;
+      }
+      if (row.resolved_type === "visitor") {
+        const normalized = normalizeName(row.normalized_name || row.source_name);
+        const visitorId = row.resolved_id
+          ? String(row.resolved_id)
+          : visitorByNormalized.get(normalized) || "";
+        if (visitorId) presentVisitorIds.add(visitorId);
       }
     });
 
@@ -242,6 +251,17 @@ export async function commitSessionSummary(request: NextRequest) {
     }));
     if (attendancePayload.length) {
       await supabase.from("player_attendance").upsert(attendancePayload, { onConflict: "player_id,session_date" });
+    }
+
+    const visitorAttendancePayload = Array.from(presentVisitorIds).map((visitorId) => ({
+      visitor_id: visitorId,
+      session_date: sessionDate,
+      present: true
+    }));
+    if (visitorAttendancePayload.length) {
+      await supabase
+        .from("visitor_attendance")
+        .upsert(visitorAttendancePayload, { onConflict: "visitor_id,session_date" });
     }
 
     const goalIncrements = new Map<string, number>();
@@ -369,7 +389,7 @@ export async function commitSessionSummary(request: NextRequest) {
         action: "session_summary_commit",
         session_date: sessionDate,
         players_present: presentPlayerIds.size,
-        visitors_present: 0,
+        visitors_present: presentVisitorIds.size,
         goal_rows: review.goals?.length || 0,
         card_rows: review.cards?.length || 0,
         summary_id: summary?.id || null
@@ -380,7 +400,7 @@ export async function commitSessionSummary(request: NextRequest) {
       session_date: sessionDate,
       summary_id: summary?.id || null,
       players_present: presentPlayerIds.size,
-      visitors_present: 0,
+      visitors_present: presentVisitorIds.size,
       goals_updated_for_players: goalIncrements.size,
       cards_updated_for_players: playerCardIncrements.size,
       cards_updated_for_visitors: visitorCardIncrements.size,

@@ -4,7 +4,9 @@
   const currencyInput = document.getElementById("setting-currency");
   const newMemberFeeInput = document.getElementById("setting-fee-new");
   const renewalFeeInput = document.getElementById("setting-fee-renewal");
+  const visitorSessionFeeInput = document.getElementById("setting-fee-visitor-session");
   const attendanceStartInput = document.getElementById("setting-attendance-start");
+  const attendanceDayInput = document.getElementById("setting-attendance-day");
   const attendanceLockInput = document.getElementById("setting-attendance-lock");
   const yellowFineInput = document.getElementById("setting-fine-yellow");
   const redFineInput = document.getElementById("setting-fine-red");
@@ -49,7 +51,9 @@
     !currencyInput ||
     !newMemberFeeInput ||
     !renewalFeeInput ||
+    !visitorSessionFeeInput ||
     !attendanceStartInput ||
+    !attendanceDayInput ||
     !attendanceLockInput ||
     !saveBtn ||
     !resetBtn ||
@@ -272,7 +276,13 @@
     renderSchedule(monthlySchedule);
     newMemberFeeInput.value = String(settings.fees?.newMemberYearly ?? 0);
     renewalFeeInput.value = String(settings.fees?.renewalYearly ?? 0);
+    visitorSessionFeeInput.value = String(settings.fees?.visitorSessionFee ?? 1000);
     attendanceStartInput.value = settings.attendance?.startDate || "";
+    attendanceDayInput.value = String(
+      Number.isInteger(Number(settings.attendance?.playableDayOfWeek))
+        ? Number(settings.attendance?.playableDayOfWeek)
+        : 6
+    );
     attendanceLockInput.checked = Boolean(settings.attendance?.lockFuture);
     yellowFineInput.value = String(settings.discipline?.yellowFine ?? 0);
     redFineInput.value = String(settings.discipline?.redFine ?? 0);
@@ -287,10 +297,12 @@
       fees: {
         monthlySchedule,
         newMemberYearly: Number(newMemberFeeInput.value),
-        renewalYearly: Number(renewalFeeInput.value)
+        renewalYearly: Number(renewalFeeInput.value),
+        visitorSessionFee: Number(visitorSessionFeeInput.value)
       },
       attendance: {
         startDate: attendanceStartInput.value,
+        playableDayOfWeek: Number(attendanceDayInput.value),
         lockFuture: attendanceLockInput.checked
       },
       discipline: {

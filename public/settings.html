@@ -60,6 +60,10 @@
                 <span>Renewal Yearly Fee</span>
                 <input class="input" id="setting-fee-renewal" type="number" min="0" />
               </label>
+              <label class="form-field">
+                <span>Visitor Session Fee</span>
+                <input class="input" id="setting-fee-visitor-session" type="number" min="0" />
+              </label>
             </div>
 
             <div class="settings-section">
@@ -67,6 +71,18 @@
               <label class="form-field">
                 <span>Attendance Start Date</span>
                 <input class="input" id="setting-attendance-start" type="date" />
+              </label>
+              <label class="form-field">
+                <span>Playable Day Of Week</span>
+                <select class="input" id="setting-attendance-day">
+                  <option value="0">Sunday</option>
+                  <option value="1">Monday</option>
+                  <option value="2">Tuesday</option>
+                  <option value="3">Wednesday</option>
+                  <option value="4">Thursday</option>
+                  <option value="5">Friday</option>
+                  <option value="6">Saturday</option>
+                </select>
               </label>
               <label class="form-field checkbox-field">
                 <input id="setting-attendance-lock" type="checkbox" />

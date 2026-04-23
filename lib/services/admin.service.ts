@@ -120,7 +120,8 @@ export async function getLatestBackupFile(request: NextRequest) {
     if (!check.ok || !check.auth) return check.response;
 
     const { searchParams } = new URL(request.url);
-    const type = searchParams.get("type") === "settings" ? "settings" : "db";
+    const typeParam = searchParams.get("type");
+    const type = typeParam === "settings" || typeParam === "activity_logs" ? typeParam : "db";
     const latest = await getLatestBackup(type);
     if (!latest) return failure("No backups found", 404);
 
@@ -166,6 +167,7 @@ export async function getDataHealth(request: NextRequest) {
     const totalEvents = activityCountRes.count || 0;
     const latestDb = backups.find((item) => item.type === "db") || null;
     const latestSettings = backups.find((item) => item.type === "settings") || null;
+    const latestActivityLogs = backups.find((item) => item.type === "activity_logs") || null;
 
     return success({
       files: {
@@ -208,11 +210,13 @@ export async function getDataHealth(request: NextRequest) {
         count: backups.length,
         latestFiles: {
           db: latestDb?.name || null,
-          settings: latestSettings?.name || null
+          settings: latestSettings?.name || null,
+          activity_logs: latestActivityLogs?.name || null
         },
         latestByType: {
           db: latestDb?.updatedAt || null,
-          settings: latestSettings?.updatedAt || null
+          settings: latestSettings?.updatedAt || null,
+          activity_logs: latestActivityLogs?.updatedAt || null
         }
       },
       serverTime: new Date().toISOString()
