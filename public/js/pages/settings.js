@@ -163,7 +163,7 @@
     healthError.textContent = "";
     healthRefreshBtn.disabled = true;
     return window
-      .apiFetch("/admin/data-health")
+      .apiFetch("/admin/data-health", { silent: true })
       .then((res) => {
         const data = res?.data || {};
         renderHealthRows(data.files);

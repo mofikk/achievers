@@ -152,17 +152,24 @@ export async function getDataHealth(request: NextRequest) {
       notesHealth,
       visitorsHealth,
       activityHealth,
-      activityCountRes,
-      backups
+      activityCountRes
     ] = await Promise.all([
       getLatestTimestamp(supabase, "players"),
       getLatestTimestamp(supabase, "app_settings"),
       getLatestTimestamp(supabase, "notes"),
       getLatestTimestamp(supabase, "visitors"),
       getLatestTimestamp(supabase, "activity_logs", "created_at", "created_at"),
-      supabase.from("activity_logs").select("id", { count: "exact", head: true }),
-      listBackups()
+      supabase.from("activity_logs").select("id", { count: "exact", head: true })
     ]);
+
+    // Backup listing can fail on some serverless platforms due filesystem constraints.
+    // Keep settings page functional by degrading to an empty backup list instead of 500.
+    let backups: Array<{ type: string; name: string; updatedAt: string }> = [];
+    try {
+      backups = (await listBackups()) as Array<{ type: string; name: string; updatedAt: string }>;
+    } catch {
+      backups = [];
+    }
 
     const totalEvents = activityCountRes.count || 0;
     const latestDb = backups.find((item) => item.type === "db") || null;
