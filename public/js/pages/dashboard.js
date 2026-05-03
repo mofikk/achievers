@@ -39,9 +39,18 @@
     attendanceDates: []
   };
 
-  function formatDisplayName(player) {
+  function formatPrimaryName(player) {
     if (!player) return "Player";
-    return player.nickname ? `${player.name} (${player.nickname})` : player.name;
+    return player.name || "Player";
+  }
+
+  function formatSecondaryMeta(player) {
+    const nickname = (player?.nickname || "").trim();
+    const position = (player?.position || "").trim();
+    if (nickname && position) return `${nickname} | ${position}`;
+    if (nickname) return nickname;
+    if (position) return position;
+    return "No nickname or position";
   }
 
   function getCurrentMonthKey() {
@@ -109,6 +118,7 @@
           id: player.id,
           name: player.name || "",
           nickname: player.nickname || "",
+          position: player.position || "",
           value
         };
       })
@@ -118,31 +128,24 @@
 
   function renderRankList(list, container) {
     container.innerHTML = "";
-    const maxValue = Math.max(...list.map((item) => item.value), 0);
 
     list.forEach((item, index) => {
-      const rank =
-        index === 0
-          ? "🥇"
-          : index === 1
-            ? "🥈"
-            : index === 2
-              ? "🥉"
-              : String(index + 1);
-      const label = formatDisplayName(item);
-      const width = maxValue ? Math.round((item.value / maxValue) * 100) : 0;
+      const rank = String(index + 1).padStart(2, "0");
+      const primaryName = formatPrimaryName(item);
+      const secondaryMeta = formatSecondaryMeta(item);
       const row = document.createElement("li");
       row.className = "rank-row";
       row.innerHTML = `
-        <span class="rank-icon">${rank}</span>
-        <span class="rank-name">${label}</span>
+        <span class="rank-number">${rank}</span>
+        <span class="rank-details">
+          <span class="rank-name">${primaryName}</span>
+          <span class="rank-meta">${secondaryMeta}</span>
+        </span>
         <span class="rank-value">${item.value}</span>
-        <span class="value-bar"><span class="value-fill" style="width: ${width}%"></span></span>
       `;
       container.appendChild(row);
     });
   }
-
   function renderLeaderboard(metric) {
     const list = state.leaderboards[metric] || [];
     performersList.innerHTML = "";
@@ -219,6 +222,7 @@
         id: player.id,
         name: player.name || "",
         nickname: player.nickname || "",
+        position: player.position || "",
         value: count,
         attendancePercent: attendanceSummary ? attendanceSummary.attendancePercent : 0
       };
@@ -310,4 +314,5 @@
 
   loadDashboard();
 })();
+
 

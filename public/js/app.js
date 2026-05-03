@@ -55,7 +55,7 @@
       preference === "system" ? "fa-circle-half-stroke" : applied === "dark" ? "fa-moon" : "fa-sun";
     const label =
       preference === "system" ? "Auto" : applied === "dark" ? "Dark" : "Light";
-    button.innerHTML = `<i class="fa-solid ${icon}" aria-hidden="true"></i><span class="theme-label">${label}</span>`;
+    button.innerHTML = `<i class="fa-solid ${icon}" aria-hidden="true"></i>`;
     button.setAttribute(
       "aria-label",
       `Theme: ${label}. Click to switch theme mode.`
