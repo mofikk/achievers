@@ -562,9 +562,9 @@ body.auth-page .auth-main {
   background: var(--surface);
   padding: 20px;
   border-radius: 14px;
-  box-shadow: var(--shadow);
+  /* box-shadow: var(--shadow); */
   width: 100%;
-  border: 3px solid var(--box-border);
+  border: 2px solid var(--box-border);
 }
 
 .card h3 {
@@ -586,7 +586,7 @@ body.auth-page .auth-main {
   background: var(--surface);
   padding: 20px;
   border-radius: 14px;
-  box-shadow: var(--shadow);
+  /* box-shadow: var(--shadow); */
   width: 100%;
   border: 2px solid var(--border);
 }
