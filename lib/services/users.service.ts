@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
 import { failure, success } from "../http/response";
+import { createServerClient } from "../supabase/server";
 import {
   AppRole,
   PermissionKey,
@@ -9,6 +10,30 @@ import {
 } from "../auth/permissions";
 
 const ALL_ROLES: AppRole[] = ["viewer", "admin", "super_admin", "super_user"];
+const USER_CREATE_ROLES = new Set<AppRole>(["super_user", "super_admin"]);
+
+function normalizeRole(value: unknown): AppRole | null {
+  const role = String(value || "viewer") as AppRole;
+  return ALL_ROLES.includes(role) ? role : null;
+}
+
+async function requireUserListAccess(req: NextRequest) {
+  const auth = await getAuthContext(req);
+  if (!auth) return { ok: false as const, response: failure("Unauthorized", 401), auth: null };
+  if (!auth.permissions.manage_users && !USER_CREATE_ROLES.has(auth.profile.role)) {
+    return { ok: false as const, response: failure("Forbidden", 403), auth };
+  }
+  return { ok: true as const, response: null, auth };
+}
+
+async function requireUserCreateAccess(req: NextRequest) {
+  const auth = await getAuthContext(req);
+  if (!auth) return { ok: false as const, response: failure("Unauthorized", 401), auth: null };
+  if (!USER_CREATE_ROLES.has(auth.profile.role)) {
+    return { ok: false as const, response: failure("Forbidden", 403), auth };
+  }
+  return { ok: true as const, response: null, auth };
+}
 
 function normalizePermissions(input: any) {
   const result: Record<PermissionKey, boolean> = {} as Record<PermissionKey, boolean>;
@@ -21,7 +46,7 @@ function normalizePermissions(input: any) {
 
 export async function getUsers(req: NextRequest) {
   try {
-    const check = await requirePermission(req, "manage_users");
+    const check = await requireUserListAccess(req);
     if (!check.ok || !check.auth) return check.response;
     const { supabase } = check.auth;
 
@@ -36,6 +61,72 @@ export async function getUsers(req: NextRequest) {
     return success(data ?? []);
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to fetch users.";
+    return failure(message, 500);
+  }
+}
+
+export async function createUser(req: NextRequest) {
+  try {
+    const check = await requireUserCreateAccess(req);
+    if (!check.ok || !check.auth) return check.response;
+
+    const body = await req.json();
+    const email = String(body?.email || "").trim().toLowerCase();
+    const fullName = String(body?.full_name || "").trim();
+    const password = String(body?.password || "").trim();
+    const role = normalizeRole(body?.role);
+
+    if (!fullName) return failure("Full name is required.", 400);
+    if (!email) return failure("Email is required.", 400);
+    if (!password) return failure("Password is required.", 400);
+    if (password.length < 6) return failure("Password must be at least 6 characters.", 400);
+    if (!role) return failure("Invalid role.", 400);
+    if (check.auth.profile.role !== "super_user" && role === "super_user") {
+      return failure("Only a super user can create another super user.", 403);
+    }
+    if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      return failure("Server is not configured for admin account creation.", 500);
+    }
+
+    const adminSupabase = createServerClient();
+
+    const { data: created, error: createError } = await adminSupabase.auth.admin.createUser({
+      email,
+      password,
+      email_confirm: true,
+      user_metadata: {
+        full_name: fullName
+      }
+    });
+
+    if (createError || !created?.user?.id) {
+      return failure(createError?.message || "Failed to create user.", 400);
+    }
+
+    const userId = created.user.id;
+    const { data: profile, error: profileError } = await adminSupabase
+      .from("profiles")
+      .upsert(
+        {
+          id: userId,
+          email,
+          full_name: fullName,
+          role,
+          is_active: true
+        },
+        { onConflict: "id" }
+      )
+      .select("id, full_name, email, role, is_active")
+      .single();
+
+    if (profileError) {
+      await adminSupabase.auth.admin.deleteUser(userId);
+      return failure(profileError.message, 400);
+    }
+
+    return success(profile, 201);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Failed to create user.";
     return failure(message, 500);
   }
 }

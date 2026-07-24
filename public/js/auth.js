@@ -65,7 +65,7 @@
 
   function isAuthPage() {
     const path = window.location.pathname || "";
-    return ["/login.html", "/signup.html", "/forgot-password.html"].includes(path);
+    return ["/login.html", "/forgot-password.html"].includes(path);
   }
 
   applyTheme(getThemePreference());
@@ -86,7 +86,6 @@
   function toFriendlyAuthError(error, mode) {
     const fallbackByMode = {
       login: "We couldn't log you in. Check your details, and if you just signed up, verify your email first.",
-      signup: "We couldn't create your account right now. Please try again.",
       reset: "We couldn't send the reset link. Please try again."
     };
     const fallback = fallbackByMode[mode] || "Something went wrong. Please try again.";
@@ -195,24 +194,6 @@
     return data?.user || null;
   }
 
-  async function signup(email, password, fullName) {
-    const client = await getClient();
-    const safeFullName = String(fullName || "").trim();
-    const payload = safeFullName
-      ? { email, password, options: { data: { full_name: safeFullName } } }
-      : { email, password };
-    const { data, error } = await withAuthRetry(() => client.auth.signUp(payload));
-
-    if (error) throw error;
-    const identities = Array.isArray(data?.user?.identities) ? data.user.identities : null;
-    if (data?.user && identities && identities.length === 0) {
-      const duplicateError = new Error("This email is already registered. Try logging in instead.");
-      duplicateError.code = "user_already_registered";
-      throw duplicateError;
-    }
-    return data || null;
-  }
-
   async function logout() {
     const client = await getClient();
     const { error } = await client.auth.signOut();
@@ -250,7 +231,6 @@
 
   window.auth = {
     login,
-    signup,
     logout,
     getCurrentUser,
     requestPasswordReset
@@ -327,55 +307,6 @@
     });
   }
 
-  function initSignupPage() {
-    const form = document.getElementById('signup-form');
-    if (!form) return;
-
-    const errorEl = document.getElementById('signup-error');
-    const submitBtn = document.getElementById('signup-submit');
-
-    form.addEventListener('submit', async (event) => {
-      event.preventDefault();
-      const formData = new FormData(form);
-      const fullName = String(formData.get('fullName') || '').trim();
-      const email = String(formData.get('email') || '').trim();
-      const password = String(formData.get('password') || '').trim();
-      const confirmPassword = String(formData.get('confirmPassword') || '').trim();
-
-      if (!fullName || !email || !password || !confirmPassword) {
-        setError(errorEl, 'All fields are required.');
-        return;
-      }
-
-      if (password !== confirmPassword) {
-        setError(errorEl, 'Passwords do not match.');
-        return;
-      }
-
-      setError(errorEl, '');
-      setButtonLoading(submitBtn, true, 'Create account', 'Creating...');
-
-      try {
-        const signupResult = await signup(email, password, fullName);
-        if (signupResult?.session) {
-          window.location.href = '/';
-          return;
-        }
-        setError(
-          errorEl,
-          'Account created. Check your email to verify your account before logging in.',
-          'success'
-        );
-        window.location.href = '/login.html';
-      } catch (error) {
-        console.error(error);
-        setError(errorEl, toFriendlyAuthError(error, "signup"));
-      } finally {
-        setButtonLoading(submitBtn, false, 'Create account', 'Creating...');
-      }
-    });
-  }
-
   function initForgotPasswordPage() {
     const form = document.getElementById('forgot-form');
     if (!form) return;
@@ -416,7 +347,6 @@
       if (existing) existing.remove();
     }
     initLoginPage();
-    initSignupPage();
     initForgotPasswordPage();
   });
 })();

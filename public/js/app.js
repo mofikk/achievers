@@ -200,7 +200,7 @@
 
   function isPublicAuthPage() {
     const path = window.location.pathname || "";
-    return ["/login.html", "/signup.html", "/forgot-password.html"].includes(path);
+    return ["/login.html", "/forgot-password.html"].includes(path);
   }
 
   async function getSession() {

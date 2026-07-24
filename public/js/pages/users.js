@@ -8,6 +8,13 @@
   const myAccountError = document.getElementById("my-account-error");
 
   const userManagementSection = document.getElementById("user-management-section");
+  const createUserForm = document.getElementById("create-user-form");
+  const createUserFullNameInput = document.getElementById("create-user-full-name");
+  const createUserEmailInput = document.getElementById("create-user-email");
+  const createUserPasswordInput = document.getElementById("create-user-password");
+  const createUserRoleInput = document.getElementById("create-user-role");
+  const createUserSubmitBtn = document.getElementById("create-user-submit");
+  const createUserError = document.getElementById("create-user-error");
   const usersBody = document.getElementById("users-body");
   const usersEmpty = document.getElementById("users-empty");
   const rolePermissionsSection = document.getElementById("role-permissions-section");
@@ -28,6 +35,13 @@
     !logoutBtn ||
     !myAccountError ||
     !userManagementSection ||
+    !createUserForm ||
+    !createUserFullNameInput ||
+    !createUserEmailInput ||
+    !createUserPasswordInput ||
+    !createUserRoleInput ||
+    !createUserSubmitBtn ||
+    !createUserError ||
     !usersBody ||
     !usersEmpty ||
     !rolePermissionsSection ||
@@ -53,12 +67,12 @@
     return user?.role === "super_user";
   }
 
-  function isAdmin(user) {
-    return user?.role === "admin";
+  function canCreateUsers(user) {
+    return user?.role === "super_user" || user?.role === "super_admin";
   }
 
-  function isViewer(user) {
-    return user?.role === "viewer";
+  function canViewUserManagement(user) {
+    return Boolean(user?.permissions?.manage_users) || canCreateUsers(user);
   }
 
   function guardAction(user, targetUserId) {
@@ -77,6 +91,10 @@
 
   function showError(message) {
     myAccountError.textContent = message || "";
+  }
+
+  function showCreateUserError(message) {
+    createUserError.textContent = message || "";
   }
 
   function setButtonLoading(button, isLoading, loadingText, idleText) {
@@ -112,6 +130,18 @@
     myFullNameInput.value = user.full_name || "";
     myEmailInput.value = user.email || "";
     showError("");
+  }
+
+  function renderCreateUserForm() {
+    const superUserOption = createUserRoleInput.querySelector('option[value="super_user"]');
+    if (superUserOption) {
+      superUserOption.hidden = !isSuperUser(state.currentUser);
+      superUserOption.disabled = !isSuperUser(state.currentUser);
+    }
+    if (!isSuperUser(state.currentUser) && createUserRoleInput.value === "super_user") {
+      createUserRoleInput.value = "viewer";
+    }
+    showCreateUserError("");
   }
 
   function renderUsersTable() {
@@ -219,8 +249,10 @@
     state.currentUser = currentUser || null;
     state.users = Array.isArray(users) ? users : [];
     renderMyAccount();
-    const canManageUsers = Boolean(state.currentUser?.permissions?.manage_users);
+    const canManageUsers = canViewUserManagement(state.currentUser);
     userManagementSection.classList.toggle("hidden", !canManageUsers);
+    createUserForm.classList.toggle("hidden", !canCreateUsers(state.currentUser));
+    renderCreateUserForm();
     if (!canManageUsers) {
       usersBody.innerHTML = "";
       usersEmpty.textContent = "";
@@ -313,6 +345,66 @@
       if (window.toast) window.toast("Unable to update profile", "error");
     } finally {
       setButtonLoading(mySaveBtn, false, "Saving...", "Save");
+    }
+  });
+
+  createUserForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    if (!canCreateUsers(state.currentUser)) {
+      showCreateUserError("You don't have permission to create accounts.");
+      return;
+    }
+
+    const fullName = String(createUserFullNameInput.value || "").trim();
+    const email = String(createUserEmailInput.value || "").trim();
+    const password = String(createUserPasswordInput.value || "").trim();
+    const role = String(createUserRoleInput.value || "viewer");
+
+    if (!fullName || !email || !password) {
+      showCreateUserError("Full name, email, and password are required.");
+      return;
+    }
+
+    if (password.length < 6) {
+      showCreateUserError("Password must be at least 6 characters.");
+      return;
+    }
+
+    setButtonLoading(createUserSubmitBtn, true, "Creating...", "Create account");
+    showCreateUserError("");
+
+    try {
+      const res = await window.apiFetch("/users", {
+        method: "POST",
+        body: JSON.stringify({
+          full_name: fullName,
+          email,
+          password,
+          role
+        })
+      });
+
+      if (res?.error) {
+        showCreateUserError(res.error);
+        return;
+      }
+
+      const created = res?.data;
+      if (created?.id) {
+        state.users = [...state.users, created];
+      } else {
+        state.users = await fetchUsers();
+      }
+      createUserForm.reset();
+      createUserRoleInput.value = "viewer";
+      renderUsersTable();
+      if (window.toast) window.toast("Account created", "success");
+    } catch (error) {
+      console.error(error);
+      showCreateUserError(error?.message || "Unable to create account.");
+      if (window.toast) window.toast("Unable to create account", "error");
+    } finally {
+      setButtonLoading(createUserSubmitBtn, false, "Creating...", "Create account");
     }
   });
 

@@ -56,6 +56,33 @@
           <div class="page-title-row">
             <h3>User Management</h3>
           </div>
+          <form id="create-user-form" class="form-grid hidden" style="margin-top: 16px;">
+            <label class="form-field">
+              <span>Full name</span>
+              <input id="create-user-full-name" class="input" type="text" autocomplete="name" />
+            </label>
+            <label class="form-field">
+              <span>Email</span>
+              <input id="create-user-email" class="input" type="email" autocomplete="email" />
+            </label>
+            <label class="form-field">
+              <span>Temporary password</span>
+              <input id="create-user-password" class="input" type="password" autocomplete="new-password" />
+            </label>
+            <label class="form-field">
+              <span>Role</span>
+              <select id="create-user-role" class="input">
+                <option value="viewer">viewer</option>
+                <option value="admin">admin</option>
+                <option value="super_admin">super_admin</option>
+                <option value="super_user">super_user</option>
+              </select>
+            </label>
+            <div class="actions">
+              <button id="create-user-submit" class="action-btn" type="submit">Create account</button>
+            </div>
+            <div id="create-user-error" class="form-error" role="alert"></div>
+          </form>
           <div class="table-wrap" style="margin-top: 16px;">
             <table class="table responsive">
               <thead>
