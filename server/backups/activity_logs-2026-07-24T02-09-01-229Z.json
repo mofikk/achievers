@@ -1,0 +1,450 @@
+{
+  "meta": {
+    "type": "activity_logs",
+    "createdAt": "2026-07-24T02:09:01.227Z",
+    "cutoffIso": "2026-06-24T02:09:00.552Z",
+    "retentionDays": 30,
+    "rowsCount": 23
+  },
+  "data": {
+    "activity_logs": [
+      {
+        "id": "dd5844af-7776-420a-8f63-bc320db526a5",
+        "type": "player_updated",
+        "message": "Frank updated player Samuel",
+        "actor_user_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+        "related_player_id": "2c9105c7-2a7c-4ed9-9783-8876780fdede",
+        "related_visitor_id": null,
+        "metadata": {
+          "action": "update_player",
+          "actor_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+          "player_id": "2c9105c7-2a7c-4ed9-9783-8876780fdede",
+          "actor_name": "Frank",
+          "actor_email": "mofikk35@gmail.com",
+          "player_name": "Samuel"
+        },
+        "created_at": "2026-06-12T20:07:09.073882+00:00"
+      },
+      {
+        "id": "e538f6f2-47c4-449a-a427-d07c29a2fcbb",
+        "type": "attendance_recorded",
+        "message": "Frank committed weekly summary for 2026-05-16",
+        "actor_user_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+        "related_player_id": null,
+        "related_visitor_id": null,
+        "metadata": {
+          "action": "session_summary_commit",
+          "actor_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+          "card_rows": 9,
+          "goal_rows": 13,
+          "actor_name": "Frank",
+          "summary_id": "6cf2f73f-c335-456f-a3e6-375d49e90363",
+          "actor_email": "mofikk35@gmail.com",
+          "session_date": "2026-05-16",
+          "players_present": 28,
+          "visitors_present": 1
+        },
+        "created_at": "2026-06-12T20:23:20.448572+00:00"
+      },
+      {
+        "id": "47056f18-f484-4243-b10d-b538b573d3d8",
+        "type": "visitor_updated",
+        "message": "Frank deleted visitor Ebube",
+        "actor_user_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+        "related_player_id": null,
+        "related_visitor_id": null,
+        "metadata": {
+          "action": "delete_visitor",
+          "actor_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+          "actor_name": "Frank",
+          "visitor_id": "db2d0c05-68a8-4273-a800-db0add2888b8",
+          "actor_email": "mofikk35@gmail.com",
+          "visitor_name": "Ebube"
+        },
+        "created_at": "2026-06-12T20:32:29.681558+00:00"
+      },
+      {
+        "id": "917f9a94-8508-4ee7-8648-090e418331ca",
+        "type": "visitor_updated",
+        "message": "Frank deleted visitor ⁠surerise",
+        "actor_user_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+        "related_player_id": null,
+        "related_visitor_id": null,
+        "metadata": {
+          "action": "delete_visitor",
+          "actor_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+          "actor_name": "Frank",
+          "visitor_id": "1aa69ade-c1f3-416d-93cf-8cf0a5e33759",
+          "actor_email": "mofikk35@gmail.com",
+          "visitor_name": "⁠surerise"
+        },
+        "created_at": "2026-06-12T20:32:40.553025+00:00"
+      },
+      {
+        "id": "ad318ff5-6473-4c41-8a45-63c055893b7b",
+        "type": "attendance_recorded",
+        "message": "Frank committed weekly summary for 2026-05-30",
+        "actor_user_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+        "related_player_id": null,
+        "related_visitor_id": null,
+        "metadata": {
+          "action": "session_summary_commit",
+          "actor_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+          "card_rows": 11,
+          "goal_rows": 9,
+          "actor_name": "Frank",
+          "summary_id": "57b9f43b-8522-4435-a61e-aacca1380d8f",
+          "actor_email": "mofikk35@gmail.com",
+          "session_date": "2026-05-30",
+          "players_present": 24,
+          "visitors_present": 0
+        },
+        "created_at": "2026-06-12T20:34:26.602914+00:00"
+      },
+      {
+        "id": "74fb8ad5-556e-4a83-8745-0be8892d9296",
+        "type": "fine_updated",
+        "message": "Frank updated fines for Kayode Bakare",
+        "actor_user_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+        "related_player_id": "2822301b-642c-4aba-b074-94c8fe8026aa",
+        "related_visitor_id": null,
+        "metadata": {
+          "action": "update_player_fines",
+          "actor_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+          "player_id": "2822301b-642c-4aba-b074-94c8fe8026aa",
+          "actor_name": "Frank",
+          "actor_email": "mofikk35@gmail.com",
+          "player_name": "Kayode Bakare",
+          "red_paid_count": 1,
+          "yellow_paid_count": 11
+        },
+        "created_at": "2026-06-13T07:48:48.868982+00:00"
+      },
+      {
+        "id": "3e56d40b-6624-4ae7-869b-7f6dd66ad4e4",
+        "type": "fine_cleared",
+        "message": "Frank cleared fines for Abu",
+        "actor_user_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+        "related_player_id": "ca72d5ba-9087-4ce6-9702-acf7767c4725",
+        "related_visitor_id": null,
+        "metadata": {
+          "action": "update_player_fines",
+          "actor_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+          "player_id": "ca72d5ba-9087-4ce6-9702-acf7767c4725",
+          "actor_name": "Frank",
+          "actor_email": "mofikk35@gmail.com",
+          "player_name": "Abu",
+          "red_paid_count": 1,
+          "yellow_paid_count": 1
+        },
+        "created_at": "2026-06-13T07:49:05.040944+00:00"
+      },
+      {
+        "id": "219f6f98-59ec-4e16-a5d2-3fe45eef4e93",
+        "type": "fine_cleared",
+        "message": "Frank cleared fines for Caleb",
+        "actor_user_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+        "related_player_id": "083e3920-5cea-4e49-ae9d-558d60ad2cca",
+        "related_visitor_id": null,
+        "metadata": {
+          "action": "update_player_fines",
+          "actor_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+          "player_id": "083e3920-5cea-4e49-ae9d-558d60ad2cca",
+          "actor_name": "Frank",
+          "actor_email": "mofikk35@gmail.com",
+          "player_name": "Caleb",
+          "red_paid_count": 0,
+          "yellow_paid_count": 1
+        },
+        "created_at": "2026-06-13T07:49:22.049937+00:00"
+      },
+      {
+        "id": "2333eb86-3bd9-41a1-b574-c2c43a4a11f5",
+        "type": "fine_cleared",
+        "message": "Frank cleared fines for Izu",
+        "actor_user_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+        "related_player_id": "e6a4712b-b161-400b-9509-c21cd9e42c94",
+        "related_visitor_id": null,
+        "metadata": {
+          "action": "update_player_fines",
+          "actor_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+          "player_id": "e6a4712b-b161-400b-9509-c21cd9e42c94",
+          "actor_name": "Frank",
+          "actor_email": "mofikk35@gmail.com",
+          "player_name": "Izu",
+          "red_paid_count": 0,
+          "yellow_paid_count": 2
+        },
+        "created_at": "2026-06-13T07:49:40.281312+00:00"
+      },
+      {
+        "id": "e5030b07-8043-405d-884d-3678a22513fd",
+        "type": "fine_updated",
+        "message": "Frank updated fines for Uche",
+        "actor_user_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+        "related_player_id": "3c1772a0-d50c-41af-b36c-426913976e22",
+        "related_visitor_id": null,
+        "metadata": {
+          "action": "update_player_fines",
+          "actor_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+          "player_id": "3c1772a0-d50c-41af-b36c-426913976e22",
+          "actor_name": "Frank",
+          "actor_email": "mofikk35@gmail.com",
+          "player_name": "Uche",
+          "red_paid_count": 2,
+          "yellow_paid_count": 6
+        },
+        "created_at": "2026-06-13T07:50:11.199346+00:00"
+      },
+      {
+        "id": "7b667c61-70cb-4523-bd35-4027bc2876de",
+        "type": "fine_updated",
+        "message": "Frank updated fines for Taiwo",
+        "actor_user_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+        "related_player_id": "fcc355a2-3939-4d08-a7a1-2f3e97ec1b91",
+        "related_visitor_id": null,
+        "metadata": {
+          "action": "update_player_fines",
+          "actor_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+          "player_id": "fcc355a2-3939-4d08-a7a1-2f3e97ec1b91",
+          "actor_name": "Frank",
+          "actor_email": "mofikk35@gmail.com",
+          "player_name": "Taiwo",
+          "red_paid_count": 0,
+          "yellow_paid_count": 2
+        },
+        "created_at": "2026-06-13T08:07:40.13505+00:00"
+      },
+      {
+        "id": "1289e5b1-92c3-479c-83ef-0d1d7ca1fe67",
+        "type": "fine_cleared",
+        "message": "Frank cleared fines for Tobi",
+        "actor_user_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+        "related_player_id": "bdea5ea8-90dd-430b-aa21-0d81c1c59d59",
+        "related_visitor_id": null,
+        "metadata": {
+          "action": "update_player_fines",
+          "actor_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+          "player_id": "bdea5ea8-90dd-430b-aa21-0d81c1c59d59",
+          "actor_name": "Frank",
+          "actor_email": "mofikk35@gmail.com",
+          "player_name": "Tobi",
+          "red_paid_count": 0,
+          "yellow_paid_count": 8
+        },
+        "created_at": "2026-06-13T08:09:49.838216+00:00"
+      },
+      {
+        "id": "51cdace4-f655-42cf-95c7-a4527593262c",
+        "type": "fine_cleared",
+        "message": "Frank cleared fines for Chizey",
+        "actor_user_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+        "related_player_id": "e0990dc3-61fc-4ee4-b9c4-1c716a1c40b4",
+        "related_visitor_id": null,
+        "metadata": {
+          "action": "update_player_fines",
+          "actor_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+          "player_id": "e0990dc3-61fc-4ee4-b9c4-1c716a1c40b4",
+          "actor_name": "Frank",
+          "actor_email": "mofikk35@gmail.com",
+          "player_name": "Chizey",
+          "red_paid_count": 1,
+          "yellow_paid_count": 21
+        },
+        "created_at": "2026-06-13T08:10:17.805562+00:00"
+      },
+      {
+        "id": "15fb17b1-88bc-4871-ad3a-eb7333cd318a",
+        "type": "fine_updated",
+        "message": "Frank updated fines for Nzubechukwu",
+        "actor_user_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+        "related_player_id": "db803525-43cd-4ffb-82fe-0f13ec48ce54",
+        "related_visitor_id": null,
+        "metadata": {
+          "action": "update_player_fines",
+          "actor_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+          "player_id": "db803525-43cd-4ffb-82fe-0f13ec48ce54",
+          "actor_name": "Frank",
+          "actor_email": "mofikk35@gmail.com",
+          "player_name": "Nzubechukwu",
+          "red_paid_count": 0,
+          "yellow_paid_count": 1
+        },
+        "created_at": "2026-06-14T14:15:28.943602+00:00"
+      },
+      {
+        "id": "6b439b80-5a13-425e-a8b5-9a8169244f6d",
+        "type": "fine_cleared",
+        "message": "Frank cleared fines for Charles Okoli",
+        "actor_user_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+        "related_player_id": "ebb4df12-ad76-4a4b-9fac-f7ed513bda83",
+        "related_visitor_id": null,
+        "metadata": {
+          "action": "update_player_fines",
+          "actor_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+          "player_id": "ebb4df12-ad76-4a4b-9fac-f7ed513bda83",
+          "actor_name": "Frank",
+          "actor_email": "mofikk35@gmail.com",
+          "player_name": "Charles Okoli",
+          "red_paid_count": 0,
+          "yellow_paid_count": 2
+        },
+        "created_at": "2026-06-14T14:15:51.071328+00:00"
+      },
+      {
+        "id": "314f5677-2168-464e-bcc8-25ccfccf7bd4",
+        "type": "fine_cleared",
+        "message": "Frank cleared fines for Jibril",
+        "actor_user_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+        "related_player_id": "73be1f4e-03b1-4ebd-a681-e1661acc5a08",
+        "related_visitor_id": null,
+        "metadata": {
+          "action": "update_player_fines",
+          "actor_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+          "player_id": "73be1f4e-03b1-4ebd-a681-e1661acc5a08",
+          "actor_name": "Frank",
+          "actor_email": "mofikk35@gmail.com",
+          "player_name": "Jibril",
+          "red_paid_count": 0,
+          "yellow_paid_count": 5
+        },
+        "created_at": "2026-06-14T14:16:04.03462+00:00"
+      },
+      {
+        "id": "d92811ce-1ce6-4c06-ae07-71de3c406527",
+        "type": "fine_cleared",
+        "message": "Frank cleared fines for Kayode Bakare",
+        "actor_user_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+        "related_player_id": "2822301b-642c-4aba-b074-94c8fe8026aa",
+        "related_visitor_id": null,
+        "metadata": {
+          "action": "update_player_fines",
+          "actor_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+          "player_id": "2822301b-642c-4aba-b074-94c8fe8026aa",
+          "actor_name": "Frank",
+          "actor_email": "mofikk35@gmail.com",
+          "player_name": "Kayode Bakare",
+          "red_paid_count": 1,
+          "yellow_paid_count": 12
+        },
+        "created_at": "2026-06-14T14:16:28.973838+00:00"
+      },
+      {
+        "id": "4d59a0d1-19e0-4d2e-a942-50721e731b3a",
+        "type": "fine_cleared",
+        "message": "Frank cleared fines for Nzubechukwu",
+        "actor_user_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+        "related_player_id": "db803525-43cd-4ffb-82fe-0f13ec48ce54",
+        "related_visitor_id": null,
+        "metadata": {
+          "action": "update_player_fines",
+          "actor_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+          "player_id": "db803525-43cd-4ffb-82fe-0f13ec48ce54",
+          "actor_name": "Frank",
+          "actor_email": "mofikk35@gmail.com",
+          "player_name": "Nzubechukwu",
+          "red_paid_count": 0,
+          "yellow_paid_count": 2
+        },
+        "created_at": "2026-06-14T14:16:43.066992+00:00"
+      },
+      {
+        "id": "e7de96eb-c51a-43fb-8948-3440484476a4",
+        "type": "fine_cleared",
+        "message": "Frank cleared fines for Uche",
+        "actor_user_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+        "related_player_id": "3c1772a0-d50c-41af-b36c-426913976e22",
+        "related_visitor_id": null,
+        "metadata": {
+          "action": "update_player_fines",
+          "actor_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+          "player_id": "3c1772a0-d50c-41af-b36c-426913976e22",
+          "actor_name": "Frank",
+          "actor_email": "mofikk35@gmail.com",
+          "player_name": "Uche",
+          "red_paid_count": 2,
+          "yellow_paid_count": 7
+        },
+        "created_at": "2026-06-14T14:17:08.659974+00:00"
+      },
+      {
+        "id": "77c903d4-58c2-409f-b917-57f4115bad56",
+        "type": "fine_cleared",
+        "message": "Frank cleared fines for Taiwo",
+        "actor_user_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+        "related_player_id": "fcc355a2-3939-4d08-a7a1-2f3e97ec1b91",
+        "related_visitor_id": null,
+        "metadata": {
+          "action": "update_player_fines",
+          "actor_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+          "player_id": "fcc355a2-3939-4d08-a7a1-2f3e97ec1b91",
+          "actor_name": "Frank",
+          "actor_email": "mofikk35@gmail.com",
+          "player_name": "Taiwo",
+          "red_paid_count": 0,
+          "yellow_paid_count": 3
+        },
+        "created_at": "2026-06-14T14:17:19.342827+00:00"
+      },
+      {
+        "id": "96264c08-6400-4d8f-8fac-83ee3e6d821e",
+        "type": "attendance_recorded",
+        "message": "Frank committed weekly summary for 2026-06-13",
+        "actor_user_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+        "related_player_id": null,
+        "related_visitor_id": null,
+        "metadata": {
+          "action": "session_summary_commit",
+          "actor_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+          "card_rows": 7,
+          "goal_rows": 12,
+          "actor_name": "Frank",
+          "summary_id": "fa9f4a69-3e9f-4069-bffc-519a81da848f",
+          "actor_email": "mofikk35@gmail.com",
+          "session_date": "2026-06-13",
+          "players_present": 29,
+          "visitors_present": 0
+        },
+        "created_at": "2026-06-14T14:20:43.317058+00:00"
+      },
+      {
+        "id": "bf72ef3e-80b7-41d5-ba3a-04a96be50d11",
+        "type": "player_updated",
+        "message": "Frank updated player Jahi Star",
+        "actor_user_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+        "related_player_id": "3e6ad99b-0312-480c-98b5-88f42ae1a698",
+        "related_visitor_id": null,
+        "metadata": {
+          "action": "update_player",
+          "actor_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+          "player_id": "3e6ad99b-0312-480c-98b5-88f42ae1a698",
+          "actor_name": "Frank",
+          "actor_email": "mofikk35@gmail.com",
+          "player_name": "Jahi Star"
+        },
+        "created_at": "2026-06-14T14:32:00.214556+00:00"
+      },
+      {
+        "id": "d6f5e431-9015-4b7b-a3d5-dd2c9164ce94",
+        "type": "attendance_recorded",
+        "message": "Frank committed weekly summary for 2026-06-06",
+        "actor_user_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+        "related_player_id": null,
+        "related_visitor_id": null,
+        "metadata": {
+          "action": "session_summary_commit",
+          "actor_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+          "card_rows": 8,
+          "goal_rows": 13,
+          "actor_name": "Frank",
+          "summary_id": "812a1842-3df4-4e61-90fb-58a79b5aab0c",
+          "actor_email": "mofikk35@gmail.com",
+          "session_date": "2026-06-06",
+          "players_present": 30,
+          "visitors_present": 0
+        },
+        "created_at": "2026-06-14T14:36:41.515318+00:00"
+      }
+    ]
+  }
+}

@@ -1,0 +1,353 @@
+{
+  "meta": {
+    "type": "activity_logs",
+    "createdAt": "2026-07-26T14:12:06.597Z",
+    "cutoffIso": "2026-06-26T14:12:04.546Z",
+    "retentionDays": 30,
+    "rowsCount": 15
+  },
+  "data": {
+    "activity_logs": [
+      {
+        "id": "d28d6fd8-8d4f-4366-a2e9-dd9869879e68",
+        "type": "attendance_recorded",
+        "message": "Frank committed weekly summary for 2026-06-20",
+        "actor_user_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+        "related_player_id": null,
+        "related_visitor_id": null,
+        "metadata": {
+          "action": "session_summary_commit",
+          "actor_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+          "card_rows": 2,
+          "goal_rows": 9,
+          "actor_name": "Frank",
+          "summary_id": "868717b6-08ef-4915-8258-38fcf11a1031",
+          "actor_email": "mofikk35@gmail.com",
+          "session_date": "2026-06-20",
+          "players_present": 24,
+          "visitors_present": 1
+        },
+        "created_at": "2026-06-24T08:57:45.878355+00:00"
+      },
+      {
+        "id": "1f5a5bcb-d1b0-4a35-92b1-bcb054e34445",
+        "type": "attendance_recorded",
+        "message": "Frank recorded attendance for Jimmy Isaac (2026-06-20: present)",
+        "actor_user_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+        "related_player_id": "a6150764-0d37-455e-aec5-58bf84f84a5d",
+        "related_visitor_id": null,
+        "metadata": {
+          "action": "attendance_recorded",
+          "present": true,
+          "actor_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+          "player_id": "a6150764-0d37-455e-aec5-58bf84f84a5d",
+          "actor_name": "Frank",
+          "actor_email": "mofikk35@gmail.com",
+          "player_name": "Jimmy Isaac",
+          "session_date": "2026-06-20",
+          "previous_present": false
+        },
+        "created_at": "2026-06-24T08:58:36.511301+00:00"
+      },
+      {
+        "id": "f764783f-3964-4047-bdbb-928215231e52",
+        "type": "monthly_payment_cleared",
+        "message": "Frank cleared monthly payment for Coker (2026-06)",
+        "actor_user_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+        "related_player_id": "ff510af1-8aa9-457c-8be5-ec828d63397a",
+        "related_visitor_id": null,
+        "metadata": {
+          "scope": "monthly",
+          "action": "monthly_payment_update",
+          "actor_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+          "month_key": "2026-06",
+          "player_id": "ff510af1-8aa9-457c-8be5-ec828d63397a",
+          "actor_name": "Frank",
+          "actor_email": "mofikk35@gmail.com",
+          "paid_amount": 3000,
+          "player_name": "Coker",
+          "expected_amount": 3000,
+          "previous_paid_amount": null,
+          "previous_expected_amount": null
+        },
+        "created_at": "2026-06-24T09:04:50.719502+00:00"
+      },
+      {
+        "id": "2bc863c7-2fe2-4430-b2d7-b8ec3d79de4f",
+        "type": "monthly_payment_cleared",
+        "message": "Frank cleared monthly payment for Peter (2026-06)",
+        "actor_user_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+        "related_player_id": "68b76d91-435b-4c56-90f1-7730e8045279",
+        "related_visitor_id": null,
+        "metadata": {
+          "scope": "monthly",
+          "action": "monthly_payment_update",
+          "actor_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+          "month_key": "2026-06",
+          "player_id": "68b76d91-435b-4c56-90f1-7730e8045279",
+          "actor_name": "Frank",
+          "actor_email": "mofikk35@gmail.com",
+          "paid_amount": 3000,
+          "player_name": "Peter",
+          "expected_amount": 3000,
+          "previous_paid_amount": null,
+          "previous_expected_amount": null
+        },
+        "created_at": "2026-06-24T09:05:06.69645+00:00"
+      },
+      {
+        "id": "9d53f8fe-e20c-4345-a64c-de7c511f270b",
+        "type": "monthly_payment_cleared",
+        "message": "Frank cleared monthly payment for Henry (2026-06)",
+        "actor_user_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+        "related_player_id": "4109c144-ab0e-4491-8e65-ae49f0643933",
+        "related_visitor_id": null,
+        "metadata": {
+          "scope": "monthly",
+          "action": "monthly_payment_update",
+          "actor_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+          "month_key": "2026-06",
+          "player_id": "4109c144-ab0e-4491-8e65-ae49f0643933",
+          "actor_name": "Frank",
+          "actor_email": "mofikk35@gmail.com",
+          "paid_amount": 3000,
+          "player_name": "Henry",
+          "expected_amount": 3000,
+          "previous_paid_amount": null,
+          "previous_expected_amount": null
+        },
+        "created_at": "2026-06-24T09:05:19.951919+00:00"
+      },
+      {
+        "id": "25f0e043-387f-4f63-a8bb-d2b21d159ba4",
+        "type": "monthly_payment_cleared",
+        "message": "Frank cleared monthly payment for Jimmy Isaac (2026-06)",
+        "actor_user_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+        "related_player_id": "a6150764-0d37-455e-aec5-58bf84f84a5d",
+        "related_visitor_id": null,
+        "metadata": {
+          "scope": "monthly",
+          "action": "monthly_payment_update",
+          "actor_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+          "month_key": "2026-06",
+          "player_id": "a6150764-0d37-455e-aec5-58bf84f84a5d",
+          "actor_name": "Frank",
+          "actor_email": "mofikk35@gmail.com",
+          "paid_amount": 3000,
+          "player_name": "Jimmy Isaac",
+          "expected_amount": 3000,
+          "previous_paid_amount": null,
+          "previous_expected_amount": null
+        },
+        "created_at": "2026-06-24T09:05:38.050649+00:00"
+      },
+      {
+        "id": "08488816-1456-400f-b6c6-6d5c465fad53",
+        "type": "monthly_payment_cleared",
+        "message": "Frank cleared monthly payment for Abu (2026-06)",
+        "actor_user_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+        "related_player_id": "ca72d5ba-9087-4ce6-9702-acf7767c4725",
+        "related_visitor_id": null,
+        "metadata": {
+          "scope": "monthly",
+          "action": "monthly_payment_update",
+          "actor_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+          "month_key": "2026-06",
+          "player_id": "ca72d5ba-9087-4ce6-9702-acf7767c4725",
+          "actor_name": "Frank",
+          "actor_email": "mofikk35@gmail.com",
+          "paid_amount": 3000,
+          "player_name": "Abu",
+          "expected_amount": 3000,
+          "previous_paid_amount": null,
+          "previous_expected_amount": null
+        },
+        "created_at": "2026-06-24T09:05:53.914741+00:00"
+      },
+      {
+        "id": "172b435d-8618-40aa-a70a-73a9d3c796d0",
+        "type": "monthly_payment_cleared",
+        "message": "Frank cleared monthly payment for Jibril (2026-06)",
+        "actor_user_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+        "related_player_id": "73be1f4e-03b1-4ebd-a681-e1661acc5a08",
+        "related_visitor_id": null,
+        "metadata": {
+          "scope": "monthly",
+          "action": "monthly_payment_update",
+          "actor_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+          "month_key": "2026-06",
+          "player_id": "73be1f4e-03b1-4ebd-a681-e1661acc5a08",
+          "actor_name": "Frank",
+          "actor_email": "mofikk35@gmail.com",
+          "paid_amount": 3000,
+          "player_name": "Jibril",
+          "expected_amount": 3000,
+          "previous_paid_amount": null,
+          "previous_expected_amount": null
+        },
+        "created_at": "2026-06-24T09:06:07.233117+00:00"
+      },
+      {
+        "id": "2c77c6ea-aaf8-441d-a6d6-553f41d045de",
+        "type": "monthly_payment_cleared",
+        "message": "Frank cleared monthly payment for Charles Okoli (2026-06)",
+        "actor_user_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+        "related_player_id": "ebb4df12-ad76-4a4b-9fac-f7ed513bda83",
+        "related_visitor_id": null,
+        "metadata": {
+          "scope": "monthly",
+          "action": "monthly_payment_update",
+          "actor_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+          "month_key": "2026-06",
+          "player_id": "ebb4df12-ad76-4a4b-9fac-f7ed513bda83",
+          "actor_name": "Frank",
+          "actor_email": "mofikk35@gmail.com",
+          "paid_amount": 3000,
+          "player_name": "Charles Okoli",
+          "expected_amount": 3000,
+          "previous_paid_amount": null,
+          "previous_expected_amount": null
+        },
+        "created_at": "2026-06-24T09:06:22.946858+00:00"
+      },
+      {
+        "id": "47164ef3-ea31-47fb-9ec5-b2d3f22be6a9",
+        "type": "monthly_payment_cleared",
+        "message": "Frank cleared monthly payment for Kamil (2026-06)",
+        "actor_user_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+        "related_player_id": "c9769b98-f9a4-4492-98a3-5cc373f2831e",
+        "related_visitor_id": null,
+        "metadata": {
+          "scope": "monthly",
+          "action": "monthly_payment_update",
+          "actor_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+          "month_key": "2026-06",
+          "player_id": "c9769b98-f9a4-4492-98a3-5cc373f2831e",
+          "actor_name": "Frank",
+          "actor_email": "mofikk35@gmail.com",
+          "paid_amount": 3000,
+          "player_name": "Kamil",
+          "expected_amount": 3000,
+          "previous_paid_amount": null,
+          "previous_expected_amount": null
+        },
+        "created_at": "2026-06-24T09:06:44.805106+00:00"
+      },
+      {
+        "id": "2ed2e8ce-ef0a-4a68-9754-60d9ee41f0d7",
+        "type": "monthly_payment_cleared",
+        "message": "Frank cleared monthly payment for Femi (2026-06)",
+        "actor_user_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+        "related_player_id": "78d78cef-ee8e-4e6d-9a12-8f3b8cd1cf53",
+        "related_visitor_id": null,
+        "metadata": {
+          "scope": "monthly",
+          "action": "monthly_payment_update",
+          "actor_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+          "month_key": "2026-06",
+          "player_id": "78d78cef-ee8e-4e6d-9a12-8f3b8cd1cf53",
+          "actor_name": "Frank",
+          "actor_email": "mofikk35@gmail.com",
+          "paid_amount": 3000,
+          "player_name": "Femi",
+          "expected_amount": 3000,
+          "previous_paid_amount": null,
+          "previous_expected_amount": null
+        },
+        "created_at": "2026-06-24T09:07:01.280033+00:00"
+      },
+      {
+        "id": "3603e9e3-6b8a-4340-ae4a-4a2dc77b5adf",
+        "type": "monthly_payment_cleared",
+        "message": "Frank cleared monthly payment for Engr Saka (2026-06)",
+        "actor_user_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+        "related_player_id": "db960491-aa5d-41ac-8a7a-1f0662614b81",
+        "related_visitor_id": null,
+        "metadata": {
+          "scope": "monthly",
+          "action": "monthly_payment_update",
+          "actor_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+          "month_key": "2026-06",
+          "player_id": "db960491-aa5d-41ac-8a7a-1f0662614b81",
+          "actor_name": "Frank",
+          "actor_email": "mofikk35@gmail.com",
+          "paid_amount": 3000,
+          "player_name": "Engr Saka",
+          "expected_amount": 3000,
+          "previous_paid_amount": null,
+          "previous_expected_amount": null
+        },
+        "created_at": "2026-06-24T09:07:15.321669+00:00"
+      },
+      {
+        "id": "50e1eadb-ee55-4e4d-908c-470a8b2e5882",
+        "type": "monthly_payment_cleared",
+        "message": "Frank cleared monthly payment for Frank (2026-06)",
+        "actor_user_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+        "related_player_id": "6f2bb968-d754-4e16-b102-86df90387017",
+        "related_visitor_id": null,
+        "metadata": {
+          "scope": "monthly",
+          "action": "monthly_payment_update",
+          "actor_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+          "month_key": "2026-06",
+          "player_id": "6f2bb968-d754-4e16-b102-86df90387017",
+          "actor_name": "Frank",
+          "actor_email": "mofikk35@gmail.com",
+          "paid_amount": 3000,
+          "player_name": "Frank",
+          "expected_amount": 3000,
+          "previous_paid_amount": null,
+          "previous_expected_amount": null
+        },
+        "created_at": "2026-06-24T09:07:27.602496+00:00"
+      },
+      {
+        "id": "384fe3c3-3a3d-44fe-9b19-0dd354ef8998",
+        "type": "monthly_payment_cleared",
+        "message": "Frank cleared monthly payment for Nonso (2026-05)",
+        "actor_user_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+        "related_player_id": "39b46b91-a818-4649-a888-e357ab94d4ea",
+        "related_visitor_id": null,
+        "metadata": {
+          "scope": "monthly",
+          "action": "monthly_payment_update",
+          "actor_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+          "month_key": "2026-05",
+          "player_id": "39b46b91-a818-4649-a888-e357ab94d4ea",
+          "actor_name": "Frank",
+          "actor_email": "mofikk35@gmail.com",
+          "paid_amount": 3000,
+          "player_name": "Nonso",
+          "expected_amount": 3000,
+          "previous_paid_amount": null,
+          "previous_expected_amount": null
+        },
+        "created_at": "2026-06-24T09:08:42.709876+00:00"
+      },
+      {
+        "id": "6641c3ba-1047-4602-9811-a20c20e93742",
+        "type": "monthly_payment_updated",
+        "message": "Frank updated monthly payment for Nonso (2026-05)",
+        "actor_user_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+        "related_player_id": "39b46b91-a818-4649-a888-e357ab94d4ea",
+        "related_visitor_id": null,
+        "metadata": {
+          "scope": "monthly",
+          "action": "monthly_payment_update",
+          "actor_id": "ff9ec80d-b0ed-4d1c-99e2-3fd9e78d5746",
+          "month_key": "2026-05",
+          "player_id": "39b46b91-a818-4649-a888-e357ab94d4ea",
+          "actor_name": "Frank",
+          "actor_email": "mofikk35@gmail.com",
+          "paid_amount": 0,
+          "player_name": "Nonso",
+          "expected_amount": 3000,
+          "previous_paid_amount": 3000,
+          "previous_expected_amount": 3000
+        },
+        "created_at": "2026-06-24T09:09:05.212551+00:00"
+      }
+    ]
+  }
+}

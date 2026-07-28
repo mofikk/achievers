@@ -17,16 +17,6 @@
     return;
   }
 
-  const dayNames = [
-    "Sunday",
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday"
-  ];
-
   const defaultSettings = {
     attendance: { startDate: "2026-01-10", playableDayOfWeek: 6 }
   };
@@ -37,66 +27,14 @@
     attendanceDates: []
   };
 
-  function toLocalDateKey(date) {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`;
-  }
-
   function formatDisplayName(player) {
     return player.nickname ? `${player.name} (${player.nickname})` : player.name;
   }
 
-  function getPlayableDayOfWeek(settings) {
-    const value = Number(settings?.attendance?.playableDayOfWeek);
-    return Number.isInteger(value) && value >= 0 && value <= 6 ? value : 6;
-  }
-
-  function getPlayableDayLabel(settings) {
-    return dayNames[getPlayableDayOfWeek(settings)] || "Saturday";
-  }
-
-  function buildPlayableDayList(startDate, endDate, settings) {
-    const startMatch = String(startDate || "").match(/^(\d{4})-(\d{2})-(\d{2})$/);
-    const endMatch = String(endDate || "").match(/^(\d{4})-(\d{2})-(\d{2})$/);
-    if (!startMatch || !endMatch) return [];
-
-    const dates = [];
-    const cursor = new Date(
-      Number(startMatch[1]),
-      Number(startMatch[2]) - 1,
-      Number(startMatch[3])
-    );
-    const end = new Date(
-      Number(endMatch[1]),
-      Number(endMatch[2]) - 1,
-      Number(endMatch[3])
-    );
-    if (Number.isNaN(cursor.getTime()) || Number.isNaN(end.getTime())) return dates;
-
-    const playableDay = getPlayableDayOfWeek(settings);
-    while (cursor.getDay() !== playableDay) {
-      cursor.setDate(cursor.getDate() + 1);
+  function getAttendanceDates(players) {
+    if (window.attendanceMetrics?.getAttendanceDateKeys) {
+      return window.attendanceMetrics.getAttendanceDateKeys(players, 0);
     }
-
-    while (cursor <= end) {
-      dates.push(toLocalDateKey(cursor));
-      cursor.setDate(cursor.getDate() + 7);
-    }
-
-    return dates;
-  }
-
-  function getAttendanceDates(players, settings) {
-    const todayStr = new Date().toISOString().slice(0, 10);
-    const configuredStart = String(settings?.attendance?.startDate || "").slice(0, 10);
-    const startDate = /^\d{4}-\d{2}-\d{2}$/.test(configuredStart)
-      ? configuredStart
-      : `${new Date().getFullYear()}-01-01`;
-
-    const timeline = buildPlayableDayList(startDate, todayStr, settings);
-    if (timeline.length) return timeline;
 
     const keys = new Set();
     (players || []).forEach((player) => {
@@ -111,6 +49,7 @@
     if (window.attendanceMetrics?.computeAttendanceStreak) {
       return window.attendanceMetrics.computeAttendanceStreak(player, attendanceDates);
     }
+
     let count = 0;
     for (let i = attendanceDates.length - 1; i >= 0; i -= 1) {
       const date = attendanceDates[i];
@@ -124,6 +63,7 @@
     if (window.attendanceMetrics?.getPlayerAttendanceSummary) {
       return window.attendanceMetrics.getPlayerAttendanceSummary(player, attendanceDates);
     }
+
     const present = attendanceDates.reduce((count, date) => {
       return count + (player?.attendance?.[date] === true ? 1 : 0);
     }, 0);
@@ -135,16 +75,14 @@
 
   function buildRankList(list, container, formatter) {
     container.innerHTML = "";
+    if (!list.length) {
+      container.innerHTML = '<li class="muted">No attendance records found.</li>';
+      return;
+    }
+
     const maxValue = Math.max(...list.map((item) => item.value), 0);
     list.forEach((item, index) => {
-      const rank =
-        index === 0
-          ? "🥇"
-          : index === 1
-            ? "🥈"
-            : index === 2
-              ? "🥉"
-              : String(index + 1);
+      const rank = String(index + 1);
       const width = maxValue ? Math.round((item.value / maxValue) * 100) : 0;
       const row = document.createElement("li");
       row.className = "rank-row";
@@ -156,6 +94,13 @@
       `;
       container.appendChild(row);
     });
+  }
+
+  function renderEmpty() {
+    body.innerHTML = '<tr><td colspan="6">No attendance records found.</td></tr>';
+    countEl.textContent = `Showing 0 of ${state.players.length}`;
+    buildRankList([], topPercentEl, (value) => `${value}%`);
+    buildRankList([], topStreaksEl, (value) => `${value}`);
   }
 
   function render() {
@@ -171,10 +116,23 @@
       return !search || name.includes(search) || nickname.includes(search);
     });
 
+    if (!state.attendanceDates.length) {
+      renderEmpty();
+      return;
+    }
+
     body.innerHTML = "";
+    if (!filtered.length) {
+      body.innerHTML = '<tr><td colspan="6">No players match your search.</td></tr>';
+      countEl.textContent = `Showing 0 of ${state.players.length}`;
+      buildRankList([], topPercentEl, (value) => `${value}%`);
+      buildRankList([], topStreaksEl, (value) => `${value}`);
+      return;
+    }
+
     const rows = filtered.map((player) => {
       const summary = getAttendanceSummary(player, recentAttendanceDates);
-      const streak = computeStreak(player, recentAttendanceDates);
+      const streak = summary.currentStreak ?? computeStreak(player, recentAttendanceDates);
 
       const row = document.createElement("tr");
       row.innerHTML = `
@@ -211,8 +169,23 @@
         return String(a.name || "").localeCompare(String(b.name || ""));
       })
       .slice(0, 5);
+
     buildRankList(topPercent, topPercentEl, (value) => `${value}%`);
     buildRankList(topStreaks, topStreaksEl, (value) => `${value}`);
+  }
+
+  function updateRangeLabels() {
+    const options = Array.from(rangeSelect.options);
+    const allOption = options.find((option) => option.value === "all");
+    if (allOption) {
+      allOption.textContent = `All Recorded Sessions (${state.attendanceDates.length})`;
+    }
+
+    options.forEach((option) => {
+      const value = Number(option.value);
+      if (!Number.isFinite(value)) return;
+      option.textContent = `Last ${value} Recorded Sessions`;
+    });
   }
 
   function loadData() {
@@ -221,23 +194,21 @@
       window.apiFetch("/players")
     ])
       .then(([settingsRes, playersRes]) => {
-        const players = playersRes?.data || [];
         state.settings = settingsRes?.data || defaultSettings;
-        state.players = players;
-        state.attendanceDates = getAttendanceDates(players, state.settings);
-        const label = getPlayableDayLabel(state.settings);
-        const options = Array.from(rangeSelect.options);
-        const allOption = options.find((option) => option.value === "all");
-        if (allOption) allOption.textContent = "All";
-        options.forEach((option) => {
-          const value = Number(option.value);
-          if (!Number.isFinite(value)) return;
-          option.textContent = `Last ${value} ${label}${value === 1 ? "" : "s"}`;
-        });
+        state.players = Array.isArray(playersRes?.data) ? playersRes.data : [];
+        state.attendanceDates = getAttendanceDates(state.players);
         rangeSelect.value = "all";
+        updateRangeLabels();
         render();
       })
-      .catch(console.error);
+      .catch((error) => {
+        console.error(error);
+        body.innerHTML = '<tr><td colspan="6">Unable to load attendance summary.</td></tr>';
+        countEl.textContent = "";
+        buildRankList([], topPercentEl, (value) => `${value}%`);
+        buildRankList([], topStreaksEl, (value) => `${value}`);
+        if (window.toast) window.toast("Unable to load attendance summary", "error");
+      });
   }
 
   rangeSelect.addEventListener("change", render);

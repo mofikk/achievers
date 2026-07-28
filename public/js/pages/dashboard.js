@@ -4,12 +4,12 @@
   const yearlyPendingEl = document.getElementById("yearly-pending");
   const monthlyPaidEl = document.getElementById("monthly-paid");
   const monthlyPendingEl = document.getElementById("monthly-pending");
-  const bestStreakEl = document.getElementById("best-streak");
+  const bestAttendanceEl = document.getElementById("best-attendance");
   const activityList = document.getElementById("activity-list");
   const performersList = document.getElementById("performers-list");
   const performersEmpty = document.getElementById("performers-empty");
-  const streaksList = document.getElementById("streaks-list");
-  const streaksEmpty = document.getElementById("streaks-empty");
+  const attendanceConsistencyList = document.getElementById("attendance-consistency-list");
+  const attendanceConsistencyEmpty = document.getElementById("attendance-consistency-empty");
 
   if (
     !totalMembersEl ||
@@ -17,12 +17,12 @@
     !yearlyPendingEl ||
     !monthlyPaidEl ||
     !monthlyPendingEl ||
-    !bestStreakEl ||
+    !bestAttendanceEl ||
     !activityList ||
     !performersList ||
     !performersEmpty ||
-    !streaksList ||
-    !streaksEmpty
+    !attendanceConsistencyList ||
+    !attendanceConsistencyEmpty
   ) {
     return;
   }
@@ -146,6 +146,28 @@
       container.appendChild(row);
     });
   }
+
+  function renderAttendanceRankList(list, container) {
+    container.innerHTML = "";
+
+    list.forEach((item, index) => {
+      const rank = String(index + 1).padStart(2, "0");
+      const primaryName = formatPrimaryName(item);
+      const position = (item.position || "").trim() || "No position";
+      const totalMeta = `Present ${item.matchesPresent}/${item.totalMatches}`;
+      const row = document.createElement("li");
+      row.className = "rank-row";
+      row.innerHTML = `
+        <span class="rank-number">${rank}</span>
+        <span class="rank-details">
+          <span class="rank-name">${primaryName}</span>
+          <span class="rank-meta">${position} &bull; ${totalMeta}</span>
+        </span>
+        <span class="rank-value">${item.value}%</span>
+      `;
+      container.appendChild(row);
+    });
+  }
   function renderLeaderboard(metric) {
     const list = state.leaderboards[metric] || [];
     performersList.innerHTML = "";
@@ -181,7 +203,7 @@
 
   function getAttendanceDates(players) {
     if (window.attendanceMetrics?.getAttendanceDateKeys) {
-      return window.attendanceMetrics.getAttendanceDateKeys(players, 12);
+      return window.attendanceMetrics.getAttendanceDateKeys(players, 0);
     }
     const keys = new Set();
     (players || []).forEach((player) => {
@@ -189,57 +211,54 @@
         if (/^\d{4}-\d{2}-\d{2}$/.test(dateKey)) keys.add(dateKey);
       });
     });
-    return Array.from(keys).sort().slice(-12);
+    return Array.from(keys).sort();
   }
 
-  function renderStreaks() {
-    streaksList.innerHTML = "";
+  function renderAttendanceConsistency() {
+    attendanceConsistencyList.innerHTML = "";
     if (!state.attendanceDates.length) {
-      streaksEmpty.classList.remove("hidden");
-      bestStreakEl.textContent = "No attendance yet";
+      attendanceConsistencyEmpty.classList.remove("hidden");
+      bestAttendanceEl.textContent = "No attendance yet";
       return;
     }
-    streaksEmpty.classList.add("hidden");
+    attendanceConsistencyEmpty.classList.add("hidden");
 
-    const streaks = state.players.map((player) => {
+    const attendanceRows = state.players.map((player) => {
       const attendanceSummary = window.attendanceMetrics?.getPlayerAttendanceSummary
         ? window.attendanceMetrics.getPlayerAttendanceSummary(player, state.attendanceDates)
         : null;
-      const count = attendanceSummary
-        ? attendanceSummary.currentStreak
-        : window.attendanceMetrics?.computeAttendanceStreak
-          ? window.attendanceMetrics.computeAttendanceStreak(player, state.attendanceDates)
-          : (() => {
-              let fallbackCount = 0;
-              for (let i = state.attendanceDates.length - 1; i >= 0; i -= 1) {
-                const date = state.attendanceDates[i];
-                if (player?.attendance?.[date] === true) fallbackCount += 1;
-                else break;
-              }
-              return fallbackCount;
-            })();
+      const matchesPresent = attendanceSummary
+        ? attendanceSummary.present
+        : state.attendanceDates.reduce((count, date) => {
+            return count + (player?.attendance?.[date] === true ? 1 : 0);
+          }, 0);
+      const totalMatches = attendanceSummary ? attendanceSummary.total : state.attendanceDates.length;
+      const attendancePercentage =
+        totalMatches > 0 ? Math.round((matchesPresent / totalMatches) * 100) : 0;
+
       return {
         id: player.id,
         name: player.name || "",
-        nickname: player.nickname || "",
         position: player.position || "",
-        value: count,
-        attendancePercent: attendanceSummary ? attendanceSummary.attendancePercent : 0
+        matchesPresent,
+        totalMatches,
+        attendancePercentage,
+        value: attendancePercentage
       };
     });
 
-    const sorted = streaks
+    const sorted = attendanceRows
       .sort((a, b) => {
-        if (b.value !== a.value) return b.value - a.value;
-        if (b.attendancePercent !== a.attendancePercent) {
-          return b.attendancePercent - a.attendancePercent;
+        if (b.attendancePercentage !== a.attendancePercentage) {
+          return b.attendancePercentage - a.attendancePercentage;
         }
+        if (b.matchesPresent !== a.matchesPresent) return b.matchesPresent - a.matchesPresent;
         return String(a.name || "").localeCompare(String(b.name || ""));
       })
       .slice(0, 5);
-    const best = sorted[0]?.value || 0;
-    bestStreakEl.textContent = `${best} weeks`;
-    renderRankList(sorted, streaksList);
+    const best = sorted[0]?.attendancePercentage || 0;
+    bestAttendanceEl.textContent = `${best}%`;
+    renderAttendanceRankList(sorted, attendanceConsistencyList);
   }
 
   function loadDashboard() {
@@ -307,7 +326,7 @@
         renderActivity(activity);
         buildLeaderboards();
         setupTabs();
-        renderStreaks();
+        renderAttendanceConsistency();
       })
       .catch(console.error);
   }
