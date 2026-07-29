@@ -889,6 +889,78 @@ body.auth-page .auth-main {
   overflow: visible;
 }
 
+.sticky-table-wrap {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: visible;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x pan-y;
+}
+
+.sticky-table-panel {
+  min-width: 0;
+  overflow: visible;
+}
+
+.sticky-data-table th:first-child,
+.sticky-data-table td:first-child {
+  background: var(--surface);
+}
+
+body.theme-dark .sticky-data-table th:first-child,
+body.theme-dark .sticky-data-table td:first-child {
+  background: var(--surface);
+}
+
+.payments-table {
+  --sticky-table-tablet-width: 760px;
+  --sticky-table-mobile-width: 680px;
+  --sticky-actions-width: 170px;
+}
+
+.obligations-table {
+  --sticky-table-tablet-width: 980px;
+  --sticky-table-mobile-width: 860px;
+  --sticky-actions-width: 190px;
+}
+
+.stats-table {
+  --sticky-table-tablet-width: 1120px;
+  --sticky-table-mobile-width: 980px;
+  --sticky-actions-width: 120px;
+}
+
+.visitors-table {
+  --sticky-table-tablet-width: 620px;
+  --sticky-table-mobile-width: 560px;
+  --sticky-actions-width: 320px;
+}
+
+.visitor-payments-table {
+  --sticky-table-tablet-width: 820px;
+  --sticky-table-mobile-width: 720px;
+  --sticky-actions-width: 120px;
+}
+
+.visitor-obligations-table {
+  --sticky-table-tablet-width: 860px;
+  --sticky-table-mobile-width: 760px;
+}
+
+.visitor-stats-table {
+  --sticky-table-tablet-width: 860px;
+  --sticky-table-mobile-width: 760px;
+  --sticky-actions-width: 120px;
+}
+
+.visitor-attendance-table {
+  --sticky-table-tablet-width: 620px;
+  --sticky-table-mobile-width: 560px;
+}
+
 .players-table th:first-child,
 .players-table td:first-child {
   background: var(--surface);
@@ -1714,6 +1786,56 @@ body.theme-dark .user-chevron {
     z-index: 2;
   }
 
+  .sticky-data-table {
+    border-collapse: separate;
+    border-spacing: 0;
+    min-width: var(--sticky-table-tablet-width, 820px);
+    width: var(--sticky-table-tablet-width, 820px);
+    max-width: none;
+  }
+
+  .sticky-data-table th,
+  .sticky-data-table td {
+    white-space: nowrap;
+  }
+
+  .sticky-data-table th:first-child,
+  .sticky-data-table td:first-child {
+    position: sticky;
+    left: 0;
+    width: var(--sticky-first-col-tablet, 170px);
+    min-width: var(--sticky-first-col-tablet, 170px);
+    max-width: var(--sticky-first-col-tablet, 170px);
+    white-space: normal;
+    overflow-wrap: anywhere;
+    background: var(--surface);
+    box-shadow: 1px 0 0 var(--border);
+  }
+
+  .sticky-data-table th:first-child {
+    z-index: 3;
+  }
+
+  .sticky-data-table td:first-child {
+    z-index: 2;
+  }
+
+  .sticky-data-table th[data-key],
+  .sticky-data-table th.sortable {
+    position: relative;
+  }
+
+  .sticky-data-table th:last-child,
+  .sticky-data-table td:last-child {
+    min-width: var(--sticky-actions-width, 120px);
+  }
+
+  .sticky-data-table td[data-label="Actions"] .actions {
+    width: max-content;
+    min-width: max-content;
+    justify-content: flex-start;
+  }
+
   .theme-label {
     display: none;
   }
@@ -2023,6 +2145,86 @@ body.theme-dark .user-chevron {
   }
 
   .players-table.responsive td[data-label="Actions"] .actions {
+    width: max-content;
+    min-width: max-content;
+    justify-content: flex-start;
+  }
+
+  .sticky-data-table {
+    table-layout: auto;
+    min-width: var(--sticky-table-mobile-width, 720px);
+    width: var(--sticky-table-mobile-width, 720px);
+    max-width: none;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+
+  .sticky-data-table.responsive thead {
+    display: table-header-group;
+  }
+
+  .sticky-data-table.responsive tr {
+    display: table-row;
+    border: 0;
+    border-radius: 0;
+    padding: 0;
+    margin-bottom: 0;
+  }
+
+  .sticky-data-table th,
+  .sticky-data-table td,
+  .sticky-data-table.responsive th,
+  .sticky-data-table.responsive td {
+    display: table-cell;
+    padding: 10px 8px;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+    vertical-align: middle;
+  }
+
+  .sticky-data-table.responsive td::before {
+    content: none;
+  }
+
+  .sticky-data-table th:first-child,
+  .sticky-data-table td:first-child,
+  .sticky-data-table.responsive th:first-child,
+  .sticky-data-table.responsive td:first-child {
+    position: sticky;
+    left: 0;
+    width: var(--sticky-first-col-mobile, 150px);
+    min-width: var(--sticky-first-col-mobile, 150px);
+    max-width: var(--sticky-first-col-mobile, 150px);
+    white-space: normal;
+    overflow-wrap: anywhere;
+    background: var(--surface);
+    box-shadow: 1px 0 0 var(--border);
+  }
+
+  .sticky-data-table th:first-child,
+  .sticky-data-table.responsive th:first-child {
+    z-index: 3;
+  }
+
+  .sticky-data-table td:first-child,
+  .sticky-data-table.responsive td:first-child {
+    z-index: 2;
+  }
+
+  .sticky-data-table th:last-child,
+  .sticky-data-table td:last-child,
+  .sticky-data-table.responsive th:last-child,
+  .sticky-data-table.responsive td:last-child {
+    min-width: var(--sticky-actions-width, 110px);
+  }
+
+  .sticky-data-table td[data-label="Actions"],
+  .sticky-data-table.responsive td[data-label="Actions"] {
+    display: table-cell;
+  }
+
+  .sticky-data-table td[data-label="Actions"] .actions,
+  .sticky-data-table.responsive td[data-label="Actions"] .actions {
     width: max-content;
     min-width: max-content;
     justify-content: flex-start;
