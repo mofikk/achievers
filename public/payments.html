@@ -33,7 +33,7 @@
               <h2>Payments</h2>
               <p>Track subscriptions and payment status.</p>
             </div>
-            <div class="page-title-actions">
+            <div class="page-title-actions horizontal-filter-actions">
               <label class="form-field">
                 <span>Year</span>
                 <select class="input" id="payments-year"></select>
@@ -43,8 +43,10 @@
                 <select class="input" id="payments-month"></select>
               </label>
               <button class="ghost-btn" type="button" id="add-player-payments">Add Player</button>
-              <input id="payments-search" class="input" type="search" placeholder="Search name or nickname..." />
-              <span id="payments-count" class="muted"></span>
+              <div class="horizontal-filter-search">
+                <input id="payments-search" class="input" type="search" placeholder="Search name or nickname..." />
+                <span id="payments-count" class="muted"></span>
+              </div>
             </div>
           </div>
         </div>
