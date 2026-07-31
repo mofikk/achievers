@@ -5,7 +5,6 @@
   const monthlyPaidEl = document.getElementById("monthly-paid");
   const monthlyPendingEl = document.getElementById("monthly-pending");
   const bestAttendanceEl = document.getElementById("best-attendance");
-  const activityList = document.getElementById("activity-list");
   const performersList = document.getElementById("performers-list");
   const performersEmpty = document.getElementById("performers-empty");
   const attendanceConsistencyList = document.getElementById("attendance-consistency-list");
@@ -18,7 +17,6 @@
     !monthlyPaidEl ||
     !monthlyPendingEl ||
     !bestAttendanceEl ||
-    !activityList ||
     !performersList ||
     !performersEmpty ||
     !attendanceConsistencyList ||
@@ -67,35 +65,6 @@
     monthlyPendingEl.textContent = counts.monthlyPending;
   }
 
-  function formatRelativeTime(timestamp) {
-    const diffMs = Date.now() - timestamp;
-    const seconds = Math.floor(diffMs / 1000);
-    if (seconds < 60) return "Just now";
-    const minutes = Math.floor(seconds / 60);
-    if (minutes < 60) return `${minutes}m ago`;
-    const hours = Math.floor(minutes / 60);
-    if (hours < 24) return `${hours}h ago`;
-    const days = Math.floor(hours / 24);
-    return `${days}d ago`;
-  }
-
-  function renderActivity(activity) {
-    activityList.innerHTML = "";
-    if (!activity.length) {
-      const item = document.createElement("li");
-      item.textContent = "No recent activity yet.";
-      activityList.appendChild(item);
-      return;
-    }
-
-    activity.forEach((entry) => {
-      const item = document.createElement("li");
-      const time = formatRelativeTime(entry.timestamp);
-      item.textContent = `${entry.message} • ${time}`;
-      activityList.appendChild(item);
-    });
-  }
-
   function getTopList(players, metric) {
     return players
       .map((player) => {
@@ -123,7 +92,7 @@
         };
       })
       .sort((a, b) => b.value - a.value)
-      .slice(0, 5);
+      .slice(0, 8);
   }
 
   function renderRankList(list, container) {
@@ -255,7 +224,7 @@
         if (b.matchesPresent !== a.matchesPresent) return b.matchesPresent - a.matchesPresent;
         return String(a.name || "").localeCompare(String(b.name || ""));
       })
-      .slice(0, 5);
+      .slice(0, 8);
     const best = sorted[0]?.attendancePercentage || 0;
     bestAttendanceEl.textContent = `${best}%`;
     renderAttendanceRankList(sorted, attendanceConsistencyList);
@@ -269,21 +238,8 @@
       }
       return { data: defaultSettings };
     });
-    const activityRequest = window
-      .apiFetch("/activity?limit=10&page=1", { silent: true })
-      .then((res) => {
-        const data = res?.data || [];
-        return data?.items || data || [];
-      })
-      .catch((error) => {
-        if (window.reportPartialData) {
-          window.reportPartialData(error?.message || "Activity feed is temporarily unavailable.");
-        }
-        return [];
-      });
-
-    Promise.all([settingsRequest, activityRequest])
-      .then(([settingsRes, activity]) => {
+    Promise.all([settingsRequest])
+      .then(([settingsRes]) => {
         state.settings = settingsRes?.data || defaultSettings;
         const yearKey = String(state.settings.season || new Date().getFullYear());
         const monthKey = getCurrentMonthKey();
@@ -307,11 +263,10 @@
               window.reportPartialData(error?.message || "Players are temporarily unavailable.");
             }
             return { data: [] };
-          }),
-          Promise.resolve(activity)
+          })
         ]);
       })
-      .then(([overviewRes, playersRes, activity]) => {
+      .then(([overviewRes, playersRes]) => {
         const players = playersRes?.data || [];
         const overview = overviewRes?.data || {};
         state.players = players;
@@ -323,7 +278,6 @@
           monthlyPaid: 0,
           monthlyPending: 0
         });
-        renderActivity(activity);
         buildLeaderboards();
         setupTabs();
         renderAttendanceConsistency();

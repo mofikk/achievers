@@ -261,6 +261,7 @@ body.nav-open {
 }
 
 .topbar h1 {
+  display: none;
   font-size: clamp(20px, 2vw, 26px);
   line-height: 1.2;
 }
@@ -1707,6 +1708,10 @@ body.theme-dark .user-chevron {
     right: 0;
   }
 
+  .topbar h1 {
+    display: block;
+  }
+
   .page-title-row {
     flex-direction: column;
     align-items: flex-start;
@@ -1724,6 +1729,10 @@ body.theme-dark .user-chevron {
     top: 16px;
     left: 16px;
     z-index: 30;
+  }
+
+  body.nav-open .topbar h1 {
+    margin-left: 52px;
   }
 
   .settings-grid {
