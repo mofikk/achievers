@@ -9,6 +9,12 @@
   const performersEmpty = document.getElementById("performers-empty");
   const attendanceConsistencyList = document.getElementById("attendance-consistency-list");
   const attendanceConsistencyEmpty = document.getElementById("attendance-consistency-empty");
+  const performanceIndexScore = document.getElementById("performance-index-score");
+  const performanceIndexWidget = document.getElementById("performance-index-widget");
+  const performanceIndexEmpty = document.getElementById("performance-index-empty");
+  const contributionIndexScore = document.getElementById("contribution-index-score");
+  const contributionIndexWidget = document.getElementById("contribution-index-widget");
+  const contributionIndexEmpty = document.getElementById("contribution-index-empty");
 
   if (
     !totalMembersEl ||
@@ -20,7 +26,13 @@
     !performersList ||
     !performersEmpty ||
     !attendanceConsistencyList ||
-    !attendanceConsistencyEmpty
+    !attendanceConsistencyEmpty ||
+    !performanceIndexScore ||
+    !performanceIndexWidget ||
+    !performanceIndexEmpty ||
+    !contributionIndexScore ||
+    !contributionIndexWidget ||
+    !contributionIndexEmpty
   ) {
     return;
   }
@@ -34,7 +46,8 @@
     players: [],
     settings: defaultSettings,
     leaderboards: {},
-    attendanceDates: []
+    attendanceDates: [],
+    indexes: null
   };
 
   function formatPrimaryName(player) {
@@ -230,6 +243,107 @@
     renderAttendanceRankList(sorted, attendanceConsistencyList);
   }
 
+  function formatDecimal(value) {
+    return (Number(value) || 0).toFixed(2);
+  }
+
+  function escapeHtml(value) {
+    return String(value ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+  function renderIndexWidget(options) {
+    const { ranking, scoreEl, widgetEl, emptyEl, scoreKey, metrics } = options;
+    widgetEl.innerHTML = "";
+    const topPlayer = ranking[0];
+    if (!topPlayer) {
+      scoreEl.textContent = "0 / 100";
+      emptyEl.classList.remove("hidden");
+      return;
+    }
+    emptyEl.classList.add("hidden");
+    const score = Number(topPlayer[scoreKey]) || 0;
+    scoreEl.textContent = `${score} / 100`;
+
+    const hero = document.createElement("div");
+    hero.className = "analytics-primary";
+    hero.innerHTML = `
+      <div class="analytics-player-row">
+        <div>
+          <div class="analytics-player-name">${escapeHtml(topPlayer.name || "Player")}</div>
+          <div class="rank-meta">${escapeHtml(topPlayer.position || "No position")}</div>
+        </div>
+        <strong>${score} / 100</strong>
+      </div>
+      <div class="analytics-progress" aria-label="${score} out of 100">
+        <span style="width: ${Math.min(score, 100)}%"></span>
+      </div>
+      <div class="analytics-metrics">
+        ${metrics(topPlayer)
+          .map((item) => `<span><strong>${escapeHtml(item.label)}</strong>${escapeHtml(item.value)}</span>`)
+          .join("")}
+      </div>
+    `;
+    widgetEl.appendChild(hero);
+
+    const compactList = document.createElement("div");
+    compactList.className = "analytics-rank-list";
+    ranking.slice(1, 4).forEach((player, index) => {
+      const row = document.createElement("div");
+      row.className = "analytics-rank-row";
+      const rowScore = Number(player[scoreKey]) || 0;
+      row.innerHTML = `
+        <span>${String(index + 2).padStart(2, "0")}</span>
+        <span>${escapeHtml(player.name || "Player")}</span>
+        <strong>${rowScore}</strong>
+      `;
+      compactList.appendChild(row);
+    });
+    if (compactList.children.length) widgetEl.appendChild(compactList);
+  }
+
+  function renderAnalytics() {
+    if (!window.playerIndexes?.buildPlayerIndexes) return;
+    const monthKey = getCurrentMonthKey();
+    const yearKey = String(state.settings.season || new Date().getFullYear());
+    state.indexes = window.playerIndexes.buildPlayerIndexes(
+      state.players,
+      state.settings,
+      state.attendanceDates,
+      { yearKey, monthKey }
+    );
+
+    renderIndexWidget({
+      ranking: state.indexes.rankings.performance,
+      scoreEl: performanceIndexScore,
+      widgetEl: performanceIndexWidget,
+      emptyEl: performanceIndexEmpty,
+      scoreKey: "performanceIndex",
+      metrics: (player) => [
+        { label: "Goals", value: player.metrics.goals },
+        { label: "Goals/App", value: formatDecimal(player.metrics.goalsPerAppearance) },
+        { label: "Attendance", value: `${player.metrics.attendancePercentage}%` }
+      ]
+    });
+
+    renderIndexWidget({
+      ranking: state.indexes.rankings.contribution,
+      scoreEl: contributionIndexScore,
+      widgetEl: contributionIndexWidget,
+      emptyEl: contributionIndexEmpty,
+      scoreKey: "contributionIndex",
+      metrics: (player) => [
+        { label: "Attendance", value: `${player.metrics.attendancePercentage}%` },
+        { label: "Monthly Payments", value: `${player.metrics.monthlyPaymentPercentage}%` },
+        { label: "Yearly Payments", value: `${player.metrics.yearlyPaymentPercentage}%` }
+      ]
+    });
+  }
+
   function loadDashboard() {
     if (window.clearPartialData) window.clearPartialData();
     const settingsRequest = window.apiFetch("/settings", { silent: true }).catch((error) => {
@@ -281,6 +395,7 @@
         buildLeaderboards();
         setupTabs();
         renderAttendanceConsistency();
+        renderAnalytics();
       })
       .catch(console.error);
   }

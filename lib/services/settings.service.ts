@@ -6,7 +6,7 @@ import { failure, success } from "../http/response";
 import { getActorContext, logActivity } from "./activity.service";
 
 const defaultSettings = {
-  clubName: "Achievers FC",
+  clubName: "Achievers Activity Monitor",
   season: new Date().getFullYear(),
   currencySymbol: "\u20a6",
   fees: {

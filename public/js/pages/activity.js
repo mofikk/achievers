@@ -41,7 +41,7 @@
     if (type === "yearly_payment_cleared") return "Yearly payment cleared";
     if (type === "yearly_payment_updated") return "Yearly payment updated";
     if (type === "attendance_recorded") return "Attendance recorded";
-    if (type === "stats_updated") return "Stats updated";
+    if (type === "stats_updated") return "Club statistics updated";
     if (type === "fine_cleared") return "Fine cleared";
     if (type === "visitor_added") return "Visitor added";
     if (type === "visitor_updated") return "Visitor updated";

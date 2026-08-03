@@ -4,14 +4,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Achievers FC - Dashboard</title>
+  <title>Achievers Activity Monitor - Dashboard</title>
   <link rel="stylesheet" href="/css/style.css" />
 </head>
 
 <body>
   <div class="app">
     <aside class="sidebar" id="sidebar">
-      <div class="brand">Achievers FC</div>
+      <div class="brand">Achievers Activity Monitor</div>
       <div id="sidebar-slot"></div>
     </aside>
     <div class="nav-overlay hidden" id="nav-overlay"></div>
@@ -24,7 +24,7 @@
             <span></span>
           </span>
         </button>
-        <h1>Achievers FC</h1>
+        <h1>Achievers Activity Monitor</h1>
       </header>
       <main class="main">
         <div class="page-title">
@@ -61,31 +61,59 @@
 
 
 
-        <section class="panel">
-          <div class="page-title-row">
-            <h3>Top Performers</h3>
-            <div class="tab-group">
-              <button class="tab-btn active" data-tab="goals">Goals</button>
-              <button class="tab-btn" data-tab="assists">Assists</button>
-              <button class="tab-btn" data-tab="ga">G+A</button>
-              <button class="tab-btn" data-tab="yellow">Yellow</button>
-              <button class="tab-btn" data-tab="red">Red</button>
+        <section class="dashboard-leaderboards">
+          <section class="panel">
+            <div class="page-title-row">
+              <h3>Top Performers</h3>
+              <div class="tab-group">
+                <button class="tab-btn active" data-tab="goals">Goals</button>
+                <button class="tab-btn" data-tab="assists">Assists</button>
+                <button class="tab-btn" data-tab="ga">G+A</button>
+                <button class="tab-btn" data-tab="yellow">Yellow</button>
+                <button class="tab-btn" data-tab="red">Red</button>
+              </div>
             </div>
-          </div>
-          <div class="empty-state hidden" id="performers-empty">No stats yet.</div>
-          <ul class="leaderboard" id="performers-list"></ul>
-          <div class="activity-actions">
-            <a class="ghost-btn" href="stats.html">Show more</a>
-          </div>
+            <div class="empty-state hidden" id="performers-empty">No stats yet.</div>
+            <ul class="leaderboard" id="performers-list"></ul>
+            <div class="activity-actions">
+              <a class="ghost-btn" href="stats.html">Show more</a>
+            </div>
+          </section>
+
+          <section class="panel">
+            <h3>Attendance Consistency</h3>
+            <div class="empty-state hidden" id="attendance-consistency-empty">No attendance recorded yet.</div>
+            <ul class="leaderboard" id="attendance-consistency-list"></ul>
+            <div class="activity-actions">
+              <a class="ghost-btn" href="attendance-summary.html">Show more</a>
+            </div>
+          </section>
         </section>
 
-        <section class="panel">
-          <h3>Attendance Consistency</h3>
-          <div class="empty-state hidden" id="attendance-consistency-empty">No attendance recorded yet.</div>
-          <ul class="leaderboard" id="attendance-consistency-list"></ul>
-          <div class="activity-actions">
-            <a class="ghost-btn" href="attendance-summary.html">Show more</a>
-          </div>
+        <section class="dashboard-analytics">
+          <section class="panel analytics-card">
+            <div class="analytics-header">
+              <div>
+                <h3>Performance Index</h3>
+                <p class="analytics-subtitle">Football performance score</p>
+              </div>
+              <span class="analytics-score" id="performance-index-score">0 / 100</span>
+            </div>
+            <div class="empty-state hidden" id="performance-index-empty">No player performance data yet.</div>
+            <div class="analytics-widget" id="performance-index-widget"></div>
+          </section>
+
+          <section class="panel analytics-card">
+            <div class="analytics-header">
+              <div>
+                <h3>Club Contribution Index</h3>
+                <p class="analytics-subtitle">Attendance and payments</p>
+              </div>
+              <span class="analytics-score" id="contribution-index-score">0 / 100</span>
+            </div>
+            <div class="empty-state hidden" id="contribution-index-empty">No club contribution data yet.</div>
+            <div class="analytics-widget" id="contribution-index-widget"></div>
+          </section>
         </section>
       </main>
     </div>
@@ -96,6 +124,7 @@
   <script src="/js/supabaseClient.js"></script>
   <script src="/js/auth.js"></script>
   <script src="/js/app.js"></script>
+  <script src="/js/player-indexes.js"></script>
   <script src="/js/pages/dashboard.js"></script>
 </body>
 

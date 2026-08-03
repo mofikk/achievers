@@ -45,12 +45,115 @@
     editingId: null,
     sortKey: "goals",
     sortDir: "desc",
-    settings: defaultSettings
+    settings: defaultSettings,
+    currentRanks: {},
+    previousRanks: {}
   };
+  const weeklySnapshotKey = "achievers-stats-weekly-rankings-v1";
 
   function safeNumber(value) {
     const numeric = Number(value);
     return Number.isFinite(numeric) && numeric >= 0 ? numeric : 0;
+  }
+
+  function escapeHtml(value) {
+    return String(value ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+  function getWeekKey(date = new Date()) {
+    const weekDate = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+    const day = weekDate.getUTCDay() || 7;
+    weekDate.setUTCDate(weekDate.getUTCDate() + 4 - day);
+    const yearStart = new Date(Date.UTC(weekDate.getUTCFullYear(), 0, 1));
+    const week = Math.ceil((((weekDate - yearStart) / 86400000) + 1) / 7);
+    return `${weekDate.getUTCFullYear()}-W${String(week).padStart(2, "0")}`;
+  }
+
+  function safeReadSnapshots() {
+    try {
+      const parsed = JSON.parse(localStorage.getItem(weeklySnapshotKey) || "{}");
+      return parsed && typeof parsed === "object" ? parsed : {};
+    } catch (error) {
+      return {};
+    }
+  }
+
+  function safeWriteSnapshots(payload) {
+    try {
+      localStorage.setItem(weeklySnapshotKey, JSON.stringify(payload));
+    } catch (error) {
+      console.warn("Unable to save weekly stats snapshot.", error);
+    }
+  }
+
+  function buildRankMap(players) {
+    return (players || []).reduce((map, player, index) => {
+      if (player?.id) map[player.id] = index + 1;
+      return map;
+    }, {});
+  }
+
+  function getRankingKey() {
+    const useMobileSort = window.innerWidth <= 600 && mobileSort;
+    if (useMobileSort) return `mobile-${getMobileSortKey()}-desc`;
+    return `${state.sortKey}-${state.sortDir}`;
+  }
+
+  function updateWeeklySnapshot(sortedPlayers) {
+    const store = safeReadSnapshots();
+    const snapshots = store.snapshots && typeof store.snapshots === "object" ? store.snapshots : {};
+    const currentWeek = getWeekKey();
+    const rankingKey = getRankingKey();
+    const previousWeek = Object.keys(snapshots)
+      .filter((weekKey) => weekKey < currentWeek && snapshots[weekKey]?.[rankingKey])
+      .sort()
+      .pop();
+
+    state.currentRanks = buildRankMap(sortedPlayers);
+    state.previousRanks = previousWeek
+      ? buildRankMap((snapshots[previousWeek][rankingKey] || []).map((id) => ({ id })))
+      : {};
+
+    if (!snapshots[currentWeek]) snapshots[currentWeek] = {};
+    if (!snapshots[currentWeek][rankingKey]) {
+      snapshots[currentWeek][rankingKey] = sortedPlayers.map((player) => player.id).filter(Boolean);
+      const weeksToKeep = Object.keys(snapshots).sort().slice(-12);
+      const pruned = weeksToKeep.reduce((next, weekKey) => {
+        next[weekKey] = snapshots[weekKey];
+        return next;
+      }, {});
+      safeWriteSnapshots({ version: 1, snapshots: pruned });
+    }
+  }
+
+  function getMovement(player) {
+    const previousRank = state.previousRanks[player.id];
+    const currentRank = state.currentRanks[player.id];
+    if (!previousRank || !currentRank || previousRank === currentRank) {
+      return { className: "same", symbol: "▬" };
+    }
+    return currentRank < previousRank
+      ? { className: "up", symbol: "▲" }
+      : { className: "down", symbol: "▼" };
+  }
+
+  function nameWithMovement(player) {
+    const rank = String(state.currentRanks[player.id] || 0).padStart(2, "0");
+    const movement = getMovement(player);
+    return `
+      <span class="stats-name-rank">
+        <span class="rank-with-movement">
+          <span>${rank}</span>
+          <span class="rank-movement ${movement.className}" aria-hidden="true">${movement.symbol}</span>
+        </span>
+        <span>${escapeHtml(player.name || "")}</span>
+      </span>
+    `;
   }
 
   function getStats(player) {
@@ -146,29 +249,29 @@
 
   function renderTable() {
     const search = searchInput.value.trim().toLowerCase();
-    const filtered = state.allPlayers.filter((player) => {
-      const name = String(player.name || "").toLowerCase();
-      const nickname = String(player.nickname || "").toLowerCase();
-      return !search || name.includes(search) || nickname.includes(search);
-    });
-
     const useMobileSort = window.innerWidth <= 600 && mobileSort;
-    const sorted = useMobileSort
-      ? [...filtered].sort((a, b) => {
+    const fullSorted = useMobileSort
+      ? [...state.allPlayers].sort((a, b) => {
           const key = getMobileSortKey();
           const primary = getMobileSortValue(b, key) - getMobileSortValue(a, key);
           if (primary !== 0) return primary;
           return String(a.name || "").localeCompare(String(b.name || ""));
         })
-      : sortPlayers(filtered);
+      : sortPlayers(state.allPlayers);
+    updateWeeklySnapshot(fullSorted);
+    const sorted = fullSorted.filter((player) => {
+      const name = String(player.name || "").toLowerCase();
+      const nickname = String(player.nickname || "").toLowerCase();
+      return !search || name.includes(search) || nickname.includes(search);
+    });
     body.innerHTML = "";
     sorted.forEach((player) => {
       const stats = getStats(player);
       const fines = getFineSummary(player);
       const row = document.createElement("tr");
       row.innerHTML = `
-        <td data-label="Name">${player.name || ""}</td>
-        <td data-label="Nickname">${player.nickname || "-"}</td>
+        <td data-label="Name">${nameWithMovement(player)}</td>
+        <td data-label="Nickname">${escapeHtml(player.nickname || "-")}</td>
         <td data-label="Goals">${stats.goals}</td>
         <td data-label="Assists">${stats.assists}</td>
         <td data-label="Yellow">${stats.yellow}</td>
