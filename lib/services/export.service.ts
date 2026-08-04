@@ -219,6 +219,81 @@ export async function exportByFile(request: NextRequest, file: string) {
       return new Response(csv, downloadHeaders("stats.csv", csv));
     }
 
+    if (file === "visitor-stats.csv") {
+      const [statsResult, { data: settingsRow }] = await Promise.all([
+        supabase
+          .from("visitor_stats")
+          .select("visitor_id, goals, yellow_cards, red_cards, yellow_paid_count, red_paid_count, visitors:visitor_id(full_name, nickname)")
+          .order("visitor_id", { ascending: true }),
+        supabase.from("app_settings").select("yellow_card_fine, red_card_fine").eq("id", true).maybeSingle()
+      ]);
+      let rows = statsResult.data as any[] | null;
+      let error = statsResult.error;
+      if (error) {
+        const retry = await supabase
+          .from("visitor_stats")
+          .select("visitor_id, yellow_cards, red_cards, yellow_paid_count, red_paid_count, visitors:visitor_id(full_name, nickname)")
+          .order("visitor_id", { ascending: true });
+        rows = retry.data as any[] | null;
+        error = retry.error;
+      }
+      if (error) return failure(error.message, 400);
+
+      const yellowFine = Number(settingsRow?.yellow_card_fine) || 500;
+      const redFine = Number(settingsRow?.red_card_fine) || 1000;
+
+      const out = (rows ?? []).map((row: any) => {
+        const yellow = Number(row.yellow_cards) || 0;
+        const red = Number(row.red_cards) || 0;
+        const yellowPaid = Number(row.yellow_paid_count) || 0;
+        const redPaid = Number(row.red_paid_count) || 0;
+        const yellowOwed = Math.max(0, yellow - yellowPaid);
+        const redOwed = Math.max(0, red - redPaid);
+        const finesOwed = yellowOwed * yellowFine + redOwed * redFine;
+        const status =
+          yellow + red === 0
+            ? "no_cards"
+            : finesOwed === 0
+              ? "cleared"
+              : yellowPaid + redPaid === 0
+                ? "pending"
+                : "incomplete";
+        return [
+          row.visitor_id,
+          row.visitors?.full_name || "",
+          row.visitors?.nickname || "",
+          Number(row.goals) || 0,
+          yellow,
+          red,
+          yellowPaid,
+          redPaid,
+          yellowOwed,
+          redOwed,
+          finesOwed,
+          status
+        ];
+      });
+
+      const csv = toCsv(
+        [
+          "id",
+          "name",
+          "nickname",
+          "goals",
+          "yellow",
+          "red",
+          "yellowPaid",
+          "redPaid",
+          "yellowOwed",
+          "redOwed",
+          "finesOwed",
+          "status"
+        ],
+        out
+      );
+      return new Response(csv, downloadHeaders("visitor-stats.csv", csv));
+    }
+
     return failure("Unsupported export file.", 400);
   } catch (error) {
     return failure(error instanceof Error ? error.message : "Failed to export CSV.", 500);

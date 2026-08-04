@@ -99,8 +99,7 @@
 
   function setButtonLoading(button, isLoading, loadingText, idleText) {
     if (!(button instanceof HTMLButtonElement)) return;
-    button.disabled = isLoading;
-    button.textContent = isLoading ? loadingText : idleText;
+    window.setActionButtonLoading?.(button, isLoading, loadingText, idleText);
   }
 
   function openPasswordModal() {

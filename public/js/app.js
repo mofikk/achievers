@@ -47,6 +47,41 @@
     return THEME_OPTIONS[nextIndex];
   }
 
+  function setActionButtonLoading(button, isLoading, loadingText, idleText) {
+    if (!button) return;
+    if (isLoading) {
+      if (!button.dataset.idleHtml) {
+        button.dataset.idleHtml = button.innerHTML;
+      }
+      button.disabled = true;
+      button.classList.add("is-loading");
+      button.setAttribute("aria-busy", "true");
+      button.textContent = "";
+
+      const spinner = document.createElement("span");
+      spinner.className = "btn-spinner";
+      spinner.setAttribute("aria-hidden", "true");
+
+      const label = document.createElement("span");
+      label.textContent = loadingText || "Saving...";
+
+      button.append(spinner, label);
+      return;
+    }
+
+    button.disabled = false;
+    button.classList.remove("is-loading");
+    button.removeAttribute("aria-busy");
+    if (idleText) {
+      button.textContent = idleText;
+    } else if (button.dataset.idleHtml) {
+      button.innerHTML = button.dataset.idleHtml;
+    }
+    delete button.dataset.idleHtml;
+  }
+
+  window.setActionButtonLoading = setActionButtonLoading;
+
   function updateThemeButton(button) {
     if (!button) return;
     const preference = document.body.dataset.themePreference || "system";
@@ -869,7 +904,7 @@
         return;
       }
       errorEl.textContent = "";
-      saveBtn.disabled = true;
+      window.setActionButtonLoading(saveBtn, true, "Saving...");
       const isEditing = Boolean(editingId);
       const request = isEditing
         ? window.apiFetch(`/notes/${editingId}`, {
@@ -890,7 +925,7 @@
           errorEl.textContent = err.message || "Unable to save note.";
         })
         .finally(() => {
-          saveBtn.disabled = false;
+          window.setActionButtonLoading(saveBtn, false, "Saving...", isEditing ? "Update" : "Save");
         });
     });
 

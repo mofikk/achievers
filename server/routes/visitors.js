@@ -52,7 +52,6 @@ router.post("/", async (req, res, next) => {
   try {
     const name = String(req.body.name || "").trim();
     const nickname = String(req.body.nickname || "").trim();
-    const notes = String(req.body.notes || "").trim();
     if (!name) {
       res.status(400).send("Name is required.");
       return;
@@ -63,11 +62,10 @@ router.post("/", async (req, res, next) => {
       id: nanoid(8),
       name,
       nickname,
-      notes,
       createdAt: now,
       attendance: {},
       payments: { sessions: {} },
-      stats: { yellow: 0, red: 0 },
+      stats: { goals: 0, yellow: 0, red: 0 },
       discipline: { yellowPaid: 0, redPaid: 0 }
     };
 
@@ -92,10 +90,8 @@ router.patch("/:id", async (req, res, next) => {
 
       const name = String(req.body.name || "").trim();
       const nickname = String(req.body.nickname || "").trim();
-      const notes = String(req.body.notes || "").trim();
       if (name) visitor.name = name;
       visitor.nickname = nickname;
-      visitor.notes = notes;
       await writeJsonFile(visitorsPath, visitors);
       updated = visitor;
     });
@@ -158,10 +154,18 @@ router.patch("/:id/stats", async (req, res, next) => {
       const visitor = visitors.find((item) => item.id === req.params.id);
       if (!visitor) return;
 
+      const goals = Number(req.body.goals);
       const yellow = Number(req.body.yellow);
       const red = Number(req.body.red);
-      if (!Number.isFinite(yellow) || !Number.isFinite(red) || yellow < 0 || red < 0) {
-        throw new Error("Card counts must be non-negative.");
+      if (
+        !Number.isFinite(goals) ||
+        !Number.isFinite(yellow) ||
+        !Number.isFinite(red) ||
+        goals < 0 ||
+        yellow < 0 ||
+        red < 0
+      ) {
+        throw new Error("Stats must be non-negative.");
       }
 
       const discipline = req.body.discipline || {};
@@ -176,7 +180,7 @@ router.patch("/:id/stats", async (req, res, next) => {
         Math.min(Number.isFinite(redPaid) ? redPaid : 0, red)
       );
 
-      visitor.stats = { yellow, red };
+      visitor.stats = { goals, yellow, red };
       visitor.discipline = { yellowPaid: cappedYellow, redPaid: cappedRed };
       await writeJsonFile(visitorsPath, visitors);
       updated = visitor;
@@ -187,7 +191,7 @@ router.patch("/:id/stats", async (req, res, next) => {
     }
     res.json(updated);
   } catch (err) {
-    if (err.message === "Card counts must be non-negative.") {
+    if (err.message === "Stats must be non-negative.") {
       res.status(400).send(err.message);
       return;
     }
@@ -262,8 +266,17 @@ router.post("/:id/promote", async (req, res, next) => {
         year: { [yearKey]: "pending" },
         months: { [monthKey]: "pending" }
       },
-      stats: { goals: 0, assists: 0, yellow: 0, red: 0 },
-      attendance: {},
+      stats: {
+        goals: Number(visitor.stats?.goals) || 0,
+        assists: 0,
+        yellow: Number(visitor.stats?.yellow) || 0,
+        red: Number(visitor.stats?.red) || 0
+      },
+      discipline: {
+        yellowPaid: Number(visitor.discipline?.yellowPaid) || 0,
+        redPaid: Number(visitor.discipline?.redPaid) || 0
+      },
+      attendance: { ...(visitor.attendance || {}) },
       payments: { yearly: {}, monthly: {} }
     };
 

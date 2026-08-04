@@ -324,9 +324,8 @@
   }
 
   function setSaving(isSaving) {
-    saveBtn.disabled = isSaving;
+    window.setActionButtonLoading?.(saveBtn, isSaving, "Saving...", "Save");
     cancelBtn.disabled = isSaving;
-    saveBtn.textContent = isSaving ? "Saving..." : "Save";
   }
 
   function loadPlayers() {

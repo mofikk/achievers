@@ -216,6 +216,7 @@ export function buildVisitorStatsPayload(createdVisitors: any[], visitorMeta: Ma
     const src = visitorMeta.get(key) || {};
     return {
       visitor_id: row.id,
+      goals: Number(src.goals) || 0,
       yellow_cards: Number(src.yellow ?? src.yellow_cards) || 0,
       red_cards: Number(src.red ?? src.red_cards) || 0,
       yellow_paid_count: Number(src.yellowPaid ?? src.yellow_paid_count) || 0,
@@ -268,4 +269,3 @@ export function buildNotesPayload(rows: any[], userId: string) {
   }
   return { created, skipped, notePayload };
 }
-

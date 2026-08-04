@@ -4,6 +4,7 @@
   const body = document.getElementById("visitors-body");
   const modal = document.getElementById("visitor-stats-modal");
   const modalTitle = document.getElementById("visitor-stats-title");
+  const goalsInput = document.getElementById("visitor-goals");
   const yellowInput = document.getElementById("visitor-yellow");
   const redInput = document.getElementById("visitor-red");
   const yellowPaidInput = document.getElementById("visitor-yellow-paid");
@@ -18,6 +19,7 @@
     !body ||
     !modal ||
     !modalTitle ||
+    !goalsInput ||
     !yellowInput ||
     !redInput ||
     !yellowPaidInput ||
@@ -68,6 +70,7 @@
   function renderTable(visitors) {
     body.innerHTML = "";
     visitors.forEach((visitor) => {
+      const goals = Number(visitor?.stats?.goals) || 0;
       const yellow = Number(visitor?.stats?.yellow) || 0;
       const red = Number(visitor?.stats?.red) || 0;
       const fine = computeFine(visitor);
@@ -76,6 +79,7 @@
       row.innerHTML = `
         <td data-label="Name">${visitor.name || ""}</td>
         <td data-label="Nickname">${visitor.nickname || "-"}</td>
+        <td data-label="Goals">${goals}</td>
         <td data-label="Yellow">${yellow}</td>
         <td data-label="Red">${red}</td>
         <td data-label="Fine Owed">${formatCurrency(fine.fineOwed)}</td>
@@ -103,7 +107,8 @@
 
   function openModal(visitor) {
     state.selectedId = visitor.id;
-    modalTitle.textContent = `Update Cards: ${visitor.name || ""}`;
+    modalTitle.textContent = `Update Statistics: ${visitor.name || ""}`;
+    goalsInput.value = String(visitor?.stats?.goals || 0);
     yellowInput.value = String(visitor?.stats?.yellow || 0);
     redInput.value = String(visitor?.stats?.red || 0);
     yellowPaidInput.value = String(visitor?.discipline?.yellowPaid || 0);
@@ -142,13 +147,16 @@
 
   saveBtn.addEventListener("click", () => {
     if (!state.selectedId) return;
+    const goals = Number(goalsInput.value);
     const yellow = Number(yellowInput.value);
     const red = Number(redInput.value);
     const yellowPaid = Number(yellowPaidInput.value);
     const redPaid = Number(redPaidInput.value);
     if (
       !Number.isFinite(yellow) ||
+      !Number.isFinite(goals) ||
       !Number.isFinite(red) ||
+      goals < 0 ||
       yellow < 0 ||
       red < 0 ||
       !Number.isFinite(yellowPaid) ||
@@ -160,11 +168,12 @@
       return;
     }
 
-    saveBtn.disabled = true;
+    window.setActionButtonLoading?.(saveBtn, true, "Saving...");
     window
       .apiFetch(`/visitors/${state.selectedId}/stats`, {
         method: "PATCH",
         body: JSON.stringify({
+          goals,
           yellow,
           red,
           discipline: { yellowPaid, redPaid }
@@ -178,7 +187,7 @@
         errorEl.textContent = err.message || "Unable to save stats.";
       })
       .finally(() => {
-        saveBtn.disabled = false;
+        window.setActionButtonLoading?.(saveBtn, false);
       });
   });
 

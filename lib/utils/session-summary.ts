@@ -26,6 +26,7 @@ export type ReviewGoalRow = {
   source_name: string;
   normalized_name: string;
   goals: number;
+  resolved_type: "player" | "visitor";
   resolved_id: string | null;
   resolved_name: string | null;
   confidence: number;
@@ -273,6 +274,7 @@ export function buildReview(rawText: string, playersData: any[], visitorsData: a
   const dedupeKey = new Set<string>();
   const attendanceRows: ReviewRow[] = [];
   const attendancePlayerIds = new Set<string>();
+  const attendanceVisitorNames = new Set<string>();
   const visitorsToCreate = new Set<string>();
 
   for (const rawName of attendanceNames) {
@@ -299,8 +301,9 @@ export function buildReview(rawText: string, playersData: any[], visitorsData: a
         resolved_name: titleCase(rawName),
         confidence: playerMatch.confidence
       });
+      attendanceVisitorNames.add(normalized);
       visitorsToCreate.add(normalized);
-      warnings.push(`"${rawName}" is not a player match and will be ignored for attendance.`);
+      warnings.push(`"${rawName}" is not a player match and will be tracked as a visitor.`);
     }
   }
 
@@ -319,37 +322,73 @@ export function buildReview(rawText: string, playersData: any[], visitorsData: a
   const goalsRows: ReviewGoalRow[] = [];
   for (const [norm, row] of goalsMerged.entries()) {
     const playerMatch = matchPerson(row.sourceName, players);
-    if (playerMatch.status !== "matched" || !playerMatch.personId) {
-      warnings.push(`Goal scorer "${row.sourceName}" could not be matched to a player.`);
+    const visitorMatch = matchPerson(row.sourceName, visitors);
+    const usePlayer = playerMatch.status === "matched" && !!playerMatch.personId;
+    const useVisitor = !usePlayer && visitorMatch.status === "matched" && !!visitorMatch.personId;
+
+    if (!usePlayer && !useVisitor) {
+      visitorsToCreate.add(norm);
       goalsRows.push({
         source_name: row.sourceName,
         normalized_name: norm,
         goals: row.goals,
+        resolved_type: "visitor",
         resolved_id: null,
-        resolved_name: null,
-        confidence: playerMatch.confidence,
-        status: "needs_review"
+        resolved_name: titleCase(row.sourceName),
+        confidence: Math.max(playerMatch.confidence, visitorMatch.confidence),
+        status: "ok"
       });
+      if (!attendanceVisitorNames.has(norm)) {
+        attendanceVisitorNames.add(norm);
+        attendanceRows.push({
+          source_name: row.sourceName,
+          normalized_name: norm,
+          resolved_type: "visitor",
+          resolved_id: null,
+          resolved_name: titleCase(row.sourceName),
+          confidence: Math.max(playerMatch.confidence, visitorMatch.confidence),
+          auto_added: true
+        });
+      }
       continue;
     }
+
+    const resolvedType: "player" | "visitor" = usePlayer ? "player" : "visitor";
+    const resolvedId = usePlayer ? playerMatch.personId : visitorMatch.personId;
+    const resolvedName = usePlayer ? playerMatch.personName : visitorMatch.personName;
+    const confidence = usePlayer ? playerMatch.confidence : visitorMatch.confidence;
+
     goalsRows.push({
       source_name: row.sourceName,
       normalized_name: norm,
       goals: row.goals,
-      resolved_id: playerMatch.personId,
-      resolved_name: playerMatch.personName,
-      confidence: playerMatch.confidence,
+      resolved_type: resolvedType,
+      resolved_id: resolvedId,
+      resolved_name: resolvedName,
+      confidence,
       status: "ok"
     });
-    if (!attendancePlayerIds.has(playerMatch.personId)) {
-      attendancePlayerIds.add(playerMatch.personId);
+    if (resolvedType === "player" && resolvedId && !attendancePlayerIds.has(resolvedId)) {
+      attendancePlayerIds.add(resolvedId);
       attendanceRows.push({
         source_name: row.sourceName,
         normalized_name: norm,
         resolved_type: "player",
-        resolved_id: playerMatch.personId,
-        resolved_name: playerMatch.personName || row.sourceName,
-        confidence: playerMatch.confidence,
+        resolved_id: resolvedId,
+        resolved_name: resolvedName || row.sourceName,
+        confidence,
+        auto_added: true
+      });
+    }
+    if (resolvedType === "visitor" && !attendanceVisitorNames.has(norm)) {
+      attendanceVisitorNames.add(norm);
+      attendanceRows.push({
+        source_name: row.sourceName,
+        normalized_name: norm,
+        resolved_type: "visitor",
+        resolved_id: resolvedId,
+        resolved_name: resolvedName || row.sourceName,
+        confidence,
         auto_added: true
       });
     }
@@ -440,6 +479,18 @@ export function buildReview(rawText: string, playersData: any[], visitorsData: a
         source_name: card.sourceName,
         normalized_name: norm,
         resolved_type: "player",
+        resolved_id: resolvedId,
+        resolved_name: resolvedName,
+        confidence,
+        auto_added: true
+      });
+    }
+    if (resolvedType === "visitor" && !attendanceVisitorNames.has(norm)) {
+      attendanceVisitorNames.add(norm);
+      attendanceRows.push({
+        source_name: card.sourceName,
+        normalized_name: norm,
+        resolved_type: "visitor",
         resolved_id: resolvedId,
         resolved_name: resolvedName,
         confidence,

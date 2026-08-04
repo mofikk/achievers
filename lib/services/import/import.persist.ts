@@ -50,6 +50,17 @@ async function logImportCompleted(
   });
 }
 
+async function upsertVisitorStats(supabase: any, payload: any[]) {
+  const { error } = await supabase.from("visitor_stats").upsert(payload, { onConflict: "visitor_id" });
+  if (!error) return null;
+
+  const fallbackPayload = payload.map((row) => {
+    const { goals, ...fallbackRow } = row;
+    return fallbackRow;
+  });
+  return supabase.from("visitor_stats").upsert(fallbackPayload, { onConflict: "visitor_id" });
+}
+
 async function importPlayers(supabase: any, rows: any[], userId: string, backupFile: string) {
   const { data: existingPlayers } = await supabase.from("players").select("id, full_name, nickname");
   const existing = new Set<string>(
@@ -186,7 +197,7 @@ async function importVisitors(supabase: any, rows: any[], userId: string, backup
 
   const visitorStatsPayload = buildVisitorStatsPayload(createdVisitors, visitorMeta);
   if (visitorStatsPayload.length) {
-    await supabase.from("visitor_stats").upsert(visitorStatsPayload, { onConflict: "visitor_id" });
+    await upsertVisitorStats(supabase, visitorStatsPayload);
   }
 
   const visitorPaymentPayload = buildVisitorPaymentPayload(createdVisitors, visitorMeta);

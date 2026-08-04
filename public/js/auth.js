@@ -271,7 +271,21 @@
   function setButtonLoading(button, isLoading, idleLabel, loadingLabel) {
     if (!button) return;
     button.disabled = isLoading;
-    button.textContent = isLoading ? loadingLabel : idleLabel;
+    button.classList.toggle("is-loading", isLoading);
+    button.toggleAttribute("aria-busy", isLoading);
+    if (!isLoading) {
+      button.textContent = idleLabel;
+      return;
+    }
+
+    button.textContent = "";
+    const spinner = document.createElement("span");
+    spinner.className = "btn-spinner";
+    spinner.setAttribute("aria-hidden", "true");
+
+    const label = document.createElement("span");
+    label.textContent = loadingLabel;
+    button.append(spinner, label);
   }
 
   function initLoginPage() {

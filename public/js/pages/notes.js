@@ -192,8 +192,8 @@
       return;
     }
     errorEl.textContent = "";
-    saveBtn.disabled = true;
     const isEditing = Boolean(state.editingId);
+    window.setActionButtonLoading?.(saveBtn, true, "Saving...", isEditing ? "Update" : "Save");
     const request = isEditing
       ? window.apiFetch(`/notes/${state.editingId}`, {
           method: "PATCH",
@@ -214,7 +214,7 @@
         errorEl.textContent = err.message || "Unable to save note.";
       })
       .finally(() => {
-        saveBtn.disabled = false;
+        window.setActionButtonLoading?.(saveBtn, false, "Saving...", isEditing ? "Update" : "Save");
       });
   });
 

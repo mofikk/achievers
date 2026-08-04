@@ -18,48 +18,35 @@ export async function createVisitor(request: NextRequest) {
     const fullName = String((body as any).name || (body as any).full_name || "").trim();
     if (!fullName) return failure("Name is required.", 400);
 
-    const notes = String((body as any).notes || "").trim();
-    const payloadWithNotes = {
+    const payload = {
       full_name: fullName,
       nickname: String((body as any).nickname || "").trim() || null,
-      email: (body as any).email ? String((body as any).email).trim() : null,
-      notes: notes || null
+      email: (body as any).email ? String((body as any).email).trim() : null
     };
 
-    let { data, error } = await supabase
+    const { data, error } = await supabase
       .from("visitors")
-      .insert(payloadWithNotes)
-      .select("id, full_name, nickname, email, notes, created_at")
+      .insert(payload)
+      .select("id, full_name, nickname, email, created_at")
       .single();
-    if (error && /column .*notes.* does not exist/i.test(error.message || "")) {
-      const payloadWithoutNotes = {
-        full_name: payloadWithNotes.full_name,
-        nickname: payloadWithNotes.nickname,
-        email: payloadWithNotes.email
-      };
-      const retry = await supabase
-        .from("visitors")
-        .insert(payloadWithoutNotes)
-        .select("id, full_name, nickname, email, created_at")
-        .single();
-      data = retry.data;
-      error = retry.error;
-    }
 
     if (error) {
       return failure(error.message, 400);
     }
 
-    await supabase.from("visitor_stats").upsert(
-      {
-        visitor_id: data.id,
-        yellow_cards: 0,
-        red_cards: 0,
-        yellow_paid_count: 0,
-        red_paid_count: 0
-      },
-      { onConflict: "visitor_id" }
-    );
+    const statsPayload = {
+      visitor_id: data.id,
+      goals: 0,
+      yellow_cards: 0,
+      red_cards: 0,
+      yellow_paid_count: 0,
+      red_paid_count: 0
+    };
+    const statsInsert = await supabase.from("visitor_stats").upsert(statsPayload, { onConflict: "visitor_id" });
+    if (statsInsert.error) {
+      const { goals, ...fallbackStatsPayload } = statsPayload;
+      await supabase.from("visitor_stats").upsert(fallbackStatsPayload, { onConflict: "visitor_id" });
+    }
 
     const actor = await getActorContext(supabase, user.id);
     await logActivity(supabase, {
@@ -97,27 +84,13 @@ export async function patchVisitor(request: NextRequest, id: string) {
     if (fullName !== undefined) patchPayload.full_name = String(fullName || "").trim();
     if ((body as any).nickname !== undefined) patchPayload.nickname = (body as any).nickname ? String((body as any).nickname).trim() : null;
     if ((body as any).email !== undefined) patchPayload.email = (body as any).email ? String((body as any).email).trim() : null;
-    if ((body as any).notes !== undefined) patchPayload.notes = (body as any).notes ? String((body as any).notes).trim() : null;
 
-    let { data, error } = await supabase
+    const { data, error } = await supabase
       .from("visitors")
       .update(patchPayload)
       .eq("id", id)
-      .select("id, full_name, nickname, email, notes, created_at")
+      .select("id, full_name, nickname, email, created_at")
       .single();
-
-    if (error && /column .*notes.* does not exist/i.test(error.message || "")) {
-      const fallbackPayload = { ...patchPayload };
-      delete fallbackPayload.notes;
-      const retry = await supabase
-        .from("visitors")
-        .update(fallbackPayload)
-        .eq("id", id)
-        .select("id, full_name, nickname, email, created_at")
-        .single();
-      data = retry.data;
-      error = retry.error;
-    }
 
     if (error) {
       return failure(error.message, 400);
@@ -278,14 +251,35 @@ export async function promoteVisitor(request: NextRequest, id: string) {
       return failure("Position is required.", 400);
     }
 
-    const { data: visitor, error: visitorError } = await supabase
-      .from("visitors")
-      .select("id, full_name, nickname, email, created_at")
-      .eq("id", id)
-      .single();
+    const [{ data: visitor, error: visitorError }, visitorStatsResult, { data: visitorAttendance }] = await Promise.all([
+      supabase
+        .from("visitors")
+        .select("id, full_name, nickname, email, created_at")
+        .eq("id", id)
+        .single(),
+      supabase
+        .from("visitor_stats")
+        .select("goals, yellow_cards, red_cards, yellow_paid_count, red_paid_count")
+        .eq("visitor_id", id)
+        .maybeSingle(),
+      supabase
+        .from("visitor_attendance")
+        .select("session_date, present")
+        .eq("visitor_id", id)
+    ]);
 
     if (visitorError || !visitor) {
       return failure(visitorError?.message || "Visitor not found.", 404);
+    }
+
+    let visitorStats = visitorStatsResult.data;
+    if (visitorStatsResult.error) {
+      const retry = await supabase
+        .from("visitor_stats")
+        .select("yellow_cards, red_cards, yellow_paid_count, red_paid_count")
+        .eq("visitor_id", id)
+        .maybeSingle();
+      visitorStats = retry.data;
     }
 
     const playerPayload = {
@@ -309,15 +303,25 @@ export async function promoteVisitor(request: NextRequest, id: string) {
     await supabase.from("player_stats").upsert(
       {
         player_id: player.id,
-        goals: 0,
+        goals: Number(visitorStats?.goals) || 0,
         assists: 0,
-        yellow_cards: 0,
-        red_cards: 0,
-        yellow_paid_count: 0,
-        red_paid_count: 0
+        yellow_cards: Number(visitorStats?.yellow_cards) || 0,
+        red_cards: Number(visitorStats?.red_cards) || 0,
+        yellow_paid_count: Number(visitorStats?.yellow_paid_count) || 0,
+        red_paid_count: Number(visitorStats?.red_paid_count) || 0
       },
       { onConflict: "player_id" }
     );
+
+    const playerAttendancePayload = (visitorAttendance ?? []).map((row: any) => ({
+      player_id: player.id,
+      session_date: String(row.session_date || "").slice(0, 10),
+      present: row.present === true
+    })).filter((row: any) => row.session_date);
+
+    if (playerAttendancePayload.length) {
+      await supabase.from("player_attendance").upsert(playerAttendancePayload, { onConflict: "player_id,session_date" });
+    }
 
     await Promise.all([
       supabase.from("visitor_attendance").delete().eq("visitor_id", id),
@@ -341,7 +345,9 @@ export async function promoteVisitor(request: NextRequest, id: string) {
         visitor_id: id,
         visitor_name: visitor.full_name || null,
         player_id: player.id,
-        player_name: player.full_name || null
+        player_name: player.full_name || null,
+        transferred_goals: Number(visitorStats?.goals) || 0,
+        transferred_attendance_rows: playerAttendancePayload.length
       }
     });
 

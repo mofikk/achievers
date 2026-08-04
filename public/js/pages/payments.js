@@ -368,9 +368,8 @@
   }
 
   function setSaveLoading(isLoading) {
-    saveBtn.disabled = isLoading;
+    window.setActionButtonLoading?.(saveBtn, isLoading, "Saving...", "Save");
     closeBtn.disabled = isLoading;
-    saveBtn.textContent = isLoading ? "Saving..." : "Save";
   }
 
   function buildFilters(players) {

@@ -298,13 +298,14 @@
     }
 
     if (!goalsRows.length) {
-      summaryGoalsBody.innerHTML = '<tr><td colspan="3">No goals parsed.</td></tr>';
+      summaryGoalsBody.innerHTML = '<tr><td colspan="4">No goals parsed.</td></tr>';
     } else {
       goalsRows.forEach((row) => {
         const status = row.status === "ok" ? "OK" : "NEEDS REVIEW";
         const tr = document.createElement("tr");
         tr.innerHTML = `
           <td data-label="Goals">${row.resolved_name || row.source_name || "-"}</td>
+          <td data-label="Type">${row.resolved_type || "-"}</td>
           <td data-label="Count">${Number(row.goals) || 0}</td>
           <td data-label="Status">${status}</td>
         `;
@@ -360,13 +361,16 @@
   }
 
   function setSummaryReviewLoading(isLoading) {
-    summaryReviewBtn.disabled = isLoading;
-    summaryReviewBtn.textContent = isLoading ? "Reviewing..." : "Review";
+    window.setActionButtonLoading?.(summaryReviewBtn, isLoading, "Reviewing...", "Review");
   }
 
   function setSummaryCommitLoading(isLoading) {
-    summaryCommitBtn.disabled = isLoading;
-    summaryCommitBtn.textContent = isLoading ? "Committing..." : "Accept & Commit";
+    if (isLoading) {
+      window.setActionButtonLoading?.(summaryCommitBtn, true, "Committing...", "Accept & Commit");
+      return;
+    }
+    window.setActionButtonLoading?.(summaryCommitBtn, false, "Committing...", "Accept & Commit");
+    setSummaryCommitState(state.reviewedSummary);
   }
 
   function clearSessionSummaryTables() {
@@ -454,8 +458,12 @@
   }
 
   function setSaving(isSaving) {
-    saveBtn.disabled = isSaving || !state.selectedDate || isFuture;
-    saveBtn.textContent = isSaving ? "Saving..." : "Save";
+    if (isSaving) {
+      window.setActionButtonLoading?.(saveBtn, true, "Saving...", "Save");
+      return;
+    }
+    window.setActionButtonLoading?.(saveBtn, false, "Saving...", "Save");
+    saveBtn.disabled = !state.selectedDate || isFuture;
   }
 
   function setLoadingState() {

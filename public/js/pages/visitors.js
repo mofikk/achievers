@@ -14,7 +14,6 @@
   const viewClose = document.getElementById("visitor-view-close");
   const viewName = document.getElementById("visitor-view-name");
   const viewNickname = document.getElementById("visitor-view-nickname");
-  const viewNotes = document.getElementById("visitor-view-notes");
   const viewError = document.getElementById("visitor-view-error");
   const promoteBtn = document.getElementById("visitor-promote");
   const deleteBtn = document.getElementById("visitor-delete");
@@ -39,7 +38,6 @@
     !viewClose ||
     !viewName ||
     !viewNickname ||
-    !viewNotes ||
     !viewError ||
     !promoteBtn ||
     !deleteBtn ||
@@ -109,7 +107,6 @@
   function openView(visitor) {
     viewName.textContent = visitor.name || "";
     viewNickname.textContent = visitor.nickname || "-";
-    viewNotes.textContent = visitor.notes || "-";
     viewError.textContent = "";
     state.selectedId = visitor.id;
     viewModal.classList.remove("hidden");
@@ -183,15 +180,15 @@
     const data = new FormData(form);
     const name = String(data.get("name") || "").trim();
     const nickname = String(data.get("nickname") || "").trim();
-    const notes = String(data.get("notes") || "").trim();
 
     if (!name) {
       errorEl.textContent = "Name is required.";
       return;
     }
 
-    saveBtn.disabled = true;
-    const payload = { name, nickname, notes };
+    const idleLabel = saveBtn.textContent || "Save";
+    window.setActionButtonLoading?.(saveBtn, true, "Saving...", idleLabel);
+    const payload = { name, nickname };
     const request = state.editingId
       ? window.apiFetch(`/visitors/${state.editingId}`, {
           method: "PATCH",
@@ -213,7 +210,7 @@
         errorEl.textContent = err.message || "Unable to save visitor.";
       })
       .finally(() => {
-        saveBtn.disabled = false;
+        window.setActionButtonLoading?.(saveBtn, false, "Saving...", idleLabel);
       });
   });
 
@@ -234,7 +231,6 @@
       modalTitle.textContent = "Edit Visitor";
       form.elements.name.value = visitor.name || "";
       form.elements.nickname.value = visitor.nickname || "";
-      form.elements.notes.value = visitor.notes || "";
       openModal();
       return;
     }
@@ -295,7 +291,7 @@
     const id = state.selectedId;
     if (!id) return;
     const payload = { position: promotePosition.value };
-    promoteConfirm.disabled = true;
+    window.setActionButtonLoading?.(promoteConfirm, true, "Promoting...");
     window
       .apiFetch(`/visitors/${id}/promote`, {
         method: "POST",
@@ -310,7 +306,7 @@
         viewError.textContent = err.message || "Unable to promote visitor.";
       })
       .finally(() => {
-        promoteConfirm.disabled = false;
+        window.setActionButtonLoading?.(promoteConfirm, false);
       });
   });
 

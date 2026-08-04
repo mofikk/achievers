@@ -9,31 +9,55 @@ export async function patchVisitorStats(request: NextRequest, id: string) {
     if (!auth) return failure("Unauthorized", 401);
     const { user, supabase, permissions } = auth;
     const body = await request.json();
-    const touchesStats = (body as any)?.yellow !== undefined || (body as any)?.red !== undefined;
+    const touchesStats =
+      (body as any)?.goals !== undefined ||
+      (body as any)?.yellow !== undefined ||
+      (body as any)?.red !== undefined;
     const touchesFines =
       (body as any)?.discipline?.yellowPaid !== undefined ||
       (body as any)?.discipline?.redPaid !== undefined;
     if (touchesStats && !permissions.manage_stats) return failure("Forbidden", 403);
     if (touchesFines && !permissions.manage_fines) return failure("Forbidden", 403);
-    const { data: previous } = await supabase
+    const previousResult = await supabase
       .from("visitor_stats")
-      .select("visitor_id, yellow_cards, red_cards, yellow_paid_count, red_paid_count")
+      .select("visitor_id, goals, yellow_cards, red_cards, yellow_paid_count, red_paid_count")
       .eq("visitor_id", id)
       .maybeSingle();
+    let previous = previousResult.data;
+    if (previousResult.error) {
+      const retry = await supabase
+        .from("visitor_stats")
+        .select("visitor_id, yellow_cards, red_cards, yellow_paid_count, red_paid_count")
+        .eq("visitor_id", id)
+        .maybeSingle();
+      previous = retry.data;
+    }
 
     const payload = {
       visitor_id: id,
+      goals: Number((body as any)?.goals) || 0,
       yellow_cards: Number((body as any)?.yellow) || 0,
       red_cards: Number((body as any)?.red) || 0,
       yellow_paid_count: Number((body as any)?.discipline?.yellowPaid) || 0,
       red_paid_count: Number((body as any)?.discipline?.redPaid) || 0
     };
 
-    const { data, error } = await supabase
+    let { data, error } = await supabase
       .from("visitor_stats")
       .upsert(payload, { onConflict: "visitor_id" })
-      .select("visitor_id, yellow_cards, red_cards, yellow_paid_count, red_paid_count")
+      .select("visitor_id, goals, yellow_cards, red_cards, yellow_paid_count, red_paid_count")
       .single();
+
+    if (error) {
+      const { goals, ...fallbackPayload } = payload;
+      const retry = await supabase
+        .from("visitor_stats")
+        .upsert(fallbackPayload, { onConflict: "visitor_id" })
+        .select("visitor_id, yellow_cards, red_cards, yellow_paid_count, red_paid_count")
+        .single();
+      data = retry.data;
+      error = retry.error;
+    }
 
     if (error) return failure(error.message, 400);
 
@@ -47,6 +71,7 @@ export async function patchVisitorStats(request: NextRequest, id: string) {
 
     const statsChanged =
       !previous ||
+      Number(previous.goals) !== Number(data.goals) ||
       Number(previous.yellow_cards) !== Number(data.yellow_cards) ||
       Number(previous.red_cards) !== Number(data.red_cards);
 
@@ -100,6 +125,7 @@ export async function patchVisitorStats(request: NextRequest, id: string) {
 
     return success({
       visitor_id: data.visitor_id,
+      goals: Number(data.goals) || 0,
       yellow: Number(data.yellow_cards) || 0,
       red: Number(data.red_cards) || 0,
       discipline: {
@@ -111,4 +137,3 @@ export async function patchVisitorStats(request: NextRequest, id: string) {
     return failure(error instanceof Error ? error.message : "Failed to update visitor stats.", 500);
   }
 }
-

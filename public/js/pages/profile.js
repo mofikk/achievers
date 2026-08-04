@@ -346,7 +346,7 @@
 
   deleteConfirmBtn.addEventListener("click", () => {
     if (!state.player) return;
-    deleteConfirmBtn.disabled = true;
+    window.setActionButtonLoading?.(deleteConfirmBtn, true, "Deleting...");
     window
       .apiFetch(`/players/${state.player.id}`, { method: "DELETE" })
       .then(() => {
@@ -356,7 +356,7 @@
         window.toast(err.message || "Unable to delete player.", "error");
       })
       .finally(() => {
-        deleteConfirmBtn.disabled = false;
+        window.setActionButtonLoading?.(deleteConfirmBtn, false);
       });
   });
 

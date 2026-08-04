@@ -1284,8 +1284,8 @@ body.theme-dark .sticky-data-table td:first-child {
 }
 
 .visitor-stats-table {
-  --sticky-table-tablet-width: 860px;
-  --sticky-table-mobile-width: 760px;
+  --sticky-table-tablet-width: 940px;
+  --sticky-table-mobile-width: 840px;
   --sticky-actions-width: 120px;
 }
 
@@ -1355,6 +1355,29 @@ body.theme-dark .players-table td:first-child {
 .action-btn:hover {
   background: var(--button-hover-bg);
   color: var(--button-hover-ink);
+}
+
+.action-btn:disabled,
+.ghost-btn:disabled,
+.danger-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.72;
+}
+
+.action-btn.is-loading,
+.ghost-btn.is-loading,
+.danger-btn.is-loading {
+  pointer-events: none;
+}
+
+.btn-spinner {
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  animation: preloader-spin 0.7s linear infinite;
 }
 
 .empty-state {

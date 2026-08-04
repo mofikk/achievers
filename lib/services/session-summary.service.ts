@@ -16,6 +16,7 @@ type GoalReviewRow = {
   source_name: string;
   normalized_name: string;
   goals: number;
+  resolved_type: "player" | "visitor";
   resolved_id: string | null;
   resolved_name: string | null;
   status: "ok" | "needs_review";
@@ -55,6 +56,18 @@ function titleCase(value: string) {
     .filter(Boolean)
     .map((part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
     .join(" ");
+}
+
+async function upsertVisitorStats(supabase: any, payload: any | any[]) {
+  const { error } = await supabase.from("visitor_stats").upsert(payload, { onConflict: "visitor_id" });
+  if (!error) return null;
+
+  const stripGoals = (row: any) => {
+    const { goals, ...fallbackRow } = row;
+    return fallbackRow;
+  };
+  const fallbackPayload = Array.isArray(payload) ? payload.map(stripGoals) : stripGoals(payload);
+  return supabase.from("visitor_stats").upsert(fallbackPayload, { onConflict: "visitor_id" });
 }
 
 export async function getSessionSummaries(request: NextRequest) {
@@ -218,13 +231,14 @@ export async function commitSessionSummary(request: NextRequest) {
 
       const visitorStatPayload = (createdVisitors ?? []).map((row: any) => ({
         visitor_id: row.id,
+        goals: 0,
         yellow_cards: 0,
         red_cards: 0,
         yellow_paid_count: 0,
         red_paid_count: 0
       }));
       if (visitorStatPayload.length) {
-        await supabase.from("visitor_stats").upsert(visitorStatPayload, { onConflict: "visitor_id" });
+        await upsertVisitorStats(supabase, visitorStatPayload);
       }
     }
 
@@ -265,8 +279,16 @@ export async function commitSessionSummary(request: NextRequest) {
     }
 
     const goalIncrements = new Map<string, number>();
+    const visitorGoalIncrements = new Map<string, number>();
     (review.goals ?? []).forEach((row) => {
-      if (!row.resolved_id || row.status !== "ok") return;
+      if (row.status !== "ok") return;
+      if (row.resolved_type === "visitor") {
+        const normalized = normalizeName(row.normalized_name || row.source_name);
+        const visitorId = row.resolved_id ? String(row.resolved_id) : visitorByNormalized.get(normalized) || "";
+        if (visitorId) visitorGoalIncrements.set(visitorId, (visitorGoalIncrements.get(visitorId) || 0) + (Number(row.goals) || 0));
+        return;
+      }
+      if (!row.resolved_id) return;
       const playerId = String(row.resolved_id);
       goalIncrements.set(playerId, (goalIncrements.get(playerId) || 0) + (Number(row.goals) || 0));
     });
@@ -341,31 +363,44 @@ export async function commitSessionSummary(request: NextRequest) {
       if (playerStatsError) return failure(playerStatsError.message, 400);
     }
 
-    const statVisitorIds = Array.from(visitorCardIncrements.keys());
+    const statVisitorIds = Array.from(
+      new Set([
+        ...Array.from(visitorGoalIncrements.keys()),
+        ...Array.from(visitorCardIncrements.keys())
+      ])
+    );
     if (statVisitorIds.length) {
-      const { data: existingVisitorStats } = await supabase
+      const existingVisitorStatsResult = await supabase
         .from("visitor_stats")
-        .select("visitor_id, yellow_cards, red_cards, yellow_paid_count, red_paid_count")
+        .select("visitor_id, goals, yellow_cards, red_cards, yellow_paid_count, red_paid_count")
         .in("visitor_id", statVisitorIds);
+      let existingVisitorStats = existingVisitorStatsResult.data as any[] | null;
+      if (existingVisitorStatsResult.error) {
+        const retry = await supabase
+          .from("visitor_stats")
+          .select("visitor_id, yellow_cards, red_cards, yellow_paid_count, red_paid_count")
+          .in("visitor_id", statVisitorIds);
+        existingVisitorStats = retry.data as any[] | null;
+      }
       const existingVisitorStatMap = new Map<string, any>(
         (existingVisitorStats ?? []).map((row: any) => [String(row.visitor_id), row])
       );
 
       const visitorStatPayload = statVisitorIds.map((visitorId) => {
         const existing = existingVisitorStatMap.get(visitorId) || {};
+        const goalInc = visitorGoalIncrements.get(visitorId) || 0;
         const inc = visitorCardIncrements.get(visitorId) || { yellow: 0, red: 0, yellowPaid: 0, redPaid: 0 };
         return {
           visitor_id: visitorId,
+          goals: (Number(existing.goals) || 0) + goalInc,
           yellow_cards: (Number(existing.yellow_cards) || 0) + inc.yellow,
           red_cards: (Number(existing.red_cards) || 0) + inc.red,
           yellow_paid_count: (Number(existing.yellow_paid_count) || 0) + inc.yellowPaid,
           red_paid_count: (Number(existing.red_paid_count) || 0) + inc.redPaid
         };
       });
-      const { error: visitorStatsError } = await supabase
-        .from("visitor_stats")
-        .upsert(visitorStatPayload, { onConflict: "visitor_id" });
-      if (visitorStatsError) return failure(visitorStatsError.message, 400);
+      const visitorStatsResult = await upsertVisitorStats(supabase, visitorStatPayload);
+      if (visitorStatsResult?.error) return failure(visitorStatsResult.error.message, 400);
     }
 
     const { data: summary, error: summaryError } = await supabase
@@ -402,6 +437,7 @@ export async function commitSessionSummary(request: NextRequest) {
       players_present: presentPlayerIds.size,
       visitors_present: presentVisitorIds.size,
       goals_updated_for_players: goalIncrements.size,
+      goals_updated_for_visitors: visitorGoalIncrements.size,
       cards_updated_for_players: playerCardIncrements.size,
       cards_updated_for_visitors: visitorCardIncrements.size,
       visitors_created: pendingVisitors.size

@@ -49,10 +49,12 @@ async function applyReset(supabase: any, reset: any) {
   }
 
   if (reset.stats) {
-    await Promise.all([
-      updateByIds("player_stats", "player_id", { goals: 0, assists: 0, yellow_cards: 0, red_cards: 0 }),
-      updateByIds("visitor_stats", "visitor_id", { yellow_cards: 0, red_cards: 0 })
-    ]);
+    await updateByIds("player_stats", "player_id", { goals: 0, assists: 0, yellow_cards: 0, red_cards: 0 });
+    try {
+      await updateByIds("visitor_stats", "visitor_id", { goals: 0, yellow_cards: 0, red_cards: 0 });
+    } catch {
+      await updateByIds("visitor_stats", "visitor_id", { yellow_cards: 0, red_cards: 0 });
+    }
   }
 
   if (reset.disciplinePaid) {

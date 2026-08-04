@@ -361,8 +361,7 @@
     }
     monthlySchedule = scheduleResult.schedule;
     const payload = getFormPayload();
-    saveBtn.disabled = true;
-    saveBtn.textContent = "Saving...";
+    window.setActionButtonLoading?.(saveBtn, true, "Saving...", saveBtnLabel);
 
     window
       .apiFetch("/settings", {
@@ -379,8 +378,7 @@
         errorEl.textContent = err.message || "Unable to save settings.";
       })
       .finally(() => {
-        saveBtn.disabled = false;
-        saveBtn.textContent = saveBtnLabel;
+        window.setActionButtonLoading?.(saveBtn, false, "Saving...", saveBtnLabel);
       });
   });
 
@@ -415,8 +413,7 @@
 
   seasonConfirmBtn.addEventListener("click", () => {
     if (!pendingAction) return;
-    seasonConfirmBtn.disabled = true;
-    seasonConfirmBtn.textContent = "Processing...";
+    window.setActionButtonLoading?.(seasonConfirmBtn, true, "Processing...", seasonConfirmBtnLabel);
     const endpoint =
       pendingAction.type === "rollover" ? "/admin/rollover" : "/admin/reset-season";
     const payload =
@@ -437,8 +434,7 @@
         closeSeasonModal();
       })
       .finally(() => {
-        seasonConfirmBtn.disabled = false;
-        seasonConfirmBtn.textContent = seasonConfirmBtnLabel;
+        window.setActionButtonLoading?.(seasonConfirmBtn, false, "Processing...", seasonConfirmBtnLabel);
       });
   });
 
@@ -452,8 +448,7 @@
     }
 
     const type = importType.value;
-    importBtn.disabled = true;
-    importBtn.textContent = "Importing...";
+    window.setActionButtonLoading?.(importBtn, true, "Importing...", importBtnLabel);
     window
       .apiFetch(`/import/${type}`, {
         method: "POST",
@@ -479,8 +474,7 @@
         importError.textContent = err.message || "Unable to import data.";
       })
       .finally(() => {
-        importBtn.disabled = false;
-        importBtn.textContent = importBtnLabel;
+        window.setActionButtonLoading?.(importBtn, false, "Importing...", importBtnLabel);
       });
   });
 

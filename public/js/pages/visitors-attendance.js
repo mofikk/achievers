@@ -261,8 +261,7 @@
     const selectedDate = dateSelect.value;
     if (!selectedDate) return;
     const previousLabel = saveBtn.textContent;
-    saveBtn.disabled = true;
-    saveBtn.textContent = "Saving...";
+    window.setActionButtonLoading?.(saveBtn, true, "Saving...", previousLabel || "Save");
     const updates = state.visitors.map((visitor) => ({
       id: visitor.id,
       present: visitor?.attendance?.[selectedDate] === true
@@ -279,8 +278,7 @@
         window.toast(err.message || "Unable to save attendance.", "error");
       })
       .finally(() => {
-        saveBtn.disabled = false;
-        saveBtn.textContent = previousLabel || "Save";
+        window.setActionButtonLoading?.(saveBtn, false, "Saving...", previousLabel || "Save");
       });
   });
 

@@ -23,19 +23,11 @@ export async function getVisitors(request: NextRequest) {
 
     const visitorsResult = await supabase
       .from("visitors")
-      .select("id, full_name, nickname, email, notes, created_at")
+      .select("id, full_name, nickname, email, created_at")
       .order("created_at", { ascending: false });
 
     let visitors: any[] | null = visitorsResult.data as any[] | null;
     let visitorsError: any = visitorsResult.error;
-    if (visitorsError && /column .*notes.* does not exist/i.test(visitorsError.message || "")) {
-      const retry = await supabase
-        .from("visitors")
-        .select("id, full_name, nickname, email, created_at")
-        .order("created_at", { ascending: false });
-      visitors = retry.data as any[] | null;
-      visitorsError = retry.error;
-    }
 
     if (visitorsError) return failure(visitorsError.message, 400);
     if (!visitors?.length) return success([]);
@@ -47,7 +39,7 @@ export async function getVisitors(request: NextRequest) {
     const [
       { data: attendanceRows },
       { data: paymentRows },
-      { data: statsRows }
+      statsResult
     ] = await Promise.all([
       supabase
         .from("visitor_attendance")
@@ -59,9 +51,18 @@ export async function getVisitors(request: NextRequest) {
         .in("visitor_id", visitorIds),
       supabase
         .from("visitor_stats")
-        .select("visitor_id, yellow_cards, red_cards, yellow_paid_count, red_paid_count")
+        .select("visitor_id, goals, yellow_cards, red_cards, yellow_paid_count, red_paid_count")
         .in("visitor_id", visitorIds)
     ]);
+
+    let statsRows = statsResult.data as any[] | null;
+    if (statsResult.error) {
+      const retry = await supabase
+        .from("visitor_stats")
+        .select("visitor_id, yellow_cards, red_cards, yellow_paid_count, red_paid_count")
+        .in("visitor_id", visitorIds);
+      if (!retry.error) statsRows = retry.data as any[] | null;
+    }
 
     const mapped = (visitors ?? []).map(mapVisitorBase);
     const byId = new Map(mapped.map((v) => [String(v.id), v]));
@@ -89,6 +90,7 @@ export async function getVisitors(request: NextRequest) {
       const visitor = byId.get(String(row.visitor_id || ""));
       if (!visitor) return;
       visitor.stats = {
+        goals: Number(row.goals) || 0,
         yellow: Number(row.yellow_cards) || 0,
         red: Number(row.red_cards) || 0
       };

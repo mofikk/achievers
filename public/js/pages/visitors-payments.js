@@ -336,8 +336,7 @@
     }
 
     const previousLabel = saveBtn.textContent;
-    saveBtn.disabled = true;
-    saveBtn.textContent = "Saving...";
+    window.setActionButtonLoading?.(saveBtn, true, "Saving...", previousLabel || "Save");
     window
       .apiFetch(`/visitors/${state.selectedId}/payments`, {
         method: "PATCH",
@@ -351,8 +350,7 @@
         errorEl.textContent = err.message || "Unable to save payment.";
       })
       .finally(() => {
-        saveBtn.disabled = false;
-        saveBtn.textContent = previousLabel || "Save";
+        window.setActionButtonLoading?.(saveBtn, false, "Saving...", previousLabel || "Save");
       });
   });
 

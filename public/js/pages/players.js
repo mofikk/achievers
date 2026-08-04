@@ -484,17 +484,15 @@
   });
 
   function setAddLoading(isLoading) {
-    addSaveBtn.disabled = isLoading;
+    window.setActionButtonLoading?.(addSaveBtn, isLoading, "Saving...", "Save");
     addCancelBtn.disabled = isLoading;
-    addSaveBtn.textContent = isLoading ? "Saving..." : "Save";
   }
 
   function setDeleteLoading(isLoading) {
-    deleteBtn.disabled = isLoading;
-    deleteBtn.textContent = isLoading ? "Deleting..." : "Delete Player";
+    window.setActionButtonLoading?.(deleteBtn, isLoading, "Deleting...", "Delete Player");
     deleteConfirmBtn.disabled = isLoading;
     deleteCancelBtn.disabled = isLoading;
-    deleteConfirmBtn.textContent = isLoading ? "Deleting..." : "Delete";
+    window.setActionButtonLoading?.(deleteConfirmBtn, isLoading, "Deleting...", "Delete");
   }
 
   addForm.addEventListener("submit", (event) => {
