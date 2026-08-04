@@ -64,7 +64,8 @@
     attendance: { startDate: "2026-01-10" },
     discipline: { yellowFine: 500, redFine: 1000 }
   };
-  const weeklySnapshotKey = "achievers-player-index-weekly-rankings-v1";
+  const snapshotType = "player_index";
+  const snapshotKey = "default";
 
   const state = {
     players: [],
@@ -96,7 +97,8 @@
       performance: [],
       contribution: [],
       attendance: []
-    }
+    },
+    baselineSnapshot: null
   };
 
   function getCurrentMonthKey() {
@@ -136,32 +138,6 @@
     return value.charAt(0) + value.slice(1).toLowerCase();
   }
 
-  function getWeekKey(date = new Date()) {
-    const weekDate = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
-    const day = weekDate.getUTCDay() || 7;
-    weekDate.setUTCDate(weekDate.getUTCDate() + 4 - day);
-    const yearStart = new Date(Date.UTC(weekDate.getUTCFullYear(), 0, 1));
-    const week = Math.ceil((((weekDate - yearStart) / 86400000) + 1) / 7);
-    return `${weekDate.getUTCFullYear()}-W${String(week).padStart(2, "0")}`;
-  }
-
-  function safeReadSnapshots() {
-    try {
-      const parsed = JSON.parse(localStorage.getItem(weeklySnapshotKey) || "{}");
-      return parsed && typeof parsed === "object" ? parsed : {};
-    } catch (error) {
-      return {};
-    }
-  }
-
-  function safeWriteSnapshots(payload) {
-    try {
-      localStorage.setItem(weeklySnapshotKey, JSON.stringify(payload));
-    } catch (error) {
-      console.warn("Unable to save weekly player index snapshot.", error);
-    }
-  }
-
   function buildRankMap(ranking) {
     return (ranking || []).reduce((map, player, index) => {
       if (player?.id) map[player.id] = index + 1;
@@ -181,6 +157,15 @@
     };
   }
 
+  function getFallbackRanks() {
+    return {
+      overall: {},
+      performance: {},
+      contribution: {},
+      attendance: {}
+    };
+  }
+
   function mapsFromSnapshot(snapshot) {
     const rankings = snapshot?.rankings || {};
     return {
@@ -191,38 +176,69 @@
     };
   }
 
-  function updateWeeklySnapshots() {
-    const store = safeReadSnapshots();
-    const snapshots = store.snapshots && typeof store.snapshots === "object" ? store.snapshots : {};
-    const currentWeek = getWeekKey();
-    const previousWeek = Object.keys(snapshots)
-      .filter((weekKey) => weekKey < currentWeek)
-      .sort()
-      .pop();
-
+  function updateCurrentRanks() {
     state.currentRanks = {
       overall: buildRankMap(state.rankings.overall),
       performance: buildRankMap(state.rankings.performance),
       contribution: buildRankMap(state.rankings.contribution),
       attendance: buildRankMap(state.rankings.attendance)
     };
-    state.previousRanks = previousWeek ? mapsFromSnapshot(snapshots[previousWeek]) : {
-      overall: {},
-      performance: {},
-      contribution: {},
-      attendance: {}
-    };
-
-    if (!snapshots[currentWeek]) {
-      snapshots[currentWeek] = buildSnapshot(state.rankings);
-      const weeksToKeep = Object.keys(snapshots).sort().slice(-12);
-      const pruned = weeksToKeep.reduce((next, weekKey) => {
-        next[weekKey] = snapshots[weekKey];
-        return next;
-      }, {});
-      safeWriteSnapshots({ version: 1, snapshots: pruned });
-    }
   }
+
+  function applyBaselineSnapshot(snapshot) {
+    state.baselineSnapshot = snapshot?.rankings ? snapshot : null;
+    state.previousRanks = state.baselineSnapshot ? mapsFromSnapshot(state.baselineSnapshot) : getFallbackRanks();
+  }
+
+  function saveBaselineSnapshot(snapshot) {
+    if (!snapshot?.rankings) return false;
+    return window.apiFetch("/ranking-snapshots", {
+      method: "POST",
+      body: JSON.stringify({
+        snapshot_type: snapshotType,
+        ranking_key: snapshotKey,
+        rankings: snapshot.rankings
+      })
+    });
+  }
+
+  function loadBaselineSnapshot() {
+    const query = `type=${encodeURIComponent(snapshotType)}&key=${encodeURIComponent(snapshotKey)}`;
+    return window
+      .apiFetch(`/ranking-snapshots?${query}`, { silent: true })
+      .then((res) => res?.data || null)
+      .catch((error) => {
+        if (window.reportPartialData) {
+          window.reportPartialData(error?.message || "Ranking movement baseline is temporarily unavailable.");
+        }
+        return null;
+      });
+  }
+
+  function syncBaselineSnapshot() {
+    updateCurrentRanks();
+    return loadBaselineSnapshot().then((snapshot) => {
+      applyBaselineSnapshot(snapshot);
+      if (snapshot?.rankings) return snapshot;
+      return saveBaselineSnapshot(buildSnapshot(state.rankings))
+        .then((res) => {
+          const createdSnapshot = res?.data || null;
+          applyBaselineSnapshot(createdSnapshot);
+          return createdSnapshot;
+        })
+        .catch((error) => {
+          console.warn("Unable to save initial player index ranking snapshot.", error);
+          return null;
+        });
+    });
+  }
+
+  window.playerIndexSnapshots = {
+    loadBaseline: loadBaselineSnapshot,
+    setBaselineToCurrentRankings() {
+      return saveBaselineSnapshot(buildSnapshot(state.rankings));
+    }
+  };
 
   function isMobileFilters() {
     return window.matchMedia("(max-width: 600px)").matches;
@@ -538,7 +554,6 @@
         return String(a.name || "").localeCompare(String(b.name || ""));
       })
     };
-    updateWeeklySnapshots();
   }
 
   function loadPage() {
@@ -564,9 +579,11 @@
           throw new Error("Player index calculations are unavailable.");
         }
         buildRankings(state.players);
-        populatePositionFilter();
-        renderSummary();
-        renderTables();
+        return syncBaselineSnapshot().then(() => {
+          populatePositionFilter();
+          renderSummary();
+          renderTables();
+        });
       })
       .catch(console.error);
   }

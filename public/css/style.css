@@ -903,19 +903,6 @@ body.system-page {
   color: var(--muted);
 }
 
-.stats-name-rank {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  min-width: 0;
-}
-
-.stats-name-rank > span:last-child {
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
 .player-index-detail-row td {
   background: var(--panel-muted);
 }

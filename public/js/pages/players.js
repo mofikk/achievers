@@ -537,8 +537,6 @@
       payload.initialYearKey = initialYearKey;
     }
 
-    console.log("PLAYER PAYLOAD:", payload);
-
     setAddLoading(true);
     const request =
       mode === "edit" && editingId
