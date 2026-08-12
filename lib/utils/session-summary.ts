@@ -293,6 +293,23 @@ export function buildReview(rawText: string, playersData: any[], visitorsData: a
         confidence: playerMatch.confidence
       });
     } else {
+      const visitorMatch = matchPerson(rawName, visitors);
+      if (visitorMatch.status === "matched" && visitorMatch.personId) {
+        attendanceRows.push({
+          source_name: rawName,
+          normalized_name: normalized,
+          resolved_type: "visitor",
+          resolved_id: visitorMatch.personId,
+          resolved_name: visitorMatch.personName || rawName,
+          confidence: visitorMatch.confidence
+        });
+        attendanceVisitorNames.add(normalized);
+        warnings.push(
+          `"${rawName}" already exists as visitor "${visitorMatch.personName || rawName}". Attendance will be saved to the existing visitor record.`
+        );
+        continue;
+      }
+
       attendanceRows.push({
         source_name: rawName,
         normalized_name: normalized,

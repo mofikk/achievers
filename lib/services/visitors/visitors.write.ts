@@ -18,6 +18,39 @@ export async function createVisitor(request: NextRequest) {
     const fullName = String((body as any).name || (body as any).full_name || "").trim();
     if (!fullName) return failure("Name is required.", 400);
 
+    const normalizeName = (value: unknown) =>
+      String(value ?? "")
+        .toLowerCase()
+        .replace(/[\.\,\(\)\[\]\{\}\-_]/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+    const requestedName = normalizeName(fullName);
+    const requestedNickname = normalizeName((body as any).nickname || "");
+
+    const { data: existingVisitors, error: existingError } = await supabase
+      .from("visitors")
+      .select("id, full_name, nickname");
+
+    if (existingError) return failure(existingError.message, 400);
+
+    const duplicate = (existingVisitors ?? []).find((visitor: any) => {
+      const existingName = normalizeName(visitor.full_name);
+      const existingNickname = normalizeName(visitor.nickname);
+      return (
+        (requestedName && requestedName === existingName) ||
+        (requestedName && existingNickname && requestedName === existingNickname) ||
+        (requestedNickname && requestedNickname === existingName) ||
+        (requestedNickname && existingNickname && requestedNickname === existingNickname)
+      );
+    });
+
+    if (duplicate) {
+      return failure(
+        `${duplicate.full_name || fullName} already exists in the visitors list. Use the existing visitor record or change the name.`,
+        409
+      );
+    }
+
     const payload = {
       full_name: fullName,
       nickname: String((body as any).nickname || "").trim() || null,

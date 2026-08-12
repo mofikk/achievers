@@ -39,6 +39,14 @@ function isSaturday(dateStr) {
   return !Number.isNaN(date.getTime()) && date.getDay() === 6;
 }
 
+function normalizeName(value) {
+  return String(value || "")
+    .toLowerCase()
+    .replace(/[\.\,\(\)\[\]\{\}\-_]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 router.get("/", async (req, res, next) => {
   try {
     const visitors = await readJsonFile(visitorsPath);
@@ -71,11 +79,32 @@ router.post("/", async (req, res, next) => {
 
     await withFileLock(visitorsPath, async () => {
       const visitors = await readJsonFile(visitorsPath);
+      const requestedName = normalizeName(name);
+      const requestedNickname = normalizeName(nickname);
+      const duplicate = visitors.find((visitor) => {
+        const existingName = normalizeName(visitor.name);
+        const existingNickname = normalizeName(visitor.nickname);
+        return (
+          (requestedName && requestedName === existingName) ||
+          (requestedName && existingNickname && requestedName === existingNickname) ||
+          (requestedNickname && requestedNickname === existingName) ||
+          (requestedNickname && existingNickname && requestedNickname === existingNickname)
+        );
+      });
+      if (duplicate) {
+        const error = new Error(`${duplicate.name || name} already exists in the visitors list.`);
+        error.statusCode = 409;
+        throw error;
+      }
       visitors.push(visitor);
       await writeJsonFile(visitorsPath, visitors);
     });
     res.status(201).json(visitor);
   } catch (err) {
+    if (err.statusCode === 409) {
+      res.status(409).send(err.message);
+      return;
+    }
     next(err);
   }
 });

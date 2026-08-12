@@ -345,7 +345,9 @@
     } else {
       warnings.forEach((warning) => {
         const tr = document.createElement("tr");
-        tr.innerHTML = `<td>${warning}</td>`;
+        const td = document.createElement("td");
+        td.textContent = warning;
+        tr.appendChild(td);
         summaryWarningsBody.appendChild(tr);
       });
     }
